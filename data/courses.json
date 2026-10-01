@@ -1,0 +1,934 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "name": "Programming",
+      "major": "Computer Science"
+    },
+    {
+      "id": "2",
+      "name": "Data Structures",
+      "major": "Computer Science"
+    },
+    {
+      "id": "3",
+      "name": "Algorithms",
+      "major": "Computer Science"
+    },
+    {
+      "id": "4",
+      "name": "Database Systems",
+      "major": "Computer Science"
+    },
+    {
+      "id": "5",
+      "name": "Computer Networks",
+      "major": "Computer Science"
+    },
+    {
+      "id": "6",
+      "name": "Web Development",
+      "major": "Computer Science"
+    },
+    {
+      "id": "7",
+      "name": "Information Systems",
+      "major": "Information Technology"
+    },
+    {
+      "id": "8",
+      "name": "Networking",
+      "major": "Information Technology"
+    },
+    {
+      "id": "9",
+      "name": "Web Development",
+      "major": "Information Technology"
+    },
+    {
+      "id": "10",
+      "name": "Database Management",
+      "major": "Information Technology"
+    },
+    {
+      "id": "11",
+      "name": "IT Security",
+      "major": "Information Technology"
+    },
+    {
+      "id": "12",
+      "name": "Cloud Computing",
+      "major": "Information Technology"
+    },
+    {
+      "id": "13",
+      "name": "Programming",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "14",
+      "name": "Software Design",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "15",
+      "name": "Software Testing",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "16",
+      "name": "Database Systems",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "17",
+      "name": "Web Development",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "18",
+      "name": "Software Project Management",
+      "major": "Software Engineering"
+    },
+    {
+      "id": "19",
+      "name": "Statistics",
+      "major": "Data Science"
+    },
+    {
+      "id": "20",
+      "name": "Data Analysis",
+      "major": "Data Science"
+    },
+    {
+      "id": "21",
+      "name": "Machine Learning",
+      "major": "Data Science"
+    },
+    {
+      "id": "22",
+      "name": "Data Visualization",
+      "major": "Data Science"
+    },
+    {
+      "id": "23",
+      "name": "Database Systems",
+      "major": "Data Science"
+    },
+    {
+      "id": "24",
+      "name": "Python Programming",
+      "major": "Data Science"
+    },
+    {
+      "id": "25",
+      "name": "Network Security",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "26",
+      "name": "Ethical Hacking",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "27",
+      "name": "Cryptography",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "28",
+      "name": "Cybersecurity Fundamentals",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "29",
+      "name": "Digital Forensics",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "30",
+      "name": "Information Security",
+      "major": "Cyber Security"
+    },
+    {
+      "id": "31",
+      "name": "Engineering Mechanics",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "32",
+      "name": "Thermodynamics",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "33",
+      "name": "Fluid Mechanics",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "34",
+      "name": "Machine Design",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "35",
+      "name": "Materials Science",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "36",
+      "name": "Manufacturing Processes",
+      "major": "Mechanical Engineering"
+    },
+    {
+      "id": "37",
+      "name": "Circuit Analysis",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "38",
+      "name": "Digital Electronics",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "39",
+      "name": "Electrical Machines",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "40",
+      "name": "Power Systems",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "41",
+      "name": "Control Systems",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "42",
+      "name": "Electromagnetics",
+      "major": "Electrical Engineering"
+    },
+    {
+      "id": "43",
+      "name": "Structural Engineering",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "44",
+      "name": "Construction Materials",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "45",
+      "name": "Geotechnical Engineering",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "46",
+      "name": "Fluid Mechanics",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "47",
+      "name": "Surveying",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "48",
+      "name": "Transportation Engineering",
+      "major": "Civil Engineering"
+    },
+    {
+      "id": "49",
+      "name": "Chemical Processes",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "50",
+      "name": "Thermodynamics",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "51",
+      "name": "Fluid Mechanics",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "52",
+      "name": "Heat Transfer",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "53",
+      "name": "Mass Transfer",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "54",
+      "name": "Chemical Reaction Engineering",
+      "major": "Chemical Engineering"
+    },
+    {
+      "id": "55",
+      "name": "Aerodynamics",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "56",
+      "name": "Aircraft Structures",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "57",
+      "name": "Flight Mechanics",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "58",
+      "name": "Propulsion",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "59",
+      "name": "Aerospace Materials",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "60",
+      "name": "Aircraft Design",
+      "major": "Aerospace Engineering"
+    },
+    {
+      "id": "61",
+      "name": "Engineering Mathematics",
+      "major": "Engineering"
+    },
+    {
+      "id": "62",
+      "name": "Engineering Mechanics",
+      "major": "Engineering"
+    },
+    {
+      "id": "63",
+      "name": "Engineering Materials",
+      "major": "Engineering"
+    },
+    {
+      "id": "64",
+      "name": "Computer-Aided Design",
+      "major": "Engineering"
+    },
+    {
+      "id": "65",
+      "name": "Engineering Physics",
+      "major": "Engineering"
+    },
+    {
+      "id": "66",
+      "name": "Engineering Design",
+      "major": "Engineering"
+    },
+    {
+      "id": "67",
+      "name": "Operations Research",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "68",
+      "name": "Production Planning",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "69",
+      "name": "Quality Control",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "70",
+      "name": "Supply Chain Management",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "71",
+      "name": "Industrial Statistics",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "72",
+      "name": "Systems Engineering",
+      "major": "Industrial Engineering"
+    },
+    {
+      "id": "73",
+      "name": "Robotics",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "74",
+      "name": "Automation Systems",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "75",
+      "name": "Control Systems",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "76",
+      "name": "Artificial Intelligence",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "77",
+      "name": "Sensors and Actuators",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "78",
+      "name": "Robot Programming",
+      "major": "Robotics and Automation Engineering"
+    },
+    {
+      "id": "79",
+      "name": "Graphic Design Fundamentals",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "80",
+      "name": "Typography",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "81",
+      "name": "Digital Illustration",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "82",
+      "name": "Brand Design",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "83",
+      "name": "Visual Communication",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "84",
+      "name": "Design Portfolio",
+      "major": "Graphic Design"
+    },
+    {
+      "id": "85",
+      "name": "Game Design",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "86",
+      "name": "Game Programming",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "87",
+      "name": "3D Modeling",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "88",
+      "name": "Game Animation",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "89",
+      "name": "Interactive Media",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "90",
+      "name": "Game Development",
+      "major": "Game Design and Interactive Media"
+    },
+    {
+      "id": "91",
+      "name": "Fashion Design",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "92",
+      "name": "Textile Design",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "93",
+      "name": "Fashion Illustration",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "94",
+      "name": "Pattern Making",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "95",
+      "name": "Apparel Construction",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "96",
+      "name": "Fashion Marketing",
+      "major": "Fashion and Apparel Design"
+    },
+    {
+      "id": "97",
+      "name": "Microeconomics",
+      "major": "Economics"
+    },
+    {
+      "id": "98",
+      "name": "Macroeconomics",
+      "major": "Economics"
+    },
+    {
+      "id": "99",
+      "name": "Econometrics",
+      "major": "Economics"
+    },
+    {
+      "id": "100",
+      "name": "Economic Theory",
+      "major": "Economics"
+    },
+    {
+      "id": "101",
+      "name": "International Economics",
+      "major": "Economics"
+    },
+    {
+      "id": "102",
+      "name": "Financial Economics",
+      "major": "Economics"
+    },
+    {
+      "id": "103",
+      "name": "Business Management",
+      "major": "Business Administration"
+    },
+    {
+      "id": "104",
+      "name": "Marketing",
+      "major": "Business Administration"
+    },
+    {
+      "id": "105",
+      "name": "Business Finance",
+      "major": "Business Administration"
+    },
+    {
+      "id": "106",
+      "name": "Human Resources",
+      "major": "Business Administration"
+    },
+    {
+      "id": "107",
+      "name": "Business Law",
+      "major": "Business Administration"
+    },
+    {
+      "id": "108",
+      "name": "Entrepreneurship",
+      "major": "Business Administration"
+    },
+    {
+      "id": "109",
+      "name": "Financial Accounting",
+      "major": "Accounting"
+    },
+    {
+      "id": "110",
+      "name": "Managerial Accounting",
+      "major": "Accounting"
+    },
+    {
+      "id": "111",
+      "name": "Auditing",
+      "major": "Accounting"
+    },
+    {
+      "id": "112",
+      "name": "Tax Accounting",
+      "major": "Accounting"
+    },
+    {
+      "id": "113",
+      "name": "Accounting Information Systems",
+      "major": "Accounting"
+    },
+    {
+      "id": "114",
+      "name": "Cost Accounting",
+      "major": "Accounting"
+    },
+    {
+      "id": "115",
+      "name": "Banking Fundamentals",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "116",
+      "name": "Financial Markets",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "117",
+      "name": "Investment Management",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "118",
+      "name": "Risk Management",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "119",
+      "name": "Corporate Finance",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "120",
+      "name": "Financial Analysis",
+      "major": "Banking and Finance"
+    },
+    {
+      "id": "121",
+      "name": "Introduction to Psychology",
+      "major": "Psychology"
+    },
+    {
+      "id": "122",
+      "name": "Cognitive Psychology",
+      "major": "Psychology"
+    },
+    {
+      "id": "123",
+      "name": "Social Psychology",
+      "major": "Psychology"
+    },
+    {
+      "id": "124",
+      "name": "Developmental Psychology",
+      "major": "Psychology"
+    },
+    {
+      "id": "125",
+      "name": "Research Methods",
+      "major": "Psychology"
+    },
+    {
+      "id": "126",
+      "name": "Behavioral Psychology",
+      "major": "Psychology"
+    },
+    {
+      "id": "127",
+      "name": "Clinical Psychology",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "128",
+      "name": "Psychological Assessment",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "129",
+      "name": "Abnormal Psychology",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "130",
+      "name": "Psychotherapy",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "131",
+      "name": "Clinical Research",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "132",
+      "name": "Counseling Techniques",
+      "major": "Clinical Psychology"
+    },
+    {
+      "id": "133",
+      "name": "General Biology",
+      "major": "Biology"
+    },
+    {
+      "id": "134",
+      "name": "Cell Biology",
+      "major": "Biology"
+    },
+    {
+      "id": "135",
+      "name": "Genetics",
+      "major": "Biology"
+    },
+    {
+      "id": "136",
+      "name": "Ecology",
+      "major": "Biology"
+    },
+    {
+      "id": "137",
+      "name": "Microbiology",
+      "major": "Biology"
+    },
+    {
+      "id": "138",
+      "name": "Evolutionary Biology",
+      "major": "Biology"
+    },
+    {
+      "id": "139",
+      "name": "Classical Mechanics",
+      "major": "Physics"
+    },
+    {
+      "id": "140",
+      "name": "Electromagnetism",
+      "major": "Physics"
+    },
+    {
+      "id": "141",
+      "name": "Thermodynamics",
+      "major": "Physics"
+    },
+    {
+      "id": "142",
+      "name": "Quantum Physics",
+      "major": "Physics"
+    },
+    {
+      "id": "143",
+      "name": "Optics",
+      "major": "Physics"
+    },
+    {
+      "id": "144",
+      "name": "Modern Physics",
+      "major": "Physics"
+    },
+    {
+      "id": "145",
+      "name": "Calculus",
+      "major": "Mathematics"
+    },
+    {
+      "id": "146",
+      "name": "Linear Algebra",
+      "major": "Mathematics"
+    },
+    {
+      "id": "147",
+      "name": "Discrete Mathematics",
+      "major": "Mathematics"
+    },
+    {
+      "id": "148",
+      "name": "Differential Equations",
+      "major": "Mathematics"
+    },
+    {
+      "id": "149",
+      "name": "Number Theory",
+      "major": "Mathematics"
+    },
+    {
+      "id": "150",
+      "name": "Mathematical Analysis",
+      "major": "Mathematics"
+    },
+    {
+      "id": "151",
+      "name": "Probability",
+      "major": "Statistics"
+    },
+    {
+      "id": "152",
+      "name": "Statistical Methods",
+      "major": "Statistics"
+    },
+    {
+      "id": "153",
+      "name": "Regression Analysis",
+      "major": "Statistics"
+    },
+    {
+      "id": "154",
+      "name": "Data Analysis",
+      "major": "Statistics"
+    },
+    {
+      "id": "155",
+      "name": "Experimental Design",
+      "major": "Statistics"
+    },
+    {
+      "id": "156",
+      "name": "Applied Statistics",
+      "major": "Statistics"
+    },
+    {
+      "id": "157",
+      "name": "Fundamentals of Nursing",
+      "major": "Nursing"
+    },
+    {
+      "id": "158",
+      "name": "Anatomy and Physiology",
+      "major": "Nursing"
+    },
+    {
+      "id": "159",
+      "name": "Pharmacology",
+      "major": "Nursing"
+    },
+    {
+      "id": "160",
+      "name": "Medical-Surgical Nursing",
+      "major": "Nursing"
+    },
+    {
+      "id": "161",
+      "name": "Pediatric Nursing",
+      "major": "Nursing"
+    },
+    {
+      "id": "162",
+      "name": "Community Health Nursing",
+      "major": "Nursing"
+    },
+    {
+      "id": "163",
+      "name": "Pharmacology",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "164",
+      "name": "Pharmaceutical Chemistry",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "165",
+      "name": "Pharmaceutics",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "166",
+      "name": "Clinical Pharmacy",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "167",
+      "name": "Drug Development",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "168",
+      "name": "Pharmaceutical Calculations",
+      "major": "Pharmacy and Pharmaceutical Sciences"
+    },
+    {
+      "id": "169",
+      "name": "Introduction to Philosophy",
+      "major": "Philosophy"
+    },
+    {
+      "id": "170",
+      "name": "Ethics",
+      "major": "Philosophy"
+    },
+    {
+      "id": "171",
+      "name": "Logic",
+      "major": "Philosophy"
+    },
+    {
+      "id": "172",
+      "name": "Political Philosophy",
+      "major": "Philosophy"
+    },
+    {
+      "id": "173",
+      "name": "Epistemology",
+      "major": "Philosophy"
+    },
+    {
+      "id": "174",
+      "name": "Philosophy of Science",
+      "major": "Philosophy"
+    },
+    {
+      "id": "175",
+      "name": "World History",
+      "major": "History"
+    },
+    {
+      "id": "176",
+      "name": "Ancient History",
+      "major": "History"
+    },
+    {
+      "id": "177",
+      "name": "Modern History",
+      "major": "History"
+    },
+    {
+      "id": "178",
+      "name": "Historical Research",
+      "major": "History"
+    },
+    {
+      "id": "179",
+      "name": "European History",
+      "major": "History"
+    },
+    {
+      "id": "180",
+      "name": "Middle Eastern History",
+      "major": "History"
+    },
+    {
+      "id": "181",
+      "name": "English Literature",
+      "major": "English"
+    },
+    {
+      "id": "182",
+      "name": "Academic Writing",
+      "major": "English"
+    },
+    {
+      "id": "183",
+      "name": "English Grammar",
+      "major": "English"
+    },
+    {
+      "id": "184",
+      "name": "Creative Writing",
+      "major": "English"
+    },
+    {
+      "id": "185",
+      "name": "Literary Analysis",
+      "major": "English"
+    },
+    {
+      "id": "186",
+      "name": "Communication Skills",
+      "major": "English"
+    }
+  ]
+}
