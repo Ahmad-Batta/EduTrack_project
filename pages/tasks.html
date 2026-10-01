@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack - Assignments</title>
+    <link rel="stylesheet" href="../css/tasks.css">
+</head>
+<body>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h2>EduTrack</h2>
+                <p>Instructor workspace</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="students.html" class="nav-item">Students</a>
+                <a href="quizzes.html" class="nav-item">Quizzes</a>
+                <a href="tasks.html" class="nav-item active">Assignments</a>
+                <a href="#" class="nav-item">Reports</a>
+                <a href="#" class="nav-item">Settings</a>
+            </nav>
+
+            <div class="quick-access">
+                <p class="quick-title">Quick access</p>
+                <a href="#" class="quick-link">+ Add assignment</a>
+                <a href="#" class="quick-link">Export CSV</a>
+            </div>
+
+           <div class="user-profile">
+    <!-- ضفنا id للدائرة عشان نغير الحرف -->
+    <div class="avatar" id="user-avatar-circle">N</div>
+    <div class="user-info">
+        <!-- ضفنا id للاسم وللرتبة -->
+        <h4 id="user-name-display">Naser Bader</h4>
+        <span id="user-role-display">Instructor</span>
+    </div>
+</div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Section -->
+            <header class="content-header">
+                <div class="header-title">
+                    <h1>Assignments</h1>
+                    <p>Create and manage course assignments separately.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-input" placeholder="Search assignments by title or course...">
+                    </div>
+                    <!-- تم تعديل الـ id هنا ليتطابق مع الجافاسكريبت -->
+                    <button class="btn-primary" id="add-assignment-btn">+ New assignment</button>
+                </div>
+            </header>
+
+            <!-- Table Card Section -->
+            <div class="table-card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ASSIGNMENT</th>
+                            <th>COURSE</th>
+                            <th>DUE DATE</th>
+                            <th>MAX SCORE</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- الجافاسكريبت رح يمسح أي داتا قديمة هون ويعبي الداتا الجديدة من الـ json-server -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- النافذة المنبثقة (Modal) اللي كانت ناقصة عندك -->
+    <div class="modal-overlay" id="assignment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Assignment</h3>
+                <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+            </div>
+            <form id="assignment-form">
+                <div class="form-group">
+                    <label>Assignment Title</label>
+                    <input type="text" id="modal-title" placeholder="e.g. JS Basics Assignment" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Course</label>
+                        <select id="modal-course">
+
+</select>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Score</label>
+                        <input type="number" id="modal-score" placeholder="e.g. 100" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="modal-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="modal-status">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/tasks.js"></script>
+</body>
+</html>
