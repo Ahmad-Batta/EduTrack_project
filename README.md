@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EduTrack — Quizzes, Courses & Activity History
 
 ## Run
@@ -19,3 +20,6 @@ Scripts load in this order: utils → auth → api → activityLogger → (activ
 Quizzes: list, search, create/edit (date, time, duration, total marks), archive/unarchive, delete, per-student results, quiz analytics.
 Courses: list, add/edit/delete (cascade), enroll/remove students, enrolled list, course analytics.
 Activity: log helper, full history, recent activities (scoped per instructor).
+=======
+# EduTrack_project
+>>>>>>> 48ab63e1e2502a52f1c2acdb131f3fd29449fa8c
