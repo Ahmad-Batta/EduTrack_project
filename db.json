@@ -26,6 +26,16 @@
       "password": "Password123!",
       "University": "University of Texas",
       "department": "Engineering"
+    },
+    {
+      "first_name": "Asem",
+      "last_name": "Mohammad",
+      "email": "asem.mohammad@wise.edu",
+      "university": "World Islamic Sciences and Education",
+      "department": "Software Engineering",
+      "password": "password123",
+      "createdAt": "2026-10-01T16:36:46.149Z",
+      "id": "VwSpiX2u9DM"
     }
   ],
   "courses": [

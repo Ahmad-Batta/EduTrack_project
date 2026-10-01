@@ -7,6 +7,7 @@ const formMessage = document.getElementById("form-message");
 // Reads every named input; trims text fields and lowercases the email
 const getFormValues = () => {
   const values = Object.fromEntries(new FormData(form));
+  //Take the form's fields that have name attributes and create an object using those names as the keys.
 
   for (const key of Object.keys(values)) {
     if (key !== "password" && key !== "confirm_password") {
