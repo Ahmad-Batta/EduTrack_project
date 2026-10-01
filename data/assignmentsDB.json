@@ -1,0 +1,104 @@
+{
+  "assignments": [
+    {
+      "id": "1",
+      "title": "JS Basics Assignment",
+      "course": "JavaScript",
+      "date": "Sep 20, 2026",
+      "score": "100",
+      "status": "published",
+      "createdAt": "Created Sep 10"
+    },
+    {
+      "id": "2",
+      "title": "DOM Manipulation Task",
+      "course": "JavaScript",
+      "date": "Sep 25, 2026",
+      "score": "50",
+      "status": "published",
+      "createdAt": "Created Sep 14"
+    },
+    {
+      "id": "3",
+      "title": "HTML Structure Project",
+      "course": "HTML / CSS",
+      "date": "Oct 02, 2026",
+      "score": "80",
+      "status": "draft",
+      "createdAt": "Created Sep 18"
+    },
+    {
+      "id": "4",
+      "title": "CSS Flexbox & Grid Challenge",
+      "course": "HTML / CSS",
+      "date": "Oct 05, 2026",
+      "score": "75",
+      "status": "published",
+      "createdAt": "Created Sep 21"
+    },
+    {
+      "id": "5",
+      "title": "Advanced Arrays & Objects",
+      "course": "JavaScript",
+      "date": "Oct 10, 2026",
+      "score": "100",
+      "status": "draft",
+      "createdAt": "Created Sep 23"
+    },
+    {
+      "id": "6",
+      "title": "React Components Lifecycle",
+      "course": "React.js",
+      "date": "Oct 15, 2026",
+      "score": "90",
+      "status": "published",
+      "createdAt": "Created Sep 26"
+    },
+    {
+      "id": "7",
+      "title": "Database Schema Design",
+      "course": "SQL & Databases",
+      "date": "Oct 20, 2026",
+      "score": "100",
+      "status": "published",
+      "createdAt": "Created Sep 28"
+    },
+    {
+      "id": "8",
+      "title": "RESTful API Integration",
+      "course": "Node.js",
+      "date": "Oct 25, 2026",
+      "score": "120",
+      "status": "draft",
+      "createdAt": "Created Sep 30"
+    },
+    {
+      "id": "9",
+      "title": "Authentication & JWT Security",
+      "course": "Backend Development",
+      "date": "Nov 01, 2026",
+      "score": "100",
+      "status": "published",
+      "createdAt": "Created Oct 01"
+    },
+    {
+      "id": "10",
+      "title": "Final Capstone UI Review",
+      "course": "Full-Stack Project",
+      "date": "Nov 10, 2026",
+      "score": "200",
+      "status": "draft",
+      "createdAt": "Created Oct 02"
+    },
+    {
+      "title": "Ahmad",
+      "course": "HTML / CSS",
+      "score": "98",
+      "date": "Feb 03, 2004",
+      "status": "published",
+      "createdAt": "Created Oct 1",
+      "id": "Ty8yI9wuo7s"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
