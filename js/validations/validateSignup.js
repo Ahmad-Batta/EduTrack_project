@@ -1,5 +1,3 @@
-// validations/validateSignup.js
-
 const MIN_NAME_LENGTH = 2;
 const MIN_PASSWORD_LENGTH = 8;
 
