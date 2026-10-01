@@ -1,0 +1,26 @@
+/* ===== quizzes.css — ستايل خاص بصفحة الكويزات ===== */
+.quiz-info strong { color:var(--ink); font-size:14px; }
+.quiz-info span { display:block; font-size:12px; color:var(--faint); margin-top:2px; }
+
+.view-tabs { display:inline-flex; gap:4px; padding:4px; background:var(--line-soft); border-radius:10px; margin-bottom:16px; }
+.tab { border:none; background:transparent; padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; }
+.tab.active { background:#fff; color:var(--teal); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+
+/* قائمة ••• */
+.action-container { position:relative; }
+.btn-action-dots { background:none; border:none; font-size:18px; font-weight:bold; color:var(--muted); cursor:pointer; padding:4px 8px; border-radius:6px; }
+.btn-action-dots:hover { background:var(--line-soft); }
+.action-menu { position:absolute; right:0; top:30px; background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.08); display:none; flex-direction:column; width:130px; z-index:100; overflow:hidden; }
+.action-menu.active { display:flex; }
+.action-menu button { background:none; border:none; padding:10px 14px; text-align:left; font-size:13px; color:#334155; cursor:pointer; }
+.action-menu button:hover { background:var(--bg); }
+.action-menu .delete-option { color:var(--danger); }
+.action-menu .delete-option:hover { background:#FEF2F2; }
+
+/* نافذة النتائج */
+.modal-box .analytics-row { margin-bottom:0; gap:12px; }
+.modal-box .analytics-card { padding:14px; background:var(--bg); }
+.modal-box .analytics-value { font-size:22px; }
+.score-input { width:100px; padding:6px 8px; border:1px solid #CBD5E1; border-radius:6px; }
+.card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.card-head h3 { font-size:16px; color:var(--ink); }
