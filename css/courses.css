@@ -1,0 +1,114 @@
+/* ===== courses.css — ستايل خاص بصفحة الكورسات ===== */
+/* 4. شبكة الكورسات (Courses Grid) */
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 24px;
+}
+
+.course-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0,0,0,0.05);
+}
+
+.course-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.course-code-badge {
+    background-color: #E6F7F0;
+    color: #0D9488;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.course-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.course-card p {
+    font-size: 13px;
+    color: #64748B;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.course-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #F1F5F9;
+}
+
+.students-count-tag {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.students-count-tag:hover {
+    color: #0D9488;
+}
+
+/* أزرار الإجراءات داخل الكارت */
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background-color: #E2E8F0;
+    color: #0F172A;
+}
+
+.btn-icon.delete:hover {
+    background-color: #FEF2F2;
+    color: #EF4444;
+    border-color: #FCA5A5;
+}
+
+
+/* نافذة الطلاب المسجلين */
+.enroll-form { display:flex; gap:12px; align-items:center; }
+.btn-remove-student { background:none; border:none; color:#EF4444; font-size:12px; font-weight:600; cursor:pointer; }
+.btn-remove-student:hover { text-decoration:underline; }
+.data-table td, .data-table th { padding:12px 10px; }
