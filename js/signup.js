@@ -1,5 +1,5 @@
 import { validateSignup } from "./validations/validateSignup.js";
-import { signup } from "./api/auth.js";
+import { signup } from "./apiAuth.js";
 
 const form = document.getElementById("signup-form");
 const formMessage = document.getElementById("form-message");
