@@ -405,3 +405,22 @@ body {
 .btn-action:hover {
     color: #0f766e;
 }
+
+/* تنسيق حقل الوصف (Textarea) */
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #334155;
+    box-sizing: border-box;
+    resize: vertical; /* بتسمح للمستخدم يطول المربع لتحت بس */
+    font-family: inherit;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}

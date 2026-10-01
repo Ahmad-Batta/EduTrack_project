@@ -183,9 +183,11 @@ if (assignmentForm) {
 
         const assignmentData = {
             title: document.getElementById('modal-title').value,
+            description: document.getElementById('modal-description').value, // سحبنا الوصف
             course: document.getElementById('modal-course').value,
             score: document.getElementById('modal-score').value,
             date: formattedDate,
+            time: document.getElementById('modal-time').value, // سحبنا الوقت
             status: document.getElementById('modal-status').value,
             createdAt: isEditing ? allAssignments.find(a => a.id == currentEditId).createdAt : "Created " + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         };
@@ -215,7 +217,6 @@ if (assignmentForm) {
         }
     });
 }
-
 // 3. دالة فتح المودال للتعديل (Edit) وجلب الداتا القديمة
 window.editAssignment = function(id) {
     isEditing = true;
@@ -225,9 +226,11 @@ window.editAssignment = function(id) {
     // بندور على الواجب بالمصفوفة عشان نعبي الفورم
     const assignment = allAssignments.find(a => a.id == id);
     if(assignment) {
-        document.getElementById('modal-title').value = assignment.title;
-        document.getElementById('modal-course').value = assignment.course;
-        document.getElementById('modal-score').value = assignment.score;
+        document.getElementById('modal-title').value = assignment.title || '';
+        document.getElementById('modal-description').value = assignment.description || ''; // تعبئة حقل الوصف
+        document.getElementById('modal-course').value = assignment.course || '';
+        document.getElementById('modal-score').value = assignment.score || '';
+        document.getElementById('modal-time').value = assignment.time || ''; // تعبئة حقل الوقت
         document.getElementById('modal-status').value = assignment.status ? assignment.status.toLowerCase() : 'published';
 
         // **تعديل مهم جداً:** تحويل صيغة التاريخ عشان يقبله الـ HTML بدون إيرور
@@ -285,7 +288,6 @@ async function loadCourses() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", loadAssignments);
 document.addEventListener("DOMContentLoaded", () => {
     loadAssignments(); 
     loadUserProfile();

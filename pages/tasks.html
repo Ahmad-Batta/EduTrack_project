@@ -89,43 +89,53 @@
                 <button class="close-modal-btn" id="close-modal-btn">&times;</button>
             </div>
             <form id="assignment-form">
-                <div class="form-group">
-                    <label>Assignment Title</label>
-                    <input type="text" id="modal-title" placeholder="e.g. JS Basics Assignment" required>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Course</label>
-                        <select id="modal-course">
+    <div class="form-group">
+        <label>Assignment Title</label>
+        <input type="text" id="modal-title" placeholder="e.g. JS Basics Assignment" required>
+    </div>
 
-</select>
-                    </div>
-                    <div class="form-group">
-                        <label>Max Score</label>
-                        <input type="number" id="modal-score" placeholder="e.g. 100" required>
-                    </div>
-                </div>
+    <!-- 1. ضفنا حقل الوصف (Description) -->
+    <div class="form-group">
+        <label>Description</label>
+        <textarea id="modal-description" placeholder="Write assignment details and instructions here..." rows="3"></textarea>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label>Course</label>
+            <select id="modal-course" required></select>
+        </div>
+        <div class="form-group">
+            <label>Max Score</label>
+            <input type="number" id="modal-score" placeholder="e.g. 100" required>
+        </div>
+    </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Due Date</label>
-                        <input type="date" id="modal-date" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select id="modal-status">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </div>
-                </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="modal-date" required>
+        </div>
+        <!-- 2. ضفنا حقل الوقت (Due Time) -->
+        <div class="form-group">
+            <label>Due Time</label>
+            <input type="time" id="modal-time" required>
+        </div>
+    </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Assignment</button>
-                </div>
-            </form>
+    <div class="form-group">
+        <label>Status</label>
+        <select id="modal-status">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+        </select>
+    </div>
+
+    <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancel-modal-btn">Cancel</button>
+        <button type="submit" class="btn-primary">Save Assignment</button>
+    </div>
+</form>
         </div>
     </div>
 
