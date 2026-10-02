@@ -1,0 +1,16 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#students-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.student-card {
+    width: 280px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+}

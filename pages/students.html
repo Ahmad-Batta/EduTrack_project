@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EduTrack - Students</title>
+
+    <link rel="stylesheet" href="../css/students.css">
+</head>
+
+<body>
+
+    <main class="students-page">
+
+        <header class="students-header">
+            <div>
+                <h1>Students</h1>
+                <p>Manage and view student information.</p>
+            </div>
+
+            <button id="add-student-btn">
+                Add Student
+            </button>
+        </header>
+
+
+        <section class="students-tools">
+
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search by name or student ID"
+            >
+
+            <select id="filter-select">
+                <option value="all">All Students</option>
+                <option value="active">Active</option>
+                <option value="archived">Archived</option>
+            </select>
+
+        </section>
+
+
+        <section
+            id="students-container"
+            class="students-container">
+        </section>
+
+
+        <p id="no-students-message" hidden>
+            No students found.
+        </p>
+
+
+        <template id="student-card-template">
+
+            <article class="student-card">
+
+                <h2 class="student-name">
+                    Student Name
+                </h2>
+
+                <p>
+                    <strong>Student ID:</strong>
+                    <span class="student-id"></span>
+                </p>
+
+                <p>
+                    <strong>Major:</strong>
+                    <span class="student-major"></span>
+                </p>
+
+                <p>
+                    <strong>University:</strong>
+                    <span class="student-university"></span>
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    <span class="student-email"></span>
+                </p>
+
+
+                <div class="student-actions">
+
+                    <button class="view-profile-btn">
+                        View Profile
+                    </button>
+
+                </div>
+
+            </article>
+
+        </template>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="../js/students.js">
+    </script>
+
+</body>
+
+</html>
