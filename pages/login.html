@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in to EduTrack</title>
+  <link rel="stylesheet" href="../css/signup.css">
+</head>
+<body>
+
+  <div class="screen-wrapper">
+    <main class="main-container">
+
+      <!-- Left: hero banner -->
+      <section class="hero-banner">
+        <div class="decorative-circle"></div>
+        <div class="hero-content">
+          <h1 class="brand-title">EduTrack</h1>
+          <h2 class="headline">Welcome back,<br>instructor.</h2>
+          <p class="description">
+            Pick up where you left off with your courses, students and reports.
+          </p>
+        </div>
+      </section>
+
+      <!-- Right: login form -->
+      <section class="form-section">
+        <div class="form-card">
+          <div class="form-header">
+            <h3 class="form-title">Log in</h3>
+            <p class="form-subtitle">Enter your details to open the instructor workspace.</p>
+          </div>
+
+          <form id="login-form" class="signup-form" novalidate>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" name="email" class="input-field" autocomplete="email">
+              <small class="field-error" id="email-error"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" name="password" class="input-field" autocomplete="current-password">
+              <small class="field-error" id="password-error"></small>
+            </div>
+
+            <p class="form-message" id="form-message" role="alert"></p>
+
+            <button type="submit" class="btn-submit">Log in</button>
+            <p class="form-footer">New to EduTrack? <a href="signup.html">Create an account</a></p>
+
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="../js/login.js"></script>
+</body>
+</html>

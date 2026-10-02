@@ -1,3 +1,246 @@
-h1{
-    background-color: aqua;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen-wrapper {
+      width: 100%;
+      max-width: 1040px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-row { 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .input-field.invalid {
+        border-color: #dc2626;
+    }
+
+    .field-error {
+        min-height: 14px;
+        font-size: 12px;
+        color: #dc2626;
+    }
+
+    .form-message {
+        font-size: 13px;
+        color: #dc2626;
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .form-footer {
+        text-align: center;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .form-footer a {
+        color: #0a6c74;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .main-container {
+      display: flex;
+      background-color: #f1f5f9;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      min-height: 520px;
+    }
+
+    .hero-banner {
+      flex: 1;
+      background-color: #0a6c74;
+      border-radius: 24px 0 0 24px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #ffffff;
+    }
+
+    /* Decorative Circle Overlay */
+    .hero-banner .decorative-circle {
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .brand-title {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #ffffff;
+      margin-bottom: 24px;
+    }
+
+    .headline {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .description {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 320px;
+      margin-bottom: 32px;
+    }
+
+    .btn-demo {
+      display: inline-block;
+      background-color: #ffffff;
+      color: #0a6c74;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+
+    .form-section {
+      flex: 1;
+      background-color: #f1f5f9;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-card {
+      background-color: #ffffff;
+      border-radius: 20px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-header {
+      margin-bottom: 24px;
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .input-field {
+      width: 100%;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1e293b;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background-color: #0a6c74;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+
+
+    @media (max-width: 850px) {
+      .main-container {
+        flex-direction: column;
+        border-radius: 24px;
+      }
+
+      .hero-banner {
+        border-radius: 24px 24px 0 0;
+        padding: 36px;
+        min-height: 400px;
+      }
+
+      .form-section {
+        padding: 32px 20px;
+      }
+
+      .form-card {
+        padding: 32px 24px;
+      }
+    }
+    @media (max-width: 480px) {
+ .form-row { grid-template-columns: 1fr; }
 }

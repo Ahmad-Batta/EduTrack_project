@@ -1,20 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign-up to EduTrack</title>
-
-    <link rel="stylesheet" href="..\css\signup.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up to EduTrack</title>
+  <link rel="stylesheet" href="../css/signup.css">
 </head>
 <body>
-    <h1>Welcome to EduTrack</h1>
-    <h3>Sign Up</h3>
-    <form>
-        
 
+  <div class="screen-wrapper">
+    <main class="main-container">
 
+      <!-- Left: hero banner -->
+      <section class="hero-banner">
+        <div class="decorative-circle"></div>
+        <div class="hero-content">
+          <h1 class="brand-title">EduTrack</h1>
+          <h2 class="headline">Student progress,<br>made clear.</h2>
+          <p class="description">
+            A focused workspace for instructors to track grades, attendance, feedback and reports.
+          </p>
+        </div>
+      </section>
 
-    </form>
+      <!-- Right: signup form -->
+      <section class="form-section">
+        <div class="form-card">
+          <div class="form-header">
+            <h3 class="form-title">Create your account</h3>
+            <p class="form-subtitle">Register to use the instructor workspace.</p>
+          </div>
+
+          <form id="signup-form" class="signup-form" novalidate>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first_name" class="form-label">First name</label>
+                <input type="text" id="first_name" name="first_name" class="input-field">
+                <small class="field-error" id="first_name-error"></small>
+              </div>
+              <div class="form-group">
+                <label for="last_name" class="form-label">Last name</label>
+                <input type="text" id="last_name" name="last_name" class="input-field">
+                <small class="field-error" id="last_name-error"></small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" name="email" class="input-field">
+              <small class="field-error" id="email-error"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="university" class="form-label">University / Academy</label>
+              <input type="text" id="university" name="university" class="input-field">
+              <small class="field-error" id="university-error"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="department" class="form-label">Department</label>
+              <input type="text" id="department" name="department" class="input-field">
+              <small class="field-error" id="department-error"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" id="password" name="password" class="input-field">
+              <small class="field-error" id="password-error"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirm password</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="input-field">
+              <small class="field-error" id="confirm_password-error"></small>
+            </div>
+
+            <p class="form-message" id="form-message" role="alert"></p>
+
+            <button type="submit" class="btn-submit">Create account</button>
+            <p class="form-footer">Already have an account? <a href="login.html">Log in</a></p>
+
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="../js/signup.js"></script>
 </body>
 </html>
