@@ -71,6 +71,9 @@
     color: #475569;
     cursor: pointer;
     text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 .students-count-tag:hover {
@@ -106,9 +109,33 @@
     border-color: #FCA5A5;
 }
 
+/* ===== نافذة الطلاب المسجلين (Enrolled Students Modal) ===== */
+.enroll-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
 
-/* نافذة الطلاب المسجلين */
-.enroll-form { display:flex; gap:12px; align-items:center; }
-.btn-remove-student { background:none; border:none; color:#EF4444; font-size:12px; font-weight:600; cursor:pointer; }
-.btn-remove-student:hover { text-decoration:underline; }
-.data-table td, .data-table th { padding:12px 10px; }
+.enroll-form .enroll-form-group {
+    flex: 1;
+    margin: 0;
+}
+
+.btn-remove-student {
+    background: none;
+    border: none;
+    color: #EF4444;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-remove-student:hover {
+    text-decoration: underline;
+}
+
+/* --- جدول الطلاب داخل المودال فقط (Scoped) --- */
+.table-card-flush .data-table td,
+.table-card-flush .data-table th {
+    padding: 12px 10px;
+}

@@ -18,9 +18,10 @@
             </div>
 
             <nav class="nav-links">
-                <a href="#">Dashboard</a>
-                <a href="#">Students</a>
+                <a href="/pages/dashboard.html">Dashboard</a>
+                <a href="/pages/students.html">Students</a>
                 <a href="quizzes.html">Quizzes</a>
+                <a href="/pages/tasks.html">Tasks</a>
                 <a href="courses.html" class="active">Courses</a>
                 <a href="#">Reports</a>
                 <a href="#">Settings</a>
@@ -52,10 +53,10 @@
             
             <div class="header-actions">
                 <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="searchCourseInput" placeholder="Search courses by title or code...">
+                    <span class="search-icon" aria-hidden="true">🔍</span>
+                    <input type="text" id="searchCourseInput" placeholder="Search courses by title or code..." autocomplete="off" aria-label="Search courses">
                 </div>
-                <button class="btn-primary" id="openCourseModalBtn">+ New Course</button>
+                <button class="btn-primary" id="openCourseModalBtn" type="button">+ New Course</button>
             </div>
         </header>
 
@@ -82,11 +83,11 @@
     </main>
 
     <!-- 1. نافذة إضافة / تعديل كورس (Course Modal) -->
-    <div class="modal-overlay" id="courseModal">
+    <div class="modal-overlay" id="courseModal" role="dialog" aria-modal="true" aria-labelledby="courseModalTitle">
         <div class="modal-box">
             <div class="modal-header">
                 <h2 id="courseModalTitle">Add New Course</h2>
-                <button type="button" class="btn-close-x" id="closeCourseModalXBtn">&times;</button>
+                <button type="button" class="btn-close-x" id="closeCourseModalXBtn" aria-label="Close dialog">&times;</button>
             </div>
 
             <form id="courseForm">
@@ -116,31 +117,31 @@
     </div>
 
     <!-- 2. نافذة إدارة الطلاب المسجلين بالكبسة على الكورس (Enrolled Students Modal) -->
-    <div class="modal-overlay" id="studentsModal">
-        <div class="modal-box" style="max-width: 650px;">
+    <div class="modal-overlay" id="studentsModal" role="dialog" aria-modal="true" aria-labelledby="studentsModalTitle">
+        <div class="modal-box modal-box-lg">
             <div class="modal-header">
                 <div>
                     <h2 id="studentsModalTitle">Enrolled Students</h2>
-                    <p id="studentsModalSubtitle" style="font-size: 12px; color: #64748B; margin-top: 2px;"></p>
+                    <p id="studentsModalSubtitle" class="modal-subtitle"></p>
                 </div>
-                <button type="button" class="btn-close-x" id="closeStudentsModalBtn">&times;</button>
+                <button type="button" class="btn-close-x" id="closeStudentsModalBtn" aria-label="Close dialog">&times;</button>
             </div>
 
             <!-- نموذج تسجيل طالب جديد في الكورس (Enroll Student) -->
             <form id="enrollForm" class="enroll-form">
                 <input type="hidden" id="enrollCourseId">
-                <div class="form-group" style="flex: 1; margin: 0;">
-                    <select id="selectStudentToEnroll" required>
+                <div class="form-group enroll-form-group">
+                    <select id="selectStudentToEnroll" required aria-label="Select student to enroll">
                         <option value="" disabled selected>Select student to enroll...</option>
                     </select>
                 </div>
                 <button type="submit" class="btn-primary">Enroll Student</button>
             </form>
 
-            <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+            <hr class="modal-divider">
 
             <!-- جدول عرض الطلاب المسجلين وإزالتهم -->
-            <div class="table-card" style="padding: 0; border: none; box-shadow: none;">
+            <div class="table-card table-card-flush">
                 <table class="data-table">
                     <thead>
                         <tr>

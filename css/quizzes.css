@@ -6,7 +6,6 @@
 .tab { border:none; background:transparent; padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; }
 .tab.active { background:#fff; color:var(--teal); box-shadow:0 1px 3px rgba(0,0,0,.08); }
 
-/* قائمة ••• */
 .action-container { position:relative; }
 .btn-action-dots { background:none; border:none; font-size:18px; font-weight:bold; color:var(--muted); cursor:pointer; padding:4px 8px; border-radius:6px; }
 .btn-action-dots:hover { background:var(--line-soft); }
@@ -17,10 +16,38 @@
 .action-menu .delete-option { color:var(--danger); }
 .action-menu .delete-option:hover { background:#FEF2F2; }
 
-/* نافذة النتائج */
 .modal-box .analytics-row { margin-bottom:0; gap:12px; }
 .modal-box .analytics-card { padding:14px; background:var(--bg); }
 .modal-box .analytics-value { font-size:22px; }
 .score-input { width:100px; padding:6px 8px; border:1px solid #CBD5E1; border-radius:6px; }
 .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .card-head h3 { font-size:16px; color:var(--ink); }
+
+/* ===== قسم الأسئلة الديناميكي ===== */
+.questions-container { margin-top: 20px; }
+
+.question-block {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.question-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line-soft);
+}
+.question-block .form-group { margin-bottom: 12px; }
+.question-block .form-group label { font-size: 12px; color: var(--muted); }
+.question-block .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* زر توليد الأسئلة */
+.generate-btn { margin-top: 8px; width: 100%; }
+
+@media (max-width: 600px) {
+    .question-block .form-row { grid-template-columns: 1fr; }
+}
