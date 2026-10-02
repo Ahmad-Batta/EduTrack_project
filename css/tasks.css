@@ -424,3 +424,100 @@ body {
     border-color: #0d9488;
     box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
 }
+
+/* ==========================================
+   Responsive Design for All Screen Sizes
+   ========================================== */
+
+/* --- 1. Tablets & Medium Screens (iPad - Max Width: 1024px) --- */
+@media screen and (max-width: 1024px) {
+    /* تصغير مساحات الحواشي والـ Sidebar لو موجود */
+    .dashboard-container, .main-content {
+        padding: 16px;
+    }
+    
+    /* جعل بطاقات الإحصائيات تتوزع بعمودين بدل 3 أعمدة */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px;
+    }
+
+    /* الجدول يصير قابلاً للتمرير أفقياً عشان ما يكسر الصفحة */
+    .table-card, table {
+        overflow-x: auto;
+    }
+}
+
+/* --- 2. Mobile Phones (Max Width: 768px) --- */
+@media screen and (max-width: 768px) {
+    /* بطاقات الإحصائيات تصير تحت بعض (عمود واحد) */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* أزرار الفلترة والبحث تترتب فوق بعض بشكل عمودي سلس */
+    .filter-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* شريط البحث يملأ عرض الشاشة */
+    .search-box {
+        width: 100% !important;
+    }
+
+    /* تعديل عناصر الفورم والمودال لتناسب الشاشات الصغيرة */
+    .modal-content, .form-container {
+        width: 95% !important;
+        padding: 15px !important;
+        margin: 10px auto;
+    }
+}
+
+/* --- 3. Small Mobile Phones (Max Width: 480px) --- */
+@media screen and (max-width: 480px) {
+    /* تصغير حجم العناوين والخطوط لتتاسب مع الموبايلات الصغيرة جداً */
+    h1, .page-title {
+        font-size: 1.4rem !important;
+    }
+    
+    /* أزرار العمليات والجدول */
+    td, th {
+        padding: 8px 6px !important;
+        font-size: 0.85rem;
+    }
+}
+
+/* إظهار زر البرجر حصراً على الشاشات الصغيره */
+@media screen and (max-width: 768px) {
+    .burger-menu-btn {
+        display: block !important;
+    }
+
+    /* إخفاء الـ Sidebar افتراضياً بالموبايل */
+    .sidebar {
+        position: fixed;
+        left: -260px; /* مخفية برا الشاشة */
+        top: 0;
+        height: 100%;
+        width: 260px;
+        z-index: 1000;
+        transition: left 0.3s ease-in-out;
+    }
+
+    /* لما تفتح القائمة بنعرضها */
+    .sidebar.active {
+        left: 0;
+    }
+
+    /* توسيع محتوى الصفحة لما تختفي القائمة */
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
