@@ -4,9 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign up to EduTrack</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/signup.css">
 </head>
 <body>
+
+  <header>
+    <a href="index.html" class="logo">EduTrack</a>
+    <div class="nav-links">
+      <a href="aboutUs.html">About Us</a>
+      <a href="contactUs.html">Contact Us</a>
+    </div>
+  </header>
 
   <div class="screen-wrapper">
     <main class="main-container">
@@ -14,18 +23,29 @@
       <!-- Left: hero banner -->
       <section class="hero-banner">
         <div class="decorative-circle"></div>
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+
         <div class="hero-content">
           <h1 class="brand-title">EduTrack</h1>
           <h2 class="headline">Student progress,<br>made clear.</h2>
           <p class="description">
             A focused workspace for instructors to track grades, attendance, feedback and reports.
           </p>
+
+          <ul class="perks">
+            <li><span class="check">✓</span> Set up in under a minute</li>
+            <li><span class="check">✓</span> Everything about your students in one place</li>
+            <li><span class="check">✓</span> Built for instructors, not admins</li>
+          </ul>
         </div>
+
+        <p class="tagline" id="tagline">Join instructors who spend less time on paperwork.</p>
       </section>
 
       <!-- Right: signup form -->
       <section class="form-section">
-        <div class="form-card">
+        <div class="form-card" id="form-card">
           <div class="form-header">
             <h3 class="form-title">Create your account</h3>
             <p class="form-subtitle">Register to use the instructor workspace.</p>
@@ -36,49 +56,62 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="first_name" class="form-label">First name</label>
-                <input type="text" id="first_name" name="first_name" class="input-field">
+                <input type="text" id="first_name" name="first_name" class="input-field" placeholder="Sara" autocomplete="given-name">
                 <small class="field-error" id="first_name-error"></small>
               </div>
               <div class="form-group">
                 <label for="last_name" class="form-label">Last name</label>
-                <input type="text" id="last_name" name="last_name" class="input-field">
+                <input type="text" id="last_name" name="last_name" class="input-field" placeholder="Ahmad" autocomplete="family-name">
                 <small class="field-error" id="last_name-error"></small>
               </div>
             </div>
 
             <div class="form-group">
               <label for="email" class="form-label">Email</label>
-              <input type="email" id="email" name="email" class="input-field">
+              <input type="email" id="email" name="email" class="input-field" placeholder="you@university.edu" autocomplete="email">
               <small class="field-error" id="email-error"></small>
             </div>
 
             <div class="form-group">
               <label for="university" class="form-label">University / Academy</label>
-              <input type="text" id="university" name="university" class="input-field">
+              <input type="text" id="university" name="university" class="input-field" placeholder="Where do you teach?">
               <small class="field-error" id="university-error"></small>
             </div>
 
             <div class="form-group">
               <label for="department" class="form-label">Department</label>
-              <input type="text" id="department" name="department" class="input-field">
+              <input type="text" id="department" name="department" class="input-field" placeholder="e.g. Computer Science">
               <small class="field-error" id="department-error"></small>
             </div>
 
             <div class="form-group">
               <label for="password" class="form-label">Password</label>
-              <input type="password" id="password" name="password" class="input-field">
+              <div class="password-wrap">
+                <input type="password" id="password" name="password" class="input-field" placeholder="Create a password" autocomplete="new-password">
+                <button type="button" class="toggle-password" data-target="password">Show</button>
+              </div>
+              <div class="strength">
+                <div class="strength-track"><span class="strength-bar" id="strength-bar"></span></div>
+                <span class="strength-text" id="strength-text"></span>
+              </div>
               <small class="field-error" id="password-error"></small>
             </div>
 
             <div class="form-group">
               <label for="confirm_password" class="form-label">Confirm password</label>
-              <input type="password" id="confirm_password" name="confirm_password" class="input-field">
+              <div class="password-wrap">
+                <input type="password" id="confirm_password" name="confirm_password" class="input-field" placeholder="Repeat your password" autocomplete="new-password">
+                <button type="button" class="toggle-password" data-target="confirm_password">Show</button>
+              </div>
               <small class="field-error" id="confirm_password-error"></small>
             </div>
 
             <p class="form-message" id="form-message" role="alert"></p>
 
-            <button type="submit" class="btn-submit">Create account</button>
+            <button type="submit" class="btn-submit">
+              <span class="btn-text">Create account</span>
+              <span class="spinner"></span>
+            </button>
             <p class="form-footer">Already have an account? <a href="login.html">Log in</a></p>
 
           </form>
@@ -87,6 +120,10 @@
 
     </main>
   </div>
+
+  <footer>
+    <p>&copy; 2026 EduTrack. All rights reserved.</p>
+  </footer>
 
   <script type="module" src="../js/signup.js"></script>
 </body>
