@@ -4,29 +4,30 @@
 
 /* ---------- Design tokens ---------- */
 :root {
-	--primary: #0f8b8d;
-	--primary-dark: #0b6b6e;
-	--primary-soft: #d9f5f2;
-	--navy: #12304a;
+	--primary: #1B2CC1;
+	--primary-dark: #091540;
+	--primary-soft: #ABD2FA;
+	--accent: #7692FF;
+	--navy: #091540;
 	--bg: #f4f7fb;
 	--card: #ffffff;
-	--text: #12304a;
-	--muted: #6b7a90;
-	--border: #e3e9f1;
+	--text: #091540;
+	--muted: #536488;
+	--border: #dbe4f0;
 
 	--success: #22a06b;
 	--success-soft: #dff6ea;
-	--warning: #f59e0b;
-	--warning-soft: #fdf1d3;
+	--warning: #1B2CC1;
+	--warning-soft: #ABD2FA;
 	--danger: #e35d5d;
 	--danger-soft: #fde4e4;
-	--info: #2563eb;
-	--info-soft: #e1ebfd;
-	--purple-soft: #ece8fb;
+	--info: #1B2CC1;
+	--info-soft: #ABD2FA;
+	--purple-soft: #ABD2FA;
 
 	--radius: 14px;
 	--radius-sm: 10px;
-	--shadow: 0 2px 10px rgba(18, 48, 74, 0.06);
+	--shadow: 0 2px 10px rgba(9, 21, 64, 0.08);
 	--font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -126,7 +127,7 @@ ul {
   right: 0;
   background: #ffffff;
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(18, 48, 74, 0.04);
+  box-shadow: 0 2px 8px rgba(9, 21, 64, 0.04);
   z-index: 100;
   width: 100%;
 }
@@ -141,15 +142,36 @@ ul {
 }
 
 .nav-brand .logo {
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--navy);
+  color: #ffffff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 800;
-  color: var(--navy);
+  font-size: 1.1rem;
+  box-shadow: 0 2px 6px rgba(9, 21, 64, 0.2);
+}
+
+.logo-text {
   display: flex;
   flex-direction: column;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--navy);
   line-height: 1.1;
 }
 
-.nav-brand .logo-sub {
+.logo-sub {
   font-size: 0.72rem;
   font-weight: 500;
   color: var(--muted);
@@ -158,26 +180,26 @@ ul {
 .nav-links-desktop {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .nav-link {
   padding: 8px 16px;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--navy);
   transition: background 0.15s, color 0.15s;
 }
 
 .nav-link:hover {
   background: #f0f4f9;
-  color: var(--primary-dark);
+  color: var(--primary);
 }
 
 .nav-link.active {
-  background: var(--primary-soft);
-  color: var(--primary-dark);
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .nav-right {
@@ -193,7 +215,7 @@ ul {
   gap: 10px;
   background: #f6f8fb;
   border: 1px solid var(--border);
-  padding: 6px 12px;
+  padding: 4px 14px 4px 5px;
   border-radius: 999px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -204,22 +226,35 @@ ul {
   border-color: #d1dbe5;
 }
 
+.profile-copy {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.1;
+}
+
 .profile-name {
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--navy);
 }
 
+.profile-role {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .avatar {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--primary);
   color: #ffffff;
   font-weight: 700;
   display: grid;
   place-items: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
 }
 
@@ -268,7 +303,7 @@ ul {
   background: #ffffff;
   border-bottom: 1px solid var(--border);
   padding: 16px 24px;
-  box-shadow: 0 8px 16px rgba(18, 48, 74, 0.08);
+  box-shadow: 0 8px 16px rgba(9, 21, 64, 0.08);
 }
 
 .mobile-menu nav {
@@ -280,6 +315,7 @@ ul {
 .mobile-menu .nav-link {
   padding: 10px 14px;
   font-size: 0.98rem;
+  border-radius: var(--radius-sm);
 }
 
 .mobile-menu-divider {
@@ -394,7 +430,7 @@ ul {
 
 .badge-primary { background: var(--primary-soft); color: var(--primary-dark); }
 .badge-success { background: var(--success-soft); color: #167a50; }
-.badge-warning { background: var(--warning-soft); color: #a86a00; }
+.badge-warning { background: var(--primary-soft); color: var(--primary-dark); }
 .badge-danger  { background: var(--danger-soft);  color: #b93a3a; }
 .badge-info    { background: var(--info-soft);    color: #1d4fb8; }
 
@@ -455,7 +491,7 @@ ul {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(18, 48, 74, 0.7);
+  background: rgba(9, 21, 64, 0.7);
   display: grid;
   place-items: center;
   padding: 16px;
@@ -598,7 +634,7 @@ ul {
     padding: 10px 16px;
   }
 
-  .profile-name {
+  .profile-copy {
     display: none;
   }
 

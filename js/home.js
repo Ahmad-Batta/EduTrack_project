@@ -102,13 +102,13 @@ async function loadDashboardData() {
     }
 
     // Filter datasets specifically for the active instructor user
-    const myStudents = students.filter((s) => String(s.instructor_id || s.trainerId) === String(user.id));
-    const myAssignments = assignments.filter((a) => String(a.instructor_id || a.trainerId) === String(user.id));
-    const myEvents = events.filter((e) => String(e.instructor_id || e.trainerId) === String(user.id));
-    announcements = announcements.filter((a) => String(a.instructor_id || a.trainerId) === String(user.id));
+    const myStudents = students.filter((s) => String(s.instructor_id || s.trainerId || s.instructorId) === String(user.id));
+    const myAssignments = assignments.filter((a) => String(a.instructor_id || a.trainerId || a.instructorId) === String(user.id));
+    const myEvents = events.filter((e) => String(e.instructor_id || e.trainerId || e.instructorId) === String(user.id));
+    announcements = announcements.filter((a) => String(a.instructor_id || a.trainerId || a.instructorId) === String(user.id));
 
     // Combine local storage events & announcements to ensure instant local updates display
-    const localEvents = getLocalEvents();
+    const localEvents = getLocalEvents().filter((e) => String(e.instructor_id || e.trainerId || e.instructorId) === String(user.id));
     const combinedEvents = [...myEvents, ...localEvents];
 
     // Remove duplicate events by ID

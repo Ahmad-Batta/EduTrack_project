@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduTrack - My Profile</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/instructorProfile.css">
+</head>
+<body>
+
+  <div class="app">
+  <header id="navbar" class="top-navbar"></header>
+
+  <div class="page-column">
+
+    <header class="topbar">
+      <div class="top-links">
+        <!-- <a href="aboutUs.html">About Us</a>
+        <a href="contactUs.html">Contact Us</a> -->
+        <button type="button" class="btn-logout" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div class="header-title">
+          <h1>My profile</h1>
+          <p>View and manage your account.</p>
+        </div>
+      </header>
+
+      <!-- Summary -->
+      <section class="card profile-card">
+        <div>
+          <h2 class="profile-name" id="profile-name"></h2>
+          <p class="muted" id="profile-email"></p>
+          <div class="chips">
+            <span class="chip" id="profile-university"></span>
+            <span class="chip" id="profile-department"></span>
+          </div>
+        </div>
+      </section>
+
+      <div class="view-tabs">
+        <button class="tab active" data-tab="edit" type="button">Edit profile</button>
+      </div>
+
+      <!-- Edit profile (PATCH) -->
+      <section class="card" id="panel-edit">
+        <form id="edit-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first_name">First name</label>
+              <input type="text" id="first_name">
+            </div>
+            <div class="form-group">
+              <label for="last_name">Last name</label>
+              <input type="text" id="last_name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email (cannot be changed)</label>
+            <input type="email" id="email" readonly>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="university">University / Academy</label>
+              <input type="text" id="university">
+            </div>
+            <div class="form-group">
+              <label for="department">Department</label>
+              <input type="text" id="department">
+            </div>
+          </div>
+          <p class="error-text" id="edit-message" role="alert"></p>
+          <button class="btn-primary" type="submit" id="save-btn" disabled>Save changes</button>
+        </form>
+      </section>
+
+      <!-- Danger zone (soft delete) -->
+      <!-- <section class="card danger-zone">
+        <div>
+          <h3>Delete account</h3>
+          <p class="muted">Your account will be archived and you will be logged out.</p>
+        </div>
+        <button class="btn-danger" type="button" id="open-delete-btn">Delete account</button>
+      </section>
+    </main> -->
+
+    <!-- <footer class="site-footer">
+      <p>&copy; 2026 EduTrack. All rights reserved.</p>
+    </footer> -->
+  </div>
+
+  <!-- Delete confirmation modal -->
+  <div class="modal-overlay" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="delete-title">Delete your account?</h2>
+        <button type="button" class="btn-close-x" id="close-delete-x" aria-label="Close dialog">&times;</button>
+      </div>
+      <p class="muted">Type your email <strong id="delete-email"></strong> to confirm.</p>
+      <div class="form-group delete-input">
+        <input type="text" id="delete-confirm-input" autocomplete="off" aria-label="Confirm email">
+      </div>
+      <p class="error-text" id="delete-message" role="alert"></p>
+      <div class="modal-actions">
+        <button class="btn-cancel" type="button" id="cancel-delete-btn">Cancel</button>
+        <button class="btn-danger" type="button" id="confirm-delete-btn" disabled>Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module" src="../js/instructorProfile.js"></script>
+</body>
+</html>

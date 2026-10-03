@@ -1,16 +1,5 @@
 /* ==========================================================================
-   js/events.js - Events & Schedule Management (CRUD)
-   --------------------------------------------------------------------------
-   This module handles complete Create, Read, Update, Delete (CRUD) operations
-   for class events, workshops, and exams scheduled by the instructor.
-
-   Features:
-   - Fetches events from API endpoint (/events) with LocalStorage fallback
-   - Creates new events and persists them
-   - Updates existing events
-   - Deletes events from schedule
-   - Logs event activities in the Activity Logger feed
-   - Renders event cards filtered by category (All, Event, Exam, Workshop)
+    js/events.js - Events & Schedule Management (Simplified)
    ========================================================================== */
 
 import { api, BASE_URL } from "./api.js";
@@ -36,37 +25,39 @@ let allAnnouncementsList = [];
    LocalStorage & Activity Logging Helpers
    -------------------------------------------------------------------------- */
 
-/**
- * Retrieves cached events array from localStorage
- */
 function getLocalEvents() {
   try {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-  } catch {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+    return [];
+  } catch (err) {
     return [];
   }
 }
 
-/**
- * Saves events array into localStorage
- */
 function saveLocalEvents(list) {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(list));
 }
 
-/**
- * Helper to push new entries into the activity log feed
- */
 function logEventActivity(titleHtml) {
   if (!currentUser) return;
-  const logKey = `edutrack_activity_log_${currentUser.id}`;
+  
+  const logKey = "edutrack_activity_log_" + currentUser.id;
   try {
-    const logs = JSON.parse(localStorage.getItem(logKey)) || [];
+    let logs = [];
+    const savedLogs = localStorage.getItem(logKey);
+    if (savedLogs) {
+      logs = JSON.parse(savedLogs);
+    }
+
     logs.unshift({
       title: titleHtml,
       time: "Just now",
       timestamp: Date.now(),
     });
+
     localStorage.setItem(logKey, JSON.stringify(logs));
   } catch (err) {
     console.warn("Failed to log activity:", err);
@@ -74,34 +65,37 @@ function logEventActivity(titleHtml) {
 }
 
 /* --------------------------------------------------------------------------
-   API / CRUD Operations
+   API / CRUD Operations (Events)
    -------------------------------------------------------------------------- */
 
-/**
- * Reads all events created by the logged-in trainer
- * @param {Object} user - Logged-in instructor user object
- */
 export async function getEvents(user) {
   if (!user || !user.id) return [];
 
+  let allData = [];
   try {
-    const all = await api.get(ENDPOINT);
-    if (Array.isArray(all)) {
-      return all.filter((item) => String(item.instructor_id || item.trainerId) === String(user.id));
-    }
-  } catch {
-    // REST API failed or unavailable -> Fall back to localStorage
+    allData = await api.get(ENDPOINT);
+  } catch (err) {
+    // API failed, we will use local storage
   }
 
-  const local = getLocalEvents();
-  return local.filter((item) => String(item.instructor_id || item.trainerId) === String(user.id));
+  // If API didn't return an array, fall back to localStorage
+  if (!Array.isArray(allData) || allData.length === 0) {
+    allData = getLocalEvents();
+  }
+
+  // Filter events belonging only to the current user
+  const userEvents = [];
+  for (let i = 0; i < allData.length; i++) {
+    const item = allData[i];
+    const ownerId = item.instructor_id || item.trainerId;
+    if (String(ownerId) === String(user.id)) {
+      userEvents.push(item);
+    }
+  }
+
+  return userEvents;
 }
 
-/**
- * Creates a new event entry
- * @param {Object} user - Current user
- * @param {Object} data - Event details (title, type, date, time, duration, level, location)
- */
 export async function createEvent(user, data) {
   const newItem = {
     id: "evt_" + Date.now(),
@@ -123,25 +117,20 @@ export async function createEvent(user, data) {
       const local = getLocalEvents();
       local.push(created);
       saveLocalEvents(local);
-      logEventActivity(`Created scheduled event: <strong>${escapeHtml(newItem.title)}</strong>`);
+      logEventActivity("Created scheduled event: <strong>" + escapeHtml(newItem.title) + "</strong>");
       return created;
     }
-  } catch {
-    // API failure fallback to localStorage
+  } catch (err) {
+    // API failed, save to local storage only
   }
 
   const local = getLocalEvents();
   local.push(newItem);
   saveLocalEvents(local);
-  logEventActivity(`Created scheduled event: <strong>${escapeHtml(newItem.title)}</strong>`);
+  logEventActivity("Created scheduled event: <strong>" + escapeHtml(newItem.title) + "</strong>");
   return newItem;
 }
 
-/**
- * Updates an existing event entry
- * @param {string|number} id - Event ID
- * @param {Object} data - Updated fields
- */
 export async function updateEvent(id, data) {
   const patchData = {
     title: data.title,
@@ -154,59 +143,70 @@ export async function updateEvent(id, data) {
   };
 
   try {
-    await api.patch(`${ENDPOINT}/${id}`, patchData);
-  } catch {
-    // Fallback to local storage update if PATCH request fails
+    await api.patch(ENDPOINT + "/" + id, patchData);
+  } catch (err) {
+    // Ignore API error, update locally anyway
   }
 
   const local = getLocalEvents();
-  const index = local.findIndex((item) => String(item.id) === String(id));
-  if (index !== -1) {
-    local[index] = { ...local[index], ...patchData };
-    saveLocalEvents(local);
+  for (let i = 0; i < local.length; i++) {
+    if (String(local[i].id) === String(id)) {
+      local[i] = Object.assign({}, local[i], patchData);
+      break;
+    }
   }
+  saveLocalEvents(local);
 
-  logEventActivity(`Updated event: <strong>${escapeHtml(data.title)}</strong>`);
+  logEventActivity("Updated event: <strong>" + escapeHtml(data.title) + "</strong>");
 }
 
-/**
- * Deletes an event by ID
- * @param {string|number} id - Event ID to remove
- */
 export async function deleteEvent(id) {
-  const itemToDelete = allEventsList.find((e) => String(e.id) === String(id));
+  let itemToDelete = null;
+  for (let i = 0; i < allEventsList.length; i++) {
+    if (String(allEventsList[i].id) === String(id)) {
+      itemToDelete = allEventsList[i];
+      break;
+    }
+  }
 
   try {
-    await api.delete(`${ENDPOINT}/${id}`);
-  } catch {
-    // Fallback to local storage delete if DELETE request fails
+    await api.delete(ENDPOINT + "/" + id);
+  } catch (err) {
+    // Ignore API error
   }
 
   const local = getLocalEvents();
-  const filtered = local.filter((item) => String(item.id) !== String(id));
-  saveLocalEvents(filtered);
+  const remainingEvents = [];
+  for (let i = 0; i < local.length; i++) {
+    if (String(local[i].id) !== String(id)) {
+      remainingEvents.push(local[i]);
+    }
+  }
+  saveLocalEvents(remainingEvents);
 
   if (itemToDelete) {
-    logEventActivity(`Removed event: <strong>${escapeHtml(itemToDelete.title)}</strong>`);
+    logEventActivity("Removed event: <strong>" + escapeHtml(itemToDelete.title) + "</strong>");
   }
 }
 
 /* --------------------------------------------------------------------------
-   UI Rendering
+   UI Rendering (Events)
    -------------------------------------------------------------------------- */
 
-/**
- * Renders the list of event cards according to active filter selection
- */
 export function renderEventsList() {
   if (!container) return;
 
-  let filtered = allEventsList;
-  if (currentFilter !== "all") {
-    filtered = allEventsList.filter((e) => e.type === currentFilter);
+  // Filter events by category
+  let filtered = [];
+  for (let i = 0; i < allEventsList.length; i++) {
+    const event = allEventsList[i];
+    if (currentFilter === "all" || event.type === currentFilter) {
+      filtered.push(event);
+    }
   }
 
-  if (!filtered.length) {
+  // If no events match, show empty state
+  if (filtered.length === 0) {
     container.innerHTML = `
       <div class="empty-state" style="grid-column: 1 / -1; text-align:center; padding:32px 16px;">
         <p>No scheduled events found for this category.</p>
@@ -214,17 +214,31 @@ export function renderEventsList() {
           + Create Event
         </button>
       </div>`;
-    container.querySelector("#emptyAddEvtBtn")?.addEventListener("click", openAddEventModal);
+    
+    const emptyBtn = container.querySelector("#emptyAddEvtBtn");
+    if (emptyBtn) {
+      emptyBtn.addEventListener("click", openAddEventModal);
+    }
     return;
   }
 
-  container.innerHTML = filtered
-    .map(
-      (item) => `
+  // Build HTML string using a loop
+  let htmlCards = "";
+  for (let i = 0; i < filtered.length; i++) {
+    const item = filtered.valueOf()[i]; // or filtered[i]
+    
+    // Choose badge color based on type
+    let badgeClass = "badge-info";
+    if (item.type === "Exam") badgeClass = "badge-danger";
+    if (item.type === "Workshop") badgeClass = "badge-warning";
+
+    const timeDisplay = item.time ? " at " + escapeHtml(item.time) : "";
+
+    htmlCards += `
       <article class="card event-card" data-id="${escapeHtml(item.id)}">
         <div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <span class="badge ${item.type === "Exam" ? "badge-danger" : item.type === "Workshop" ? "badge-warning" : "badge-info"}">
+            <span class="badge ${badgeClass}">
               ${escapeHtml(item.type || "Event")}
             </span>
             <div style="display:flex; gap:4px;">
@@ -234,7 +248,7 @@ export function renderEventsList() {
           </div>
           <h4 style="font-size:1.05rem; margin-bottom:8px;">${escapeHtml(item.title)}</h4>
           <div class="event-date-box" style="margin-bottom:12px;">
-            📅 ${escapeHtml(item.date || "TBD")} ${item.time ? "at " + escapeHtml(item.time) : ""}
+            📅 ${escapeHtml(item.date || "TBD")}${timeDisplay}
           </div>
           <p class="muted" style="font-size:0.85rem;">
             ⏳ <strong>Duration:</strong> ${escapeHtml(item.duration || "N/A")}<br/>
@@ -242,43 +256,48 @@ export function renderEventsList() {
             🎯 <strong>Level:</strong> ${escapeHtml(item.level || "General")}
           </p>
         </div>
-      </article>`
-    )
-    .join("");
+      </article>`;
+  }
 
-  // Attach Edit action listeners
-  container.querySelectorAll(".edit-evt-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const item = allEventsList.find((e) => String(e.id) === String(btn.dataset.id));
-      if (item) openEditEventModal(item);
-    });
-  });
+  container.innerHTML = htmlCards;
 
-  // Attach Delete action listeners
-  container.querySelectorAll(".delete-evt-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      confirmDeleteEvent(btn.dataset.id);
+  // Attach event listeners to Edit buttons
+  const editButtons = container.querySelectorAll(".edit-evt-btn");
+  for (let i = 0; i < editButtons.length; i++) {
+    editButtons[i].addEventListener("click", function() {
+      const idToEdit = this.getAttribute("data-id");
+      let targetItem = null;
+      for (let j = 0; j < allEventsList.length; j++) {
+        if (String(allEventsList[j].id) === String(idToEdit)) {
+          targetItem = allEventsList[j];
+          break;
+        }
+      }
+      if (targetItem) openEditEventModal(targetItem);
     });
-  });
+  }
+
+  // Attach event listeners to Delete buttons
+  const deleteButtons = container.querySelectorAll(".delete-evt-btn");
+  for (let i = 0; i < deleteButtons.length; i++) {
+    deleteButtons[i].addEventListener("click", function() {
+      const idToDelete = this.getAttribute("data-id");
+      confirmDeleteEvent(idToDelete);
+    });
+  }
 }
 
-/**
- * Re-fetches events from server/storage and re-renders grid
- */
 export async function refreshEvents() {
   allEventsList = await getEvents(currentUser);
   renderEventsList();
 }
 
 /* --------------------------------------------------------------------------
-   Modal Dialog Interfaces
+   Modal Dialogs & Initialization
    -------------------------------------------------------------------------- */
 
-/**
- * Generates event creation/editing form HTML template
- * @param {boolean} isEdit - True if rendering edit modal
- */
-function eventFormHtml(isEdit = false) {
+function eventFormHtml(isEdit) {
+  const buttonText = isEdit ? "Update Event" : "Create Event";
   return `
     <form id="eventForm" novalidate>
       <div class="form-group">
@@ -319,16 +338,11 @@ function eventFormHtml(isEdit = false) {
       </div>
       <div class="form-actions" style="margin-top:20px;">
         <button type="button" class="btn btn-ghost" data-close>Cancel</button>
-        <button type="submit" class="btn btn-primary">
-          ${isEdit ? "Update Event" : "Create Event"}
-        </button>
+        <button type="submit" class="btn btn-primary">${buttonText}</button>
       </div>
     </form>`;
 }
 
-/**
- * Opens modal for adding a new event
- */
 export function openAddEventModal() {
   const modal = openModal({
     title: "Create New Event",
@@ -339,17 +353,17 @@ export function openAddEventModal() {
   const form = modal.querySelector("#eventForm");
   modal.querySelector("[data-close]").addEventListener("click", closeModal);
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async function(e) {
     e.preventDefault();
-    const title = form.elements.title.value.trim();
-    if (!title) {
+    const titleInput = form.elements.title.value.trim();
+    if (!titleInput) {
       showToast("Please enter an event title", "error");
       return;
     }
 
     try {
       await createEvent(currentUser, {
-        title,
+        title: titleInput,
         type: form.elements.type.value,
         date: form.elements.date.value || new Date().toISOString().split("T")[0],
         time: form.elements.time.value || "12:00 PM",
@@ -367,10 +381,6 @@ export function openAddEventModal() {
   });
 }
 
-/**
- * Opens modal for editing an existing event
- * @param {Object} item - Event item data
- */
 export function openEditEventModal(item) {
   const modal = openModal({
     title: "Edit Event",
@@ -389,17 +399,17 @@ export function openEditEventModal(item) {
 
   modal.querySelector("[data-close]").addEventListener("click", closeModal);
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async function(e) {
     e.preventDefault();
-    const title = form.elements.title.value.trim();
-    if (!title) {
+    const titleInput = form.elements.title.value.trim();
+    if (!titleInput) {
       showToast("Please enter an event title", "error");
       return;
     }
 
     try {
       await updateEvent(item.id, {
-        title,
+        title: titleInput,
         type: form.elements.type.value,
         date: form.elements.date.value,
         time: form.elements.time.value,
@@ -417,10 +427,6 @@ export function openEditEventModal(item) {
   });
 }
 
-/**
- * Shows confirmation prompt before deleting an event
- * @param {string|number} id - Event ID
- */
 export function confirmDeleteEvent(id) {
   openModal({
     title: "Delete Event",
@@ -433,51 +439,54 @@ export function confirmDeleteEvent(id) {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
-  modal?.querySelector("#confirmDelEvt")?.addEventListener("click", async () => {
-    try {
-      await deleteEvent(id);
-      closeModal();
-      showToast("Event removed from schedule", "success");
-      await refreshEvents();
-    } catch (err) {
-      showToast("Error deleting event: " + err.message, "error");
-    }
-  });
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    modal.querySelector("#confirmDelEvt")?.addEventListener("click", async function() {
+      try {
+        await deleteEvent(id);
+        closeModal();
+        showToast("Event removed from schedule", "success");
+        await refreshEvents();
+      } catch (err) {
+        showToast("Error deleting event: " + err.message, "error");
+      }
+    });
+  }
 }
 
 /* --------------------------------------------------------------------------
-   Initialization
+   App Initialization Hook
    -------------------------------------------------------------------------- */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Ensure user is signed in
+document.addEventListener("DOMContentLoaded", async function() {
   currentUser = requireAuth();
   if (!currentUser) return;
 
-  // Render navigation navbar
   renderTopNav("events");
-
   container = document.getElementById("eventsList");
 
-  // Add event button trigger
-  document.getElementById("addEventBtn")?.addEventListener("click", openAddEventModal);
+  const addEventBtn = document.getElementById("addEventBtn");
+  if (addEventBtn) {
+    addEventBtn.addEventListener("click", openAddEventModal);
+  }
 
-  // Filter category buttons (All, Event, Exam, Workshop)
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active", "btn-primary"));
-      btn.classList.add("active");
-      currentFilter = btn.dataset.filter;
+  // Filter category buttons logic
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  for (let i = 0; i < filterBtns.length; i++) {
+    filterBtns[i].addEventListener("click", function() {
+      for (let j = 0; j < filterBtns.length; j++) {
+        filterBtns[j].classList.remove("active", "btn-primary");
+      }
+      this.classList.add("active");
+      currentFilter = this.getAttribute("data-filter");
       renderEventsList();
     });
-  });
+  }
 
-  // Initial fetch and render
   await refreshEvents();
   await refreshAnnouncements();
 
-  // Handle direct query action (e.g., ?action=add)
+  // URL Query Parameters check (e.g. ?action=add)
   const params = new URLSearchParams(window.location.search);
   if (params.get("action") === "add") {
     openAddEventModal();
@@ -490,63 +499,100 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /* --------------------------------------------------------------------------
-   Announcements Management
+   Announcements Management (Simplified)
    -------------------------------------------------------------------------- */
 
 function getLocalAnnouncements() {
   try {
-    return JSON.parse(localStorage.getItem(`edutrack_announcements_${currentUser.id}`)) || [];
-  } catch {
+    const key = "edutrack_announcements_" + currentUser.id;
+    const data = localStorage.getItem(key);
+    if (data) return JSON.parse(data);
+    return [];
+  } catch (err) {
     return [];
   }
 }
 
 function saveLocalAnnouncement(ann) {
   const local = getLocalAnnouncements();
-  const idx = local.findIndex((a) => String(a.id) === String(ann.id));
-  if (idx >= 0) local[idx] = ann;
-  else local.unshift(ann);
-  localStorage.setItem(`edutrack_announcements_${currentUser.id}`, JSON.stringify(local));
+  let foundIndex = -1;
+  for (let i = 0; i < local.length; i++) {
+    if (String(local[i].id) === String(ann.id)) {
+      foundIndex = i;
+      break;
+    }
+  }
+
+  if (foundIndex >= 0) {
+    local[foundIndex] = ann;
+  } else {
+    local.unshift(ann);
+  }
+
+  localStorage.setItem("edutrack_announcements_" + currentUser.id, JSON.stringify(local));
 }
 
 function removeLocalAnnouncement(id) {
   const local = getLocalAnnouncements();
-  const filtered = local.filter((a) => String(a.id) !== String(id));
-  localStorage.setItem(`edutrack_announcements_${currentUser.id}`, JSON.stringify(filtered));
+  const filtered = [];
+  for (let i = 0; i < local.length; i++) {
+    if (String(local[i].id) !== String(id)) {
+      filtered.push(local[i]);
+    }
+  }
+  localStorage.setItem("edutrack_announcements_" + currentUser.id, JSON.stringify(filtered));
 }
 
 export async function refreshAnnouncements() {
+  let serverAnnouncements = [];
   try {
-    const res = await fetch(`${BASE_URL}/announcements`);
+    const res = await fetch(BASE_URL + "/announcements");
     if (res.ok) {
       const data = await res.json();
-      allAnnouncementsList = data.filter((a) => String(a.instructor_id || a.trainerId) === String(currentUser.id));
+      for (let i = 0; i < data.length; i++) {
+        const ownerId = data[i].instructor_id || data[i].trainerId;
+        if (String(ownerId) === String(currentUser.id)) {
+          serverAnnouncements.push(data[i]);
+        }
+      }
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    // API failed, skip
   }
 
-  if (!allAnnouncementsList.length) {
+  if (serverAnnouncements.length === 0) {
     try {
       let rawRes = await fetch("../db.json");
       if (!rawRes.ok) rawRes = await fetch("db.json");
       if (rawRes.ok) {
         const dbData = await rawRes.json();
-        allAnnouncementsList = (dbData.announcements || []).filter((a) => String(a.instructor_id || a.trainerId) === String(currentUser.id));
+        const dbAnn = dbData.announcements || [];
+        for (let i = 0; i < dbAnn.length; i++) {
+          const ownerId = dbAnn[i].instructor_id || dbAnn[i].trainerId;
+          if (String(ownerId) === String(currentUser.id)) {
+            serverAnnouncements.push(dbAnn[i]);
+          }
+        }
       }
     } catch (err) {
       console.warn("Could not load db.json announcements", err);
     }
   }
 
+  // Combine server announcements with local ones
   const local = getLocalAnnouncements();
-  allAnnouncementsList = [...allAnnouncementsList, ...local];
-  const seen = new Set();
-  allAnnouncementsList = allAnnouncementsList.filter((a) => {
-    if (seen.has(String(a.id))) return false;
-    seen.add(String(a.id));
-    return true;
-  });
+  const combined = serverAnnouncements.concat(local);
+
+  // Remove duplicates
+  allAnnouncementsList = [];
+  const seenIds = new Set();
+  for (let i = 0; i < combined.length; i++) {
+    const idStr = String(combined[i].id);
+    if (!seenIds.has(idStr)) {
+      seenIds.add(idStr);
+      allAnnouncementsList.push(combined[i]);
+    }
+  }
 
   renderAnnouncementsList();
 }
@@ -555,44 +601,71 @@ function renderAnnouncementsList() {
   const annContainer = document.getElementById("announcementsList");
   if (!annContainer) return;
 
-  if (!allAnnouncementsList.length) {
+  if (allAnnouncementsList.length === 0) {
     annContainer.innerHTML = `
       <div style="text-align:center; padding:20px;">
         <p class="empty-state" style="margin-bottom:8px;">No announcements posted yet.</p>
-        <button type="button" class="btn btn-sm btn-primary" id="addAnnBtnEmpty">+ Add Announcement</button>
       </div>`;
     annContainer.querySelector("#addAnnBtnEmpty")?.addEventListener("click", openAddAnnouncementModal);
     return;
   }
 
-  annContainer.innerHTML = allAnnouncementsList
-    .map((ann) => `
-      <article class="announcement priority-${escapeHtml(ann.priority || "medium")}" style="padding:12px; border-left:4px solid var(--primary); background:#ffffff; border-radius:var(--radius-sm); border:1px solid var(--border);">
+  let htmlCards = "";
+  for (let i = 0; i < allAnnouncementsList.length; i++) {
+    const ann = allAnnouncementsList[i];
+    const priority = ann.priority || "medium";
+    
+    let badgeColor = "success";
+    if (priority === "high") badgeColor = "danger";
+    if (priority === "medium") badgeColor = "warning";
+
+    const badgeHtml = ann.priority 
+      ? `<span class="badge badge-${badgeColor}" style="font-size:0.7rem;">${escapeHtml(priority.toUpperCase())}</span>` 
+      : "";
+
+    const messageContent = ann.content || ann.message || ann.body || "";
+    const dateText = ann.date || new Date().toLocaleDateString();
+
+    htmlCards += `
+      <article class="announcement priority-${escapeHtml(priority)}" style="padding:12px; border-left:4px solid var(--primary); background:#ffffff; border-radius:var(--radius-sm); border:1px solid var(--border);">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="margin:0; font-size:1rem;">${escapeHtml(ann.title)}</h4>
           <div style="display:flex; gap:6px; align-items:center;">
-            ${ann.priority ? `<span class="badge badge-${ann.priority === "high" ? "danger" : ann.priority === "medium" ? "warning" : "success"}" style="font-size:0.7rem;">${escapeHtml(ann.priority.toUpperCase())}</span>` : ""}
+            ${badgeHtml}
             <button type="button" class="btn btn-ghost btn-sm" data-edit-ann="${ann.id}" style="padding:2px 6px;" title="Edit">✏️</button>
             <button type="button" class="btn btn-ghost btn-sm" data-delete-ann="${ann.id}" style="padding:2px 6px; color:var(--danger);" title="Delete">🗑️</button>
           </div>
         </div>
-        <p style="margin:6px 0; font-size:0.88rem;">${escapeHtml(ann.content || ann.message || ann.body || "")}</p>
-        <time style="font-size:0.75rem; color:var(--muted);">${escapeHtml(ann.date || new Date().toLocaleDateString())}</time>
-      </article>`)
-    .join("");
+        <p style="margin:6px 0; font-size:0.88rem;">${escapeHtml(messageContent)}</p>
+        <time style="font-size:0.75rem; color:var(--muted);">${escapeHtml(dateText)}</time>
+      </article>`;
+  }
 
-  annContainer.querySelectorAll("[data-edit-ann]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const found = allAnnouncementsList.find((a) => String(a.id) === String(btn.dataset.editAnn));
-      if (found) openEditAnnouncementModal(found);
-    });
-  });
+  annContainer.innerHTML = htmlCards;
 
-  annContainer.querySelectorAll("[data-delete-ann]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      confirmDeleteAnnouncement(btn.dataset.deleteAnn);
+  // Add event listeners for editing/deleting announcements
+  const editBtns = annContainer.querySelectorAll("[data-edit-ann]");
+  for (let i = 0; i < editBtns.length; i++) {
+    editBtns[i].addEventListener("click", function() {
+      const annId = this.getAttribute("data-edit-ann");
+      let foundAnn = null;
+      for (let j = 0; j < allAnnouncementsList.length; j++) {
+        if (String(allAnnouncementsList[j].id) === String(annId)) {
+          foundAnn = allAnnouncementsList[j];
+          break;
+        }
+      }
+      if (foundAnn) openEditAnnouncementModal(foundAnn);
     });
-  });
+  }
+
+  const deleteBtns = annContainer.querySelectorAll("[data-delete-ann]");
+  for (let i = 0; i < deleteBtns.length; i++) {
+    deleteBtns[i].addEventListener("click", function() {
+      const annId = this.getAttribute("data-delete-ann");
+      confirmDeleteAnnouncement(annId);
+    });
+  }
 }
 
 function openAddAnnouncementModal() {
@@ -625,49 +698,59 @@ function openAddAnnouncementModal() {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    
+    const form = modal.querySelector("#annForm");
+    if (form) {
+      form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const title = modal.querySelector("#annTitle").value.trim();
+        const priority = modal.querySelector("#annPriority").value;
+        const content = modal.querySelector("#annContent").value.trim();
 
-  modal?.querySelector("#annForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const title = modal.querySelector("#annTitle").value.trim();
-    const priority = modal.querySelector("#annPriority").value;
-    const content = modal.querySelector("#annContent").value.trim();
+        if (!title || !content) return;
 
-    if (!title || !content) return;
+        const newAnn = {
+          id: "ann_" + Date.now(),
+          instructor_id: String(currentUser.id),
+          trainerId: String(currentUser.id),
+          title: title,
+          priority: priority,
+          content: content,
+          message: content,
+          date: new Date().toISOString().split("T")[0],
+        };
 
-    const newAnn = {
-      id: "ann_" + Date.now(),
-      instructor_id: String(currentUser.id),
-      trainerId: String(currentUser.id),
-      title,
-      priority,
-      content,
-      message: content,
-      date: new Date().toISOString().split("T")[0],
-    };
+        try {
+          const res = await fetch(BASE_URL + "/announcements", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newAnn),
+          });
+          if (!res.ok) throw new Error("API failed");
+          const saved = await res.json();
+          allAnnouncementsList.unshift(saved);
+        } catch (err) {
+          saveLocalAnnouncement(newAnn);
+          allAnnouncementsList.unshift(newAnn);
+        }
 
-    try {
-      const res = await fetch(`${BASE_URL}/announcements`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newAnn),
+        closeModal();
+        renderAnnouncementsList();
+        logEventActivity("Posted announcement: <strong>" + escapeHtml(newAnn.title) + "</strong>");
+        showToast("Announcement posted successfully", "success");
       });
-      if (!res.ok) throw new Error("API failed");
-      const saved = await res.json();
-      allAnnouncementsList.unshift(saved);
-    } catch {
-      saveLocalAnnouncement(newAnn);
-      allAnnouncementsList.unshift(newAnn);
     }
-
-    closeModal();
-    renderAnnouncementsList();
-    logEventActivity(`Posted announcement: <strong>${escapeHtml(newAnn.title)}</strong>`);
-    showToast("Announcement posted successfully", "success");
-  });
+  }
 }
 
 function openEditAnnouncementModal(ann) {
+  const currentContent = ann.content || ann.message || ann.body || "";
+  const lowSelected = ann.priority === "low" ? "selected" : "";
+  const medSelected = (ann.priority === "medium" || !ann.priority) ? "selected" : "";
+  const highSelected = ann.priority === "high" ? "selected" : "";
+
   openModal({
     title: "Edit Announcement",
     subtitle: "Update announcement message and priority",
@@ -680,14 +763,14 @@ function openEditAnnouncementModal(ann) {
         <div class="form-group">
           <label for="editAnnPriority">Priority</label>
           <select id="editAnnPriority">
-            <option value="low" ${ann.priority === "low" ? "selected" : ""}>Low Priority</option>
-            <option value="medium" ${ann.priority === "medium" || !ann.priority ? "selected" : ""}>Medium Priority</option>
-            <option value="high" ${ann.priority === "high" ? "selected" : ""}>High Priority</option>
+            <option value="low" ${lowSelected}>Low Priority</option>
+            <option value="medium" ${medSelected}>Medium Priority</option>
+            <option value="high" ${highSelected}>High Priority</option>
           </select>
         </div>
         <div class="form-group">
           <label for="editAnnContent">Message</label>
-          <textarea id="editAnnContent" rows="3" required>${escapeHtml(ann.content || ann.message || ann.body || "")}</textarea>
+          <textarea id="editAnnContent" rows="3" required>${escapeHtml(currentContent)}</textarea>
         </div>
         <div class="form-actions" style="margin-top:20px;">
           <button type="button" class="btn btn-ghost" data-close>Cancel</button>
@@ -697,36 +780,53 @@ function openEditAnnouncementModal(ann) {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
 
-  modal?.querySelector("#editAnnForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const updated = {
-      ...ann,
-      title: modal.querySelector("#editAnnTitle").value.trim(),
-      priority: modal.querySelector("#editAnnPriority").value,
-      content: modal.querySelector("#editAnnContent").value.trim(),
-      message: modal.querySelector("#editAnnContent").value.trim(),
-    };
+    const form = modal.querySelector("#editAnnForm");
+    if (form) {
+      form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        
+        const updatedTitle = modal.querySelector("#editAnnTitle").value.trim();
+        const updatedPriority = modal.querySelector("#editAnnPriority").value;
+        const updatedContent = modal.querySelector("#editAnnContent").value.trim();
 
-    try {
-      await fetch(`${BASE_URL}/announcements/${ann.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
+        const updated = Object.assign({}, ann, {
+          title: updatedTitle,
+          priority: updatedPriority,
+          content: updatedContent,
+          message: updatedContent,
+        });
+
+        try {
+          await fetch(BASE_URL + "/announcements/" + ann.id, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updated),
+          });
+        } catch (err) {
+          saveLocalAnnouncement(updated);
+        }
+
+        let foundIndex = -1;
+        for (let i = 0; i < allAnnouncementsList.length; i++) {
+          if (String(allAnnouncementsList[i].id) === String(ann.id)) {
+            foundIndex = i;
+            break;
+          }
+        }
+        if (foundIndex >= 0) {
+          allAnnouncementsList[foundIndex] = updated;
+        }
+
+        closeModal();
+        renderAnnouncementsList();
+        logEventActivity("Updated announcement: <strong>" + escapeHtml(updated.title) + "</strong>");
+        showToast("Announcement updated", "success");
       });
-    } catch {
-      saveLocalAnnouncement(updated);
     }
-
-    const idx = allAnnouncementsList.findIndex((a) => String(a.id) === String(ann.id));
-    if (idx >= 0) allAnnouncementsList[idx] = updated;
-
-    closeModal();
-    renderAnnouncementsList();
-    logEventActivity(`Updated announcement: <strong>${escapeHtml(updated.title)}</strong>`);
-    showToast("Announcement updated", "success");
-  });
+  }
 }
 
 function confirmDeleteAnnouncement(id) {
@@ -741,23 +841,41 @@ function confirmDeleteAnnouncement(id) {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
 
-  modal?.querySelector("#confirmDelAnnBtn")?.addEventListener("click", async () => {
-    try {
-      await fetch(`${BASE_URL}/announcements/${id}`, { method: "DELETE" });
-    } catch {
-      // ignore
-    }
-    const deleted = allAnnouncementsList.find((a) => String(a.id) === String(id));
-    removeLocalAnnouncement(id);
-    allAnnouncementsList = allAnnouncementsList.filter((a) => String(a.id) !== String(id));
+    modal.querySelector("#confirmDelAnnBtn")?.addEventListener("click", async function() {
+      try {
+        await fetch(BASE_URL + "/announcements/" + id, { method: "DELETE" });
+      } catch (err) {
+        // Ignore network errors
+      }
 
-    closeModal();
-    renderAnnouncementsList();
-    if (deleted) {
-      logEventActivity(`Deleted announcement: <strong>${escapeHtml(deleted.title)}</strong>`);
-    }
-    showToast("Announcement deleted", "info");
-  });
+      let deletedItem = null;
+      for (let i = 0; i < allAnnouncementsList.length; i++) {
+        if (String(allAnnouncementsList[i].id) === String(id)) {
+          deletedItem = allAnnouncementsList[i];
+          break;
+        }
+      }
+
+      removeLocalAnnouncement(id);
+
+      const newList = [];
+      for (let i = 0; i < allAnnouncementsList.length; i++) {
+        if (String(allAnnouncementsList[i].id) !== String(id)) {
+          newList.push(allAnnouncementsList[i]);
+        }
+      }
+      allAnnouncementsList = newList;
+
+      closeModal();
+      renderAnnouncementsList();
+      
+      if (deletedItem) {
+        logEventActivity("Deleted announcement: <strong>" + escapeHtml(deletedItem.title) + "</strong>");
+      }
+      showToast("Announcement deleted", "info");
+    });
+  }
 }

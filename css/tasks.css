@@ -1,0 +1,126 @@
+/* ==========================================================
+   tasks.css — Assignments / Tasks Page Styles
+   ========================================================== */
+
+/* Main content spacing & overrides */
+.main-content {
+    flex: 1;
+    padding: 32px;
+    max-width: 1320px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Item details inside table */
+.item-name {
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.92rem;
+}
+
+.item-date {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+}
+
+/* Action Dots & Menu Dropdown */
+.action-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--muted);
+    letter-spacing: 2px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-action:hover {
+    background: var(--line-soft, #f1f5f9);
+    color: var(--primary-dark);
+}
+
+.action-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(9, 21, 64, 0.1);
+    display: none;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.action-menu.active {
+    display: flex;
+}
+
+.action-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--navy);
+    border-bottom: 1px solid var(--line-soft, #f1f5f9);
+    transition: background 0.15s ease;
+}
+
+.action-menu button:last-child {
+    border-bottom: none;
+}
+
+.action-menu button:hover {
+    background: var(--bg);
+}
+
+.action-menu button.delete-btn {
+    color: var(--danger, #ef4444);
+}
+
+.action-menu button.delete-btn:hover {
+    background: #fde4e4;
+}
+
+/* Badges for status */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.published,
+.badge-published {
+    background-color: #E6F7ED;
+    color: #10B981;
+}
+
+.badge.draft,
+.badge-draft {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+}

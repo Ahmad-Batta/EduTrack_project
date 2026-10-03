@@ -9,31 +9,38 @@ const HOME_PAGE = "home.html";
 /** Returns the logged-in user ({ id, name, email, university, department }) or null. */
 export function getCurrentUser() {
   try {
-    const user = JSON.parse(sessionStorage.getItem("currentUser")) || JSON.parse(localStorage.getItem("currentInstructor"));
-    if (user && user.id) return user;
+    const user = JSON.parse(sessionStorage.getItem("session")) ||
+                 JSON.parse(sessionStorage.getItem("currentUser")) ||
+                 JSON.parse(localStorage.getItem("currentInstructor"));
+    if (user && user.id) {
+      if (!user.name) {
+        user.name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email || "Trainer";
+      }
+      return user;
+    }
   } catch {
-    // Fallback to default instructor
+    // Fallback
   }
-  return {
-    id: "2",
-    name: "Sara Khalil",
-    email: "sara.khalil@uj.edu",
-    University: "University of Jordan",
-    department: "Mathematics"
-  };
+  return null;
 }
 
-/** Call at the top of every page. Returns the current user (falls back to the default instructor). */
+/** Call at the top of protected pages. Redirects to login if not authenticated. */
 export function requireAuth() {
   const user = getCurrentUser();
-  if (!user || !user.id) return null;
+  if (!user || !user.id) {
+    const loginPath = window.location.pathname.includes("/pages/") ? "login.html" : "pages/login.html";
+    window.location.replace(loginPath);
+    return null;
+  }
   return user;
 }
 
 export function logout() {
+  sessionStorage.removeItem("session");
   sessionStorage.removeItem("currentUser");
   localStorage.removeItem("currentInstructor");
-  window.location.href = HOME_PAGE;
+  const loginPath = window.location.pathname.includes("/pages/") ? "login.html" : "pages/login.html";
+  window.location.href = loginPath;
 }
 
 /* ---------- Safe text ---------- */
@@ -53,6 +60,10 @@ export function escapeHtml(value) {
 const NAV_LINKS = [
   { key: "home", href: "home.html", label: "Home" },
   { key: "dashboard", href: "dashboard.html", label: "Dashboard" },
+  { key: "students", href: "students.html", label: "Students" },
+  { key: "tasks", href: "tasks.html", label: "Tasks" },
+  { key: "quizzes", href: "quizzes.html", label: "Quizzes" },
+  { key: "courses", href: "courses.html", label: "Courses" },
   { key: "events", href: "events.html", label: "Events & Announcements" },
 ];
 
@@ -60,65 +71,21 @@ const NAV_LINKS = [
  * Open profile modal with trainer details and logout option
  */
 export function openProfileModal() {
-  const user = getCurrentUser() || {};
-  const initial = escapeHtml((user.name || "?").trim().charAt(0).toUpperCase());
-
-  openModal({
-    title: "Trainer Profile",
-    subtitle: "Instructor Account Details",
-    bodyHtml: `
-      <div class="profile-card-modal">
-        <div class="profile-header">
-          <div class="avatar avatar-lg">${initial}</div>
-          <div>
-            <h3>${escapeHtml(user.name || "Trainer")}</h3>
-            <p class="muted">${escapeHtml(user.email || "No email")}</p>
-          </div>
-        </div>
-        <div class="profile-details">
-          <div class="profile-row">
-            <span class="profile-label">Instructor ID:</span>
-            <strong>#${escapeHtml(user.id)}</strong>
-          </div>
-          <div class="profile-row">
-            <span class="profile-label">University:</span>
-            <strong>${escapeHtml(user.University || user.university || "EduTrack Partner University")}</strong>
-          </div>
-          <div class="profile-row">
-            <span class="profile-label">Department:</span>
-            <strong>${escapeHtml(user.department || "Academic Department")}</strong>
-          </div>
-          <div class="profile-row">
-            <span class="profile-label">Role:</span>
-            <span class="badge badge-primary">Instructor / Trainer</span>
-          </div>
-        </div>
-        <div class="form-actions" style="margin-top:20px; justify-content: space-between;">
-          <button type="button" class="btn btn-danger" id="modalLogoutBtn">Sign Out</button>
-          <button type="button" class="btn" data-close>Close</button>
-        </div>
-      </div>
-    `,
-  });
-
-  const modal = document.getElementById("modalBackdrop");
-  if (modal) {
-    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
-    modal.querySelector("#modalLogoutBtn")?.addEventListener("click", logout);
-  }
+  const profileUrl = window.location.pathname.includes("/pages/") ? "instructorProfile.html" : "pages/instructorProfile.html";
+  window.location.href = profileUrl;
 }
 
 /**
  * Fills <header id="navbar"> or <aside id="sidebar"> with top navigation.
- * @param {"home"|"dashboard"|"events"} activeKey
+ * @param {"home"|"dashboard"|"students"|"tasks"|"quizzes"|"courses"|"events"} activeKey
  */
 export function renderTopNav(activeKey) {
-  // Support container as either header#navbar or aside#sidebar (or header.top-navbar)
   const container = document.getElementById("navbar") || document.getElementById("sidebar") || document.querySelector(".top-navbar");
   const user = getCurrentUser();
   if (!container || !user) return;
 
-  const initial = escapeHtml((user.name || "?").trim().charAt(0).toUpperCase());
+  const initial = escapeHtml((user.name || "T").trim().charAt(0).toUpperCase());
+  const firstName = escapeHtml((user.name || "Trainer").split(" ")[0]);
 
   const linksHtml = NAV_LINKS.map(
     (link) => `
@@ -133,8 +100,11 @@ export function renderTopNav(activeKey) {
     <div class="nav-container">
       <div class="nav-brand">
         <a href="home.html" class="logo">
-          EduTrack
-          <span class="logo-sub">Trainer workspace</span>
+          <span class="brand-mark">E</span>
+          <span class="logo-text">
+            EduTrack
+            <span class="logo-sub">Academic Management</span>
+          </span>
         </a>
       </div>
 
@@ -145,7 +115,10 @@ export function renderTopNav(activeKey) {
       <div class="nav-right">
         <button type="button" class="profile-btn" id="profileBtn" title="View Profile" aria-label="Trainer Profile">
           <div class="avatar">${initial}</div>
-          <span class="profile-name">${escapeHtml((user.name || "").split(" ")[0])}</span>
+          <div class="profile-copy">
+            <span class="profile-name">${firstName}</span>
+            <span class="profile-role">Instructor</span>
+          </div>
         </button>
 
         <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Navigation Menu" aria-expanded="false">

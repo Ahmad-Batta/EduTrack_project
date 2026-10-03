@@ -90,10 +90,11 @@
   margin-top: 4px;
 }
 
-.c-a { background: #d5f3ef; border:1px solid #0f8b8d; }
-.c-b { background: #9ae4dc; border:1px solid #0b6b6e; }
-.c-c { background: #4fc8bd; border:1px solid #085255; }
-.c-d { background: #e0b3ee; border:1px solid #9d4edd; }
+.c-a { background: #d0e2ff; border:1px solid #1B2CC1; }
+.c-b { background: #a6c8ff; border:1px solid #1B2CC1; }
+.c-c { background: #7692FF; border:1px solid #091540; }
+.c-d { background: #ABD2FA; border:1px solid #1B2CC1; }
+.c-f { background: #e2edff; border:1px solid #7692FF; }
 
 /* ---------- Horizontal Bar Charts ---------- */
 .bar-row {

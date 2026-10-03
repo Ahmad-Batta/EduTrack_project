@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack - Quizzes</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/quizzes.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div>
+            <div class="logo-area">
+                <h2>EduTrack</h2>
+                <span>Instructor workspace</span>
+            </div>
+            <nav class="nav-links">
+                <a href="/pages/dashboard.html">Dashboard</a>
+                <a href="/pages/students.html">Students</a>
+                <a href="quizzes.html" class="active">Quizzes</a>
+                <a href="/pages/tasks.html">Tasks</a>
+                <a href="courses.html">Courses</a>
+                <a href="#">Reports</a>
+                <a href="#">Settings</a>
+            </nav>
+            <div class="quick-access">
+                <span>Quick access</span>
+                <a href="#">+ Add student</a>
+                <a href="#">Export CSV</a>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="avatar">N</div>
+            <div>
+                <div class="user-name">Naser Bader</div><!--imp-->
+                <div class="user-role">Instructor</div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div class="header-title">
+                <h1>Quizzes</h1>
+                <p>Create and manage quizzes separately from assignments.</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <span class="search-icon" aria-hidden="true">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search quizzes by title or course..." autocomplete="off" aria-label="Search quizzes">
+                </div>
+                <button class="btn-primary" id="openModalBtn" type="button">+ New quiz</button>
+            </div>
+        </header>
+
+        <section class="analytics-row">
+            <div class="analytics-card"><span class="analytics-title">Total quizzes</span><strong class="analytics-value" id="statTotalQuizzes">0</strong></div>
+            <div class="analytics-card"><span class="analytics-title">Active quizzes</span><strong class="analytics-value" id="statActiveQuizzes">0</strong></div>
+            <div class="analytics-card"><span class="analytics-title">Overall avg. score</span><strong class="analytics-value" id="statAvgScore">—</strong></div>
+        </section>
+
+        <div class="view-tabs">
+            <button class="tab active" data-view="active" type="button">Active</button>
+            <button class="tab" data-view="archived" type="button">Archived</button>
+        </div>
+
+        <section class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr><th>QUIZ</th><th>COURSE</th><th>QUESTIONS</th><th>AVG. SCORE</th><th>STATUS</th><th>ACTION</th></tr>
+                </thead>
+                <tbody id="quizzesTableBody"></tbody>
+            </table>
+        </section>
+
+        <section class="table-card">
+            <div class="card-head">
+                <h3>Recent activity</h3>
+                <button class="btn-secondary" id="openActivityBtn" type="button">View full history</button>
+            </div>
+            <ul class="activity-list" id="recentActivityList"></ul>
+        </section>
+    </main>
+
+    <!-- Quiz modal -->
+    <div class="modal-overlay" id="quizModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box modal-box-xl">
+            <div class="modal-header">
+                <h2 id="modalTitle">Create New Quiz</h2>
+                <button type="button" class="btn-close-x" id="closeModalXBtn" aria-label="Close dialog">&times;</button>
+            </div>
+            <form id="quizForm" novalidate>
+                <input type="hidden" id="quizId">
+                <div class="form-group">
+                    <label for="quizTitle">Quiz Title</label>
+                    <input type="text" id="quizTitle" placeholder="e.g. JS Basics Quiz" maxlength="80">
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="quizCourse">Course</label><select id="quizCourse"></select></div>
+                    <div class="form-group">
+                        <label for="quizQuestionsCount">Questions Count</label>
+                        <input type="number" id="quizQuestionsCount" placeholder="e.g. 15" min="1">
+                        <button type="button" id="generateQuestionsBtn" class="btn-secondary generate-btn">Generate Question Fields</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="quizDate">Date</label><input type="date" id="quizDate"></div>
+                    <div class="form-group"><label for="quizTime">Time</label><input type="time" id="quizTime"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="quizDuration">Duration (Mins)</label><input type="number" id="quizDuration" placeholder="e.g. 60" min="1"></div>
+                    <div class="form-group"><label for="quizTotalMarks">Total Marks</label><input type="number" id="quizTotalMarks" placeholder="e.g. 100" min="1"></div>
+                </div>
+                <div class="form-group">
+                    <label for="quizStatus">Status</label>
+                    <select id="quizStatus">
+                        <option value="Published">Published</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Scheduled">Scheduled</option>
+                    </select>
+                </div>
+
+                <div id="questionsContainer" class="questions-container"></div>
+
+                <p class="error-text" id="formError" role="alert"></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="closeModalBtn">Cancel</button>
+                    <button type="submit" class="btn-save">Save Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results modal -->
+    <div class="modal-overlay" id="resultsModal" role="dialog" aria-modal="true" aria-labelledby="resultsModalTitle">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h2 id="resultsModalTitle">Quiz Results</h2>
+                <button type="button" class="btn-close-x" id="closeResultsModalBtn" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="analytics-row">
+                <div class="analytics-card"><span class="analytics-title">Submissions</span><strong class="analytics-value" id="analyticTotal">0</strong></div>
+                <div class="analytics-card"><span class="analytics-title">Average</span><strong class="analytics-value" id="analyticAvg">—</strong></div>
+                <div class="analytics-card"><span class="analytics-title">Highest</span><strong class="analytics-value" id="analyticHigh">—</strong></div>
+            </div>
+            <p class="error-text" id="resultsError" role="alert"></p>
+            <table class="data-table">
+                <thead><tr><th>STUDENT</th><th>EMAIL</th><th>SCORE</th></tr></thead>
+                <tbody id="resultsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Activity history modal (with Clear button) -->
+    <div class="modal-overlay" id="activityModal" role="dialog" aria-modal="true" aria-labelledby="activityModalTitle">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h2 id="activityModalTitle">Activity History</h2>
+                <div class="modal-header-actions">
+                    <button type="button" class="btn-clear-history" id="clearActivityBtn" aria-label="Clear all activity history">
+                        🗑 Clear
+                    </button>
+                    <button type="button" class="btn-close-x" id="closeActivityBtn" aria-label="Close dialog">&times;</button>
+                </div>
+            </div>
+            <ul class="activity-list" id="activityHistoryList"></ul>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/activityLogger.js"></script>
+    <script src="js/activityView.js"></script>
+    <script src="js/quizzes.js"></script>
+</body>
+</html>

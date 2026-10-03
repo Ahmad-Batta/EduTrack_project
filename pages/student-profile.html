@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Student Profile | EduTrack
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/students.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+
+        <!-- Navbar placeholder -->
+        <header
+            id="navbar"
+            class="top-navbar">
+        </header>
+
+
+
+        <main class="main student-profile-page">
+
+
+            <!-- Page Header -->
+            <header class="page-header">
+
+                <div>
+
+                    <a
+                        href="students.html"
+                        class="back-link">
+
+                        ← Back to Students
+
+                    </a>
+
+
+                    <p class="page-eyebrow">
+                        Student Details
+                    </p>
+
+
+                    <h1>
+                        Student Profile
+                    </h1>
+
+
+                    <p class="muted">
+                        Student information,
+                        attendance and academic performance.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- Student Information -->
+            <section class="profile-layout">
+
+
+                <article class="profile-main-card">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Profile
+                            </p>
+
+                            <h2>
+                                Student Information
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="student-profile"></div>
+
+                </article>
+
+
+
+                <!-- Attendance -->
+                <article class="analytics-card">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Attendance
+                            </p>
+
+                            <h2>
+                                Attendance Summary
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="attendance-container"></div>
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- Academic Performance -->
+            <section class="academic-grid">
+
+
+                <article class="analytics-card">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Academic Analytics
+                            </p>
+
+                            <h2>
+                                Academic Performance
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="grades-analytics"></div>
+
+                </article>
+
+
+
+                <article class="analytics-card">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Course Results
+                            </p>
+
+                            <h2>
+                                Courses & Grades
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="grades-container"></div>
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- Charts -->
+            <section class="charts-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            Visual Analytics
+                        </p>
+
+                        <h2>
+                            Student Analytics
+                        </h2>
+
+                        <p class="muted">
+                            Visual representation of
+                            attendance and academic grades.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="charts-grid">
+
+
+                    <article class="chart-card">
+
+                        <div class="chart-card-header">
+
+                            <h3>
+                                Attendance Breakdown
+                            </h3>
+
+                            <p class="muted">
+                                Present, absent and late records.
+                            </p>
+
+                        </div>
+
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="attendance-chart">
+                            </canvas>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <article class="chart-card">
+
+                        <div class="chart-card-header">
+
+                            <h3>
+                                Course Grades
+                            </h3>
+
+                            <p class="muted">
+                                Grade comparison across courses.
+                            </p>
+
+                        </div>
+
+
+                        <div class="chart-container">
+
+                            <canvas
+                                id="grades-chart">
+                            </canvas>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+
+        <!-- Footer -->
+        <footer class="site-footer">
+
+            <p>
+                © EduTrack Student Management
+            </p>
+
+        </footer>
+
+
+    </div>
+
+
+
+    <!-- Chart.js Library -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+
+
+    <script
+        type="module"
+        src="../js/student-profile.js">
+    </script>
+
+
+</body>
+
+</html>

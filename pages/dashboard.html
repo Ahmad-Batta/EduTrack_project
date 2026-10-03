@@ -1,194 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Analytics Dashboard | EduTrack</title>
-	<link rel="stylesheet" href="../css/global.css" />
-	<link rel="stylesheet" href="../css/dashboard.css" />
-	<style>
-		/* SVG Line Chart styling */
-		.line-chart-container {
-			position: relative;
-			width: 100%;
-			height: 240px;
-			margin-top: 16px;
-		}
-		.line-chart-svg {
-			width: 100%;
-			height: 100%;
-			overflow: visible;
-		}
-		.chart-point {
-			fill: var(--primary);
-			stroke: #ffffff;
-			stroke-width: 3;
-			r: 6;
-			transition: r 0.2s ease;
-			cursor: pointer;
-		}
-		.chart-point:hover {
-			r: 8;
-			fill: var(--navy);
-		}
-		.chart-line {
-			fill: none;
-			stroke: var(--primary);
-			stroke-width: 3;
-			stroke-linecap: round;
-			stroke-linejoin: round;
-		}
-		.chart-area {
-			fill: url(#chartGradient);
-			opacity: 0.15;
-		}
-		.chart-axis {
-			stroke: var(--border);
-			stroke-width: 1;
-		}
-		.chart-label {
-			font-size: 11px;
-			fill: var(--muted);
-			text-anchor: middle;
-		}
-	</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Analytics Dashboard | EduTrack</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Chart.js Responsive Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            margin-top: 16px;
+        }
+    </style>
 </head>
 <body>
-	<div class="app">
-		<header id="navbar" class="top-navbar"></header>
+    <div class="app">
+        <header id="navbar" class="top-navbar"></header>
 
-		<main class="main">
-			<header class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-				<div>
-					<h1>Class Performance & Analytics</h1>
-					<p class="muted">Real-time statistics, score distribution, and progress trends calculated from db.json</p>
-				</div>
-				<div>
-					<a href="home.html" class="btn btn-ghost" style="border:1px solid var(--border);">
-						← Back to Home
-					</a>
-				</div>
-			</header>
+        <main class="main">
+            <header class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div>
+                    <h1>Class Performance & Analytics</h1>
+                    <p class="muted">Real-time statistics, score distribution, and progress trends calculated from db.json</p>
+                </div>
+                <div>
+                    <a href="home.html" class="btn btn-ghost" style="border:1px solid var(--border);">
+                        ← Back to Home
+                    </a>
+                </div>
+            </header>
 
-			<div id="errorBox" class="error-box" role="alert" hidden></div>
+            <div id="errorBox" class="error-box" role="alert" hidden></div>
 
-			<!-- Key Performance Indicators -->
-			<section class="stats-grid" aria-label="Summary Statistics">
-				<article class="card stat">
-					<div class="stat-top">
-						<span class="stat-label">Total students</span>
-						<span class="stat-dot dot-primary" aria-hidden="true"></span>
-					</div>
-					<strong id="statStudents">0</strong>
-				</article>
-				<article class="card stat">
-					<div class="stat-top">
-						<span class="stat-label">Class Average</span>
-						<span class="stat-dot dot-info" aria-hidden="true"></span>
-					</div>
-					<strong id="statAvg">0%</strong>
-				</article>
-				<article class="card stat">
-					<div class="stat-top">
-						<span class="stat-label">Attendance Rate</span>
-						<span class="stat-dot dot-success" aria-hidden="true"></span>
-					</div>
-					<strong id="statAttendance">0%</strong>
-				</article>
-				<article class="card stat">
-					<div class="stat-top">
-						<span class="stat-label">At-Risk Students</span>
-						<span class="stat-dot dot-danger" aria-hidden="true"></span>
-					</div>
-					<strong id="statRisk">0</strong>
-				</article>
-			</section>
+            <!-- Key Performance Indicators -->
+            <section class="stats-grid" aria-label="Summary Statistics">
+                <article class="card stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Total students</span>
+                        <span class="stat-dot dot-primary" aria-hidden="true"></span>
+                    </div>
+                    <strong id="statStudents">0</strong>
+                </article>
+                <article class="card stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Class Average</span>
+                        <span class="stat-dot dot-info" aria-hidden="true"></span>
+                    </div>
+                    <strong id="statAvg">0%</strong>
+                </article>
+                <article class="card stat">
+                    <div class="stat-top">
+                        <span class="stat-label">Attendance Rate</span>
+                        <span class="stat-dot dot-success" aria-hidden="true"></span>
+                    </div>
+                    <strong id="statAttendance">0%</strong>
+                </article>
+                <article class="card stat">
+                    <div class="stat-top">
+                        <span class="stat-label">At-Risk Students</span>
+                        <span class="stat-dot dot-danger" aria-hidden="true"></span>
+                    </div>
+                    <strong id="statRisk">0</strong>
+                </article>
+            </section>
 
-			<!-- Performance Line Chart & Grade Distribution Column Chart -->
-			<section class="grid-2">
-				<article class="card">
-					<div class="card-header">
-						<div>
-							<h3>Performance Progress Trend</h3>
-							<p class="muted">Average class score progression over assignments</p>
-						</div>
-					</div>
-					<div class="line-chart-container" id="lineChartWrapper">
-						<!-- SVG Line chart dynamically rendered -->
-					</div>
-				</article>
+            <!-- Performance Line Chart & Grade Distribution Column Chart -->
+            <section class="grid-2">
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Performance Progress Trend</h3>
+                            <p class="muted">Average class score progression over assignments</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="lineChartCanvas"></canvas>
+                    </div>
+                </article>
 
-				<article class="card">
-					<div class="card-header">
-						<div>
-							<h3>Grade Distribution</h3>
-							<p class="muted">Class breakdown by letter grade</p>
-						</div>
-					</div>
-					<div id="gradeChart" class="column-chart" role="img" aria-label="Grade distribution chart">
-						<!-- Dynamically populated by JS -->
-					</div>
-				</article>
-			</section>
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Grade Distribution</h3>
+                            <p class="muted">Class breakdown by letter grade</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gradeChartCanvas"></canvas>
+                    </div>
+                </article>
+            </section>
 
-			<!-- Attendance & Assignment Status -->
-			<section class="grid-half">
-				<article class="card">
-					<div class="card-header">
-						<div>
-							<h3>Today's Attendance Breakdown</h3>
-							<p class="muted">Student presence status across active courses</p>
-						</div>
-					</div>
-					<div id="attendanceChart" class="bars">
-						<!-- Dynamically populated -->
-					</div>
-				</article>
+            <!-- Attendance & Assignment Status -->
+            <section class="grid-half">
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Today's Attendance Breakdown</h3>
+                            <p class="muted">Student presence status across active courses</p>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 220px;">
+                        <canvas id="attendanceChartCanvas"></canvas>
+                    </div>
+                </article>
 
-				<article class="card">
-					<div class="card-header">
-						<div>
-							<h3>Assignment Completion Status</h3>
-							<p class="muted">Tasks publication and status breakdown</p>
-						</div>
-					</div>
-					<div id="assignmentChart" class="bars">
-						<!-- Dynamically populated -->
-					</div>
-				</article>
-			</section>
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Assignment Completion Status</h3>
+                            <p class="muted">Tasks publication and status breakdown</p>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 220px;">
+                        <canvas id="assignmentChartCanvas"></canvas>
+                    </div>
+                </article>
+            </section>
 
-			<!-- Student Performance Roster Overview -->
-			<section class="card" style="margin-bottom:24px;">
-				<div class="card-header">
-					<div>
-						<h3>Student Performance Summary</h3>
-						<p class="muted">Overview of student averages and risk flags</p>
-					</div>
-				</div>
-				<div style="overflow-x:auto;">
-					<table class="data-table" id="analyticsRosterTable">
-						<thead>
-							<tr>
-								<th>Student Name</th>
-								<th>Student ID</th>
-								<th>Enrolled Course</th>
-								<th>Average Grade</th>
-								<th>Attendance</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody id="analyticsRosterBody">
-							<tr>
-								<td colspan="6" class="muted" style="text-align:center;">Loading analytics roster...</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</section>
-		</main>
-	</div>
+            <!-- Student Performance Roster Overview -->
+            <section class="card" style="margin-bottom:24px;">
+                <div class="card-header">
+                    <div>
+                        <h3>Student Performance Summary</h3>
+                        <p class="muted">Overview of student averages and risk flags</p>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table" id="analyticsRosterTable">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Enrolled Course</th>
+                                <th>Average Grade</th>
+                                <th>Attendance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyticsRosterBody">
+                            <tr>
+                                <td colspan="6" class="muted" style="text-align:center;">Loading analytics roster...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
 
-	<script type="module" src="../js/dashboard.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>

@@ -2,13 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=pages/home.html">
-    <title>EduTrack - Redirecting to Home</title>
-    <script>
-        window.location.href = "pages/home.html" + window.location.search + window.location.hash;
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- ربط ملف الـ CSS الخارجي -->
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-    <p>Redirecting to <a href="pages/home.html">EduTrack Workspace</a>...</p>
+
+    <!-- الهيدر العلوي -->
+    <header>
+        <a href="index.html" class="logo">EduTrack</a>
+        <div class="nav-links">
+            <a href="pages/aboutUS.html">About Us</a>
+            <a href="pages/contactUs.html">Contact Us</a>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="hero">
+        <h1>Manage Your Academic Life with Ease</h1>
+        <p>The ultimate platform for instructors and students to track assignments, courses, and manage daily tasks effortlessly.</p>
+        
+        <div class="cta-buttons">
+            <a href="pages/login.html?logout=1" class="btn btn-primary">Sign In</a>
+            <a href="pages/signup.html?logout=1" class="btn btn-outline">Sign Up</a>
+        </div>
+
+        <!-- معرض الصور الديناميكي (Image API) -->
+        <div class="image-gallery" id="api-images">
+            <p class="loading-text">Loading gallery...</p>
+        </div>
+
+        <!-- كارد الطقس الحي -->
+        <div class="weather-card">
+            <h3>Live Weather in Amman</h3>
+            <p id="weather-info">Loading weather...</p>
+        </div>
+    </main>
+
+    <!-- الفوتر -->
+    <footer>
+        <p>&copy; 2026 EduTrack. All rights reserved.</p>
+    </footer>
+
+    <!-- ربط ملف الـ JavaScript الخارجي -->
+    <script src="js/index.js"></script>
 </body>
 </html>
