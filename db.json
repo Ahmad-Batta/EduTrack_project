@@ -26,6 +26,15 @@
       "password": "Password123!",
       "University": "University of Texas",
       "department": "Engineering"
+    },
+    {
+      "id": "4",
+      "first_name": "Asem",
+      "last_name": "Mohammad",
+      "email": "asem.mohammad@wise.edu",
+      "password": "password123",
+      "University": "World Islamic Sciences and Education",
+      "department": "Software Engineering"
     }
   ],
   "students": [
@@ -53996,5 +54005,6 @@
       "date": "2026-10-28",
       "status": "present"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

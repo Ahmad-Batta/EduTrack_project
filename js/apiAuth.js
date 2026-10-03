@@ -11,11 +11,19 @@ export const signup = async (user) => {
     throw new Error("This email is already registered");
   }
 
-  // 2. Create the instructor
+  // 2. Work out the next id (highest existing id + 1)
+  const all = await fetch(`${BASE_URL}/instructors`);
+  if (!all.ok) throw new Error("Could not reach the server");
+
+  const instructors = await all.json();
+  const maxId = instructors.reduce((max, i) => Math.max(max, Number(i.id)), 0);
+  const newUser = { id: String(maxId + 1), ...user };
+
+  // 3. Create the instructor
   const response = await fetch(`${BASE_URL}/instructors`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
+    body: JSON.stringify(newUser),
   });
   if (!response.ok) throw new Error("Could not create the account");
 
