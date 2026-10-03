@@ -30,26 +30,16 @@
   ],
   "students": [
     {
-      "id": "1",
-      "first_name": "Car",
-      "last_name": "Elion",
-      "email": "celion0@w3.org",
-      "gender": "Male",
-      "University": "Faculdade Jaguariúna",
-      "University_id": "051009364",
-      "major": "Construction Engineering",
-      "instructor_id": "2"
-    },
-    {
-      "id": "2",
       "first_name": "Gustave",
       "last_name": "Urvoy",
+      "University_id": "271973775",
       "email": "gurvoy1@sogou.com",
       "gender": "Male",
-      "University": "Louisiana Tech University",
-      "University_id": "271973775",
+      "status": "active",
       "major": "Engineering Physics",
-      "instructor_id": "1"
+      "University": "Louisiana Tech University",
+      "instructor_id": "1",
+      "id": "2"
     },
     {
       "id": "3",
@@ -82,7 +72,8 @@
       "University": "Katholisch-Theologische Privatuniversität Linz",
       "University_id": "084201294",
       "major": "Phlebotomy Technician",
-      "instructor_id": "2"
+      "instructor_id": "2",
+      "status": "archived"
     },
     {
       "id": "6",
@@ -104,7 +95,8 @@
       "University": "Samchok National University",
       "University_id": "053900377",
       "major": "Research and Experimental Psychology",
-      "instructor_id": "3"
+      "instructor_id": "3",
+      "status": "archived"
     },
     {
       "id": "8",
@@ -126,7 +118,8 @@
       "University": "University of Palestine",
       "University_id": "062202998",
       "major": "Horticulture",
-      "instructor_id": "3"
+      "instructor_id": "3",
+      "status": "archived"
     },
     {
       "id": "10",
@@ -170,7 +163,8 @@
       "University": "Universidad Miguel Hernández de Elche",
       "University_id": "121136785",
       "major": "Sonographer and Ultrasound Technician",
-      "instructor_id": "3"
+      "instructor_id": "3",
+      "status": "archived"
     },
     {
       "id": "14",
@@ -335,17 +329,6 @@
       "University": "Ajman University of Science & Technology",
       "University_id": "064102740",
       "major": "Horticulture",
-      "instructor_id": "2"
-    },
-    {
-      "id": "29",
-      "first_name": "Anita",
-      "last_name": "Berrycloth",
-      "email": "aberrycloths@whitehouse.gov",
-      "gender": "Female",
-      "University": "St. Joseph's University",
-      "University_id": "111318063",
-      "major": "Equine Studies",
       "instructor_id": "2"
     },
     {
@@ -3317,6 +3300,44 @@
       "University_id": "125008657",
       "major": "Nuclear Medical Technician",
       "instructor_id": "1"
+    },
+    {
+      "first_name": "",
+      "last_name": "الهواري",
+      "University_id": "051009388",
+      "email": "daniaalhawari3@gmail.com",
+      "gender": "",
+      "major": "Construction Engineering",
+      "University": "Faculdade Jaguariúna",
+      "instructor_id": "2",
+      "image": "",
+      "id": "LqydNaN"
+    },
+    {
+      "first_name": "dana",
+      "last_name": "alhawari",
+      "University_id": "0510093643",
+      "email": "daniaalhawari3@gmail.com",
+      "gender": "Female",
+      "major": "Construction Engineering",
+      "University": "Faculdade Jaguariúna",
+      "instructor_id": "2",
+      "image": "",
+      "id": "y6PKsvB",
+      "status": "archived"
+    },
+    {
+      "first_name": "farah",
+      "last_name": "yusri",
+      "University_id": "123456789",
+      "email": "farah@gmail.com",
+      "gender": "Female",
+      "major": "Construction Engineering",
+      "University": "Faculdade Jaguariúna",
+      "instructor_id": "2",
+      "image": "",
+      "id": "CVTXnUX",
+      "status": "archived"
     }
   ],
   "courses": [

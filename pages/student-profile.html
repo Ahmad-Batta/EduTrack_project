@@ -14,39 +14,79 @@
 
     <main>
 
-        <a href="students.html">Back to Students</a>
+        <a href="students.html">
+            Back to Students
+        </a>
 
-        <h1>Student Profile</h1>
+        <h1>
+            Student Profile
+        </h1>
 
         <div id="student-profile"></div>
 
 
+        <section>
 
+            <h2>
+                Attendance
+            </h2>
+
+            <div id="attendance-container"></div>
+
+        </section>
 
 
         <section>
-    <h2>Attendance</h2>
 
-    <div id="attendance-container"></div>
-</section>
+            <h2>
+                Academic Performance
+            </h2>
+
+            <div id="grades-analytics"></div>
+
+            <h3>
+                Courses & Grades
+            </h3>
+
+            <div id="grades-container"></div>
+
+        </section>
 
 
-<section>
-    <h2>Academic Performance</h2>
+        <section>
 
-    <div id="grades-analytics"></div>
+            <h2>
+                Student Analytics
+            </h2>
 
-    <h3>Courses & Grades</h3>
+            <h3>
+                Attendance Chart
+            </h3>
 
-    <div id="grades-container"></div>
-</section>
+            <canvas id="attendance-chart"></canvas>
 
 
+            <h3>
+                Grades Chart
+            </h3>
+
+            <canvas id="grades-chart"></canvas>
+
+        </section>
 
 
     </main>
 
-    <script type="module" src="../js/student-profile.js"></script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+
+
+    <script
+        type="module"
+        src="../js/student-profile.js">
+    </script>
 
 </body>
 

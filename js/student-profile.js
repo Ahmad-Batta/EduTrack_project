@@ -1,8 +1,51 @@
+
+import {
+    getStudents,
+    getAttendance,
+    getGrades,
+    getCourses
+} from "./student-profile-api.js";
+
+import {
+    getStudentAttendance,
+    countPresent,
+    countAbsent,
+    countLate,
+    calculateAttendanceRate,
+    calculateAbsenceRate,
+    displayAttendance
+} from "./student-profile-attendance.js";
+
+import {
+    getStudentGrades,
+    displayGrades,
+    calculateAverageGrade,
+    getHighestGrade,
+    getLowestGrade,
+    displayGradesAnalytics,
+    countPassedCourses,
+    countFailedCourses,
+    getPerformanceStatus
+} from "./student-profile-grades.js";
+
+
+
+import {
+    displayStudentProfile
+} from "./student-profile-ui.js";
+
+
+
+import {
+    displayAttendanceChart,
+    displayGradesChart
+} from "./student-profile-charts.js";
+
 const profileContainer =
     document.getElementById("student-profile");
 
-    const attendanceContainer =
-    document.getElementById("attendance-container");
+    
+
 
 
 const params =
@@ -13,26 +56,7 @@ const studentId =
     params.get("id");
 
 
-async function getStudents() {
 
-    try {
-
-        const response =
-            await fetch("../data/studentsDB.json");
-
-        const data =
-            await response.json();
-
-        return data.students;
-
-    } catch (error) {
-
-        console.log(error);
-          return [];
-
-    }
-
-}
 
 
 function findStudent(students) {
@@ -48,222 +72,9 @@ function findStudent(students) {
 
 }
 
-function displayStudentProfile(student) {
 
-    const studentName =
-        document.createElement("h2");
 
-    studentName.textContent =
-        student.first_name + " " + student.last_name;
 
-    profileContainer.appendChild(studentName);
-
-
-    const studentUniversityId =
-        document.createElement("p");
-
-    studentUniversityId.textContent =
-        "Student ID: " + student.University_id;
-
-    profileContainer.appendChild(studentUniversityId);
-
-
-    const studentEmail =
-        document.createElement("p");
-
-    studentEmail.textContent =
-        "Email: " + student.email;
-
-    profileContainer.appendChild(studentEmail);
-
-
-    const studentGender =
-        document.createElement("p");
-
-    studentGender.textContent =
-        "Gender: " + student.gender;
-
-    profileContainer.appendChild(studentGender);
-
-
-    const studentUniversity =
-        document.createElement("p");
-
-    studentUniversity.textContent =
-        "University: " + student.University;
-
-    profileContainer.appendChild(studentUniversity);
-
-
-    const studentMajor =
-        document.createElement("p");
-
-    studentMajor.textContent =
-        "Major: " + student.major;
-
-    profileContainer.appendChild(studentMajor);
-
-}
-
-
-
-
-
-async function getAttendance() {
-
-    try {
-
-        const response =
-            await fetch("../data/attendance.json");
-
-        const data =
-            await response.json();
-
-        return data.attendance;
-
-    } catch (error) {
-
-        console.log(error);
-          return [];
-
-    }
-
-}
-
-
-function getStudentAttendance(attendance) {
-
-    const studentAttendance =
-        attendance.filter(function(record) {
-
-            return record.student_id === studentId;
-
-            
-
-        });
-
-    return studentAttendance;
-
-}
-
-
-function countPresent(studentAttendance) {
-
-    const presentRecords =
-        studentAttendance.filter(function(record) {
-
-            return record.status === "present";
-
-        });
-
-    return presentRecords.length;
-
-}
-
-function countAbsent(studentAttendance) {
-
-    const absentRecords =
-        studentAttendance.filter(function(record) {
-
-            return record.status === "absent";
-
-        });
-
-    return absentRecords.length;
-
-}
-
-function countLate(studentAttendance) {
-
-    const lateRecords =
-        studentAttendance.filter(function(record) {
-
-            return record.status === "late";
-
-        });
-
-    return lateRecords.length;
-
-}
-
-
-function calculateAttendanceRate(present, total) {
-
-    if (total === 0) {
-        return 0;
-    }
-
-    return (present / total) * 100;
-
-}
-
-function calculateAbsenceRate(absent, total) {
-
-    if (total === 0) {
-        return 0;
-    }
-
-    return (absent / total) * 100;
-
-}
-
-function displayAttendance(
-    present,
-    absent,
-    late,
-    attendanceRate,
-    absenceRate
-) {
-
-    const presentElement =
-        document.createElement("p");
-
-    presentElement.textContent =
-        "Present: " + present;
-
-    attendanceContainer.appendChild(presentElement);
-
-
-    const absentElement =
-        document.createElement("p");
-
-    absentElement.textContent =
-        "Absent: " + absent;
-
-    attendanceContainer.appendChild(absentElement);
-
-
-    const lateElement =
-        document.createElement("p");
-
-    lateElement.textContent =
-        "Late: " + late;
-
-    attendanceContainer.appendChild(lateElement);
-
-
-    const attendanceRateElement =
-        document.createElement("p");
-
-    attendanceRateElement.textContent =
-        "Attendance Rate: " +
-        attendanceRate.toFixed(1) +
-        "%";
-
-    attendanceContainer.appendChild(attendanceRateElement);
-
-
-    const absenceRateElement =
-        document.createElement("p");
-
-    absenceRateElement.textContent =
-        "Absence Rate: " +
-        absenceRate.toFixed(1) +
-        "%";
-
-    attendanceContainer.appendChild(absenceRateElement);
-
-}
 
 async function startProfilePage() {
 
@@ -290,7 +101,10 @@ async function startProfilePage() {
 
 
     const studentAttendance =
-        getStudentAttendance(attendance);
+         getStudentAttendance(
+        attendance,
+        studentId
+    );
 
 
     const present =
@@ -321,6 +135,65 @@ async function startProfilePage() {
         attendanceRate,
         absenceRate
     );
+
+    displayAttendanceChart(
+    present,
+    absent,
+    late
+);
+
+
+const grades =
+    await getGrades();
+
+const studentGrades =
+    getStudentGrades(
+        grades,
+        studentId
+    );
+
+const courses =
+    await getCourses();
+
+const average =
+    calculateAverageGrade(studentGrades);
+
+const highest =
+    getHighestGrade(studentGrades);
+
+const lowest =
+    getLowestGrade(studentGrades);
+
+const passed =
+    countPassedCourses(studentGrades);
+
+const failed =
+    countFailedCourses(studentGrades);
+
+const performanceStatus =
+    getPerformanceStatus(average);
+
+displayGradesAnalytics(
+    studentGrades,
+    average,
+    highest,
+    lowest,
+    passed,
+    failed,
+    performanceStatus
+);
+
+displayGrades(
+    studentGrades,
+    courses
+);
+   
+displayGradesChart(
+    studentGrades
+);
+
+
+
 
 }
 
