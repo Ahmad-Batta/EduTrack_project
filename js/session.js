@@ -6,6 +6,8 @@ export const saveSession = (user) => {
   sessionStorage.setItem(SESSION_KEY, JSON.stringify({ id, first_name, last_name, email }));
 };
 
+
+
 // AUTH-10: retrieve the logged-in user, or null
 export const getSession = () => {
   const raw = sessionStorage.getItem(SESSION_KEY);
@@ -18,8 +20,10 @@ export const isLoggedIn = () => getSession() !== null;
 // AUTH-09: end the session
 export const logout = () => {
   sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem("currentInstructor");
   window.location.href = "../pages/login.html";
 };
+
 
 // Call at the top of every protected page's script
 export const requireAuth = () => {
