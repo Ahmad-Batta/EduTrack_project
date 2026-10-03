@@ -8,11 +8,11 @@ async function getStudents() {
 
     try {
 
-        const response = await fetch("../data/studentsDB.json");
+        const response = await fetch("http://localhost:3000/students");
 
         const data = await response.json();
 
-        return data.students;
+        return data;
 
     } catch (error) {
 
