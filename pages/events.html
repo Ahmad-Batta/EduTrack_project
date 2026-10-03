@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Events & Schedule | EduTrack</title>
+  <link rel="stylesheet" href="../css/global.css" />
+  <style>
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .event-card {
+      border-left: 4px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .event-type-badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .event-date-box {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header id="navbar" class="top-navbar"></header>
+
+    <main class="main">
+      <header class="page-header">
+        <div>
+          <h1>Events & Announcements</h1>
+          <p class="muted">Manage class events, workshops, exams, and class announcements in one place.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-primary" id="addEventBtn">+ Create Event</button>
+          <button type="button" class="btn btn-secondary" id="addAnnBtn">+ Post Announcement</button>
+        </div>
+      </header>
+
+      <div id="errorBox" class="error-box" hidden></div>
+
+      <!-- Class Announcements Section -->
+      <section class="card" style="margin-bottom:24px;">
+        <div class="card-header">
+          <div>
+            <h3>Class Announcements</h3>
+            <p class="muted">Notices and updates broadcasted to your students</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-primary" id="addAnnBtnSection">+ Add Announcement</button>
+        </div>
+        <div id="announcementsList" style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
+          <p class="empty-state">Loading announcements...</p>
+        </div>
+      </section>
+
+      <!-- Scheduled Events Section -->
+      <section class="card" style="margin-bottom:20px;">
+        <div class="card-header" style="flex-wrap:wrap;">
+          <div>
+            <h3>Scheduled Events & Schedule</h3>
+            <p class="muted">Exams, workshops, and class sessions</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-sm filter-btn active" data-filter="all">All Events</button>
+            <button type="button" class="btn btn-sm filter-btn" data-filter="Event">Events</button>
+            <button type="button" class="btn btn-sm filter-btn" data-filter="Exam">Exams</button>
+            <button type="button" class="btn btn-sm filter-btn" data-filter="Workshop">Workshops</button>
+          </div>
+        </div>
+
+        <div id="eventsList" class="events-grid">
+          <p class="empty-state">Loading events...</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/events.js"></script>
+</body>
+</html>
