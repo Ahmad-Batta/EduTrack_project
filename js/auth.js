@@ -5,22 +5,22 @@
 const Auth = {
     // 1. جلب المعلم الحالي من LocalStorage (أو تعيين المعلم الافتراضي إذا لم يوجد)
     getCurrentInstructor() {
-        let instructor = null;
-        try {
-            instructor = JSON.parse(localStorage.getItem('currentInstructor'));
-        } catch {
-            instructor = null;
-        }
-        if (!instructor || !instructor.id) {
-            instructor = {
-                id: "1",
-                name: "Naser Bader",
-                email: "naser.bader@example.com"
-            };
-            localStorage.setItem('currentInstructor', JSON.stringify(instructor));
-        }
-        return instructor;
-    },
+    let session = null;
+    try {
+        session = JSON.parse(sessionStorage.getItem('session'));
+    } catch {
+        session = null;
+    }
+    if (!session || !session.id) {
+        window.location.replace('login.html');
+        return { id: null, name: '', email: '' };
+    }
+    return {
+        id: session.id,
+        name: `${session.first_name} ${session.last_name}`,
+        email: session.email
+    };
+},
 
     // 2. تعيين معلم جديد وتحديث الجلسة مع إعادة تحميل الصفحة
     setCurrentInstructor(instructor) {
@@ -46,18 +46,23 @@ const Auth = {
 
     // 4. عرض اسم المعلم والصورة الرمزية (Avatar) في القائمة الجانبية ديناميكياً
     renderSidebarProfile() {
-        const current = this.getCurrentInstructor();
+    const current = this.getCurrentInstructor();
 
-        const userNameEl = document.querySelector('.user-profile .user-name');
-        const avatarEl = document.querySelector('.user-profile .avatar');
+    const profileEl = document.querySelector('.user-profile');
+    const userNameEl = document.querySelector('.user-profile .user-name');
+    const avatarEl = document.querySelector('.user-profile .avatar');
 
-        if (userNameEl) {
-            userNameEl.textContent = current.name;
-        }
-        if (avatarEl) {
-            avatarEl.textContent = current.name ? current.name.charAt(0).toUpperCase() : 'U';
-        }
-    },
+    if (userNameEl) userNameEl.textContent = current.name;
+    if (avatarEl) avatarEl.textContent = current.name ? current.name.charAt(0).toUpperCase() : 'U';
+
+    if (profileEl) {
+        profileEl.style.cursor = 'pointer';
+        profileEl.title = 'View my profile';
+        profileEl.addEventListener('click', () => {
+            window.location.href = 'instructorProfile.html';
+        });
+    }
+},
 
     // 5. مسح الجلسة وإعادة الضبط
     clearSession() {
