@@ -1,8 +1,3 @@
-/* ==========================================================
-   api.js — كل طلبات الـ HTTP في مكان واحد
-   متوافق مع json-server v1 (يفك تغليف { data: [...] } تلقائياً)
-   ========================================================== */
-
 const BASE_URL = 'http://localhost:3000';
 
 function extractArray(data, resource) {
@@ -99,7 +94,7 @@ const StudentAPI = {
 const ResultAPI = {
     getAll: () => request('/results'),
     getByQuizId: (quizId) => request(`/results?quizId=${quizId}`),
-    create: (data) => request('/results', send('POST', data)),
+    create: () => request('/results', send('POST', data)),
     patch: (id, data) => request(`/results/${id}`, send('PATCH', data)),
     delete: (id) => request(`/results/${id}`, { method: 'DELETE' }),
 };
@@ -111,3 +106,13 @@ const ActivityAPI = {
     create: (data) => request('/activities', send('POST', data)),
     delete: (id) => request(`/activities/${id}`, { method: 'DELETE' }),
 };
+
+/* ---------- إضافة متوافقة مع طريقة ملك (Generic API Object) احتياطاً ---------- */
+export const api = {
+    get: (path) => request(path),
+    post: (path, body) => request(path, { method: 'POST', body }),
+    put: (path, body) => request(path, { method: 'PUT', body }),
+    patch: (path, body) => request(path, { method: 'PATCH', body }),
+    delete: (path) => request(path, { method: 'DELETE' }),
+};
+export { BASE_URL };
