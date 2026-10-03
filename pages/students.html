@@ -3,241 +3,421 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EduTrack - Students</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="../css/students.css">
+    <title>
+        Students | EduTrack
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/students.css"
+    >
 </head>
+
 
 <body>
 
-    <main class="students-page">
+    <div class="app">
 
-        <header class="students-header">
-            <div>
-                <h1>Students</h1>
-                <p>Manage and view student information.</p>
-            </div>
 
-            <button id="add-student-btn">
-                Add Student
-            </button>
+        <!-- Navbar placeholder -->
+        <header
+            id="navbar"
+            class="top-navbar">
         </header>
 
-<!-- <section id="add-student-form" hidden>
 
-    <h2>Add Student</h2>
-
-    <input
-        type="text"
-        id="first-name-input"
-        placeholder="First Name"
-    >
-
-    <input
-        type="text"
-        id="last-name-input"
-        placeholder="Last Name"
-    >
-
-    <input
-        type="text"
-        id="university-id-input"
-        placeholder="Student ID"
-    >
-
-    <input
-        type="email"
-        id="email-input"
-        placeholder="Email"
-    >
-<select id="gender-input">
-    <option value="">Select Gender</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-</select>
+        <main class="main students-page">
 
 
-    <input
-        type="text"
-        id="major-input"
-        placeholder="Major"
-    >
+            <!-- Page Header -->
+            <header class="page-header">
 
-    <input
-        type="text"
-        id="university-input"
-        placeholder="University"
-    >
-    <input
-    type="text"
-    id="instructor-id-input"
-    placeholder="Instructor ID"
->
+                <div>
 
-<label for="student-image-input">
-    Student Image
-</label>
+                    <p class="page-eyebrow">
+                        Student Management
+                    </p>
 
-<input
-    type="file"
-    id="student-image-input"
-    accept="image/*"
->
+                    <h1>
+                        Students
+                    </h1>
 
-    <button id="save-student-btn">
-        Save Student
-    </button>
+                    <p class="muted">
+                        Manage student information,
+                        profiles and academic records.
+                    </p>
 
-</section> -->
-<section id="add-student-form" hidden>
-
-    <h2>Add Student</h2>
-
-    <input
-        type="text"
-        id="first-name-input"
-        placeholder="First Name"
-    >
-
-    <input
-        type="text"
-        id="last-name-input"
-        placeholder="Last Name"
-    >
-
-    <input
-        type="text"
-        id="university-id-input"
-        placeholder="Student ID"
-    >
-
-    <input
-        type="email"
-        id="email-input"
-        placeholder="Email"
-    >
-
-    <select id="gender-input">
-        <option value="">Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-    </select>
+                </div>
 
 
-    <select id="status-input">
-    <option value="active">Active</option>
-    <option value="archived">Archived</option>
-</select>
+                <button
+                    id="add-student-btn"
+                    class="btn btn-primary"
+                    type="button">
 
-    <input
-        type="text"
-        id="major-input"
-        placeholder="Major"
-    >
+                    + Add Student
 
-    <input
-        type="text"
-        id="university-input"
-        placeholder="University"
-    >
+                </button>
 
-    <input
-        type="text"
-        id="instructor-id-input"
-        placeholder="Instructor ID"
-    >
-
-    <!-- <label for="student-image-input">
-        Student Image
-    </label>
-
-    <input
-        type="file"
-        id="student-image-input"
-        accept="image/*"
-    > -->
-
-    <button id="save-student-btn">
-        Save Student
-    </button>
-
-</section>
+            </header>
 
 
 
+            <!-- Add / Edit Student Form -->
+            <section
+                id="add-student-form"
+                class="student-form-card"
+                hidden>
 
-        <section class="students-tools">
+                <div class="section-heading">
 
-            <input
-                type="text"
-                id="search-input"
-                placeholder="Search by name or student ID"
-            >
+                    <div>
 
-            <select id="filter-select">
-                <option value="all">All Students</option>
-                <option value="active">Active</option>
-                <option value="archived">Archived</option>
-            </select>
+                        <p class="section-kicker">
+                            Student Form
+                        </p>
 
-        </section>
+                        <h2>
+                            Student Information
+                        </h2>
 
+                    </div>
 
-        <section
-            id="students-container"
-            class="students-container">
-        </section>
-
-
-        <p id="no-students-message" hidden>
-            No students found.
-        </p>
+                </div>
 
 
-        <template id="student-card-template">
-
-            <article class="student-card">
-
-                <h2 class="student-name">
-                    Student Name
-                </h2>
-
-                <p>
-                    <strong>Student ID:</strong>
-                    <span class="student-id"></span>
-                </p>
-
-                <p>
-                    <strong>Major:</strong>
-                    <span class="student-major"></span>
-                </p>
-
-                <p>
-                    <strong>University:</strong>
-                    <span class="student-university"></span>
-                </p>
-
-                <p>
-                    <strong>Email:</strong>
-                    <span class="student-email"></span>
-                </p>
+                <div class="student-form-grid">
 
 
-                <div class="student-actions">
+                    <div class="form-group">
 
-                    <button class="view-profile-btn">
-                        View Profile
+                        <label for="first-name-input">
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="first-name-input"
+                            placeholder="Enter first name"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="last-name-input">
+                            Last Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="last-name-input"
+                            placeholder="Enter last name"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="university-id-input">
+                            Student ID
+                        </label>
+
+                        <input
+                            type="text"
+                            id="university-id-input"
+                            placeholder="9-digit student ID"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email-input">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email-input"
+                            placeholder="student@example.com"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="gender-input">
+                            Gender
+                        </label>
+
+                        <select id="gender-input">
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            <option value="Male">
+                                Male
+                            </option>
+
+                            <option value="Female">
+                                Female
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="major-input">
+                            Major
+                        </label>
+
+                        <input
+                            type="text"
+                            id="major-input"
+                            placeholder="Enter major"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="university-input">
+                            University
+                        </label>
+
+                        <input
+                            type="text"
+                            id="university-input"
+                            placeholder="Enter university"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="instructor-id-input">
+                            Instructor ID
+                        </label>
+
+                        <input
+                            type="text"
+                            id="instructor-id-input"
+                            placeholder="Enter instructor ID"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        id="save-student-btn"
+                        class="btn btn-primary"
+                        type="button">
+
+                        Save Student
+
                     </button>
 
                 </div>
 
-            </article>
+            </section>
 
-        </template>
 
-    </main>
+
+            <!-- Search & Filters -->
+            <section class="students-toolbar">
+
+
+                <div class="search-box">
+
+                    <label
+                        for="search-input"
+                        class="toolbar-label">
+
+                        Search Students
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Search by name or student ID"
+                    >
+
+                </div>
+
+
+                <div class="filter-box">
+
+                    <label
+                        for="filter-select"
+                        class="toolbar-label">
+
+                        Status
+
+                    </label>
+
+                    <select id="filter-select">
+
+                        <option value="all">
+                            All Students
+                        </option>
+
+                        <option value="active">
+                            Active
+                        </option>
+
+                        <option value="archived">
+                            Archived
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- Students List -->
+            <section>
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            Directory
+                        </p>
+
+                        <h2>
+                            Student Directory
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <section
+                    id="students-container"
+                    class="students-container">
+                </section>
+
+
+                <p
+                    id="no-students-message"
+                    class="empty-state"
+                    hidden>
+
+                    No students found.
+
+                </p>
+
+            </section>
+
+
+
+            <!-- Kept for project compatibility -->
+            <template id="student-card-template">
+
+                <article class="student-card">
+
+                    <h2 class="student-name">
+                        Student Name
+                    </h2>
+
+                    <p>
+
+                        <strong>
+                            Student ID:
+                        </strong>
+
+                        <span class="student-id"></span>
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            Major:
+                        </strong>
+
+                        <span class="student-major"></span>
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            University:
+                        </strong>
+
+                        <span class="student-university"></span>
+
+                    </p>
+
+                    <p>
+
+                        <strong>
+                            Email:
+                        </strong>
+
+                        <span class="student-email"></span>
+
+                    </p>
+
+
+                    <div class="student-actions">
+
+                        <button class="view-profile-btn">
+                            View Profile
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </template>
+
+
+        </main>
+
+
+
+        <!-- Footer -->
+        <footer class="site-footer">
+
+            <p>
+                © EduTrack Student Management
+            </p>
+
+        </footer>
+
+
+    </div>
 
 
     <script
