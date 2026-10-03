@@ -72,7 +72,8 @@
       "University_id": "053112246",
       "major": "Civil Engineering",
       "instructor_id": "1",
-      "image": "../studentImages/3.jpg"
+      "image": "../studentImages/3.jpg",
+      "status": "archived"
     },
     {
       "id": "4",
@@ -84,7 +85,8 @@
       "University_id": "053101121",
       "major": "Biology and Biotechnology Technician",
       "instructor_id": "1",
-      "image": "../studentImages/4.jpg"
+      "image": "../studentImages/4.jpg",
+      "status": "archived"
     },
     {
       "id": "5",
@@ -132,7 +134,8 @@
       "University_id": "104908257",
       "major": "Creative Writing",
       "instructor_id": "1",
-      "image": "../studentImages/8.jpg"
+      "image": "../studentImages/8.jpg",
+      "status": "archived"
     },
     {
       "id": "9",
@@ -363,16 +366,16 @@
       "image": "../studentImages/default.jpg"
     },
     {
-      "id": "28",
-      "first_name": "Gina",
+      "first_name": "Ginaj",
       "last_name": "Minichi",
+      "University_id": "064102740",
       "email": "gminichir@webs.com",
       "gender": "Male",
-      "University": "Ajman University of Science & Technology",
-      "University_id": "064102740",
+      "status": "active",
       "major": "Horticulture",
+      "University": "Ajman University of Science & Technology",
       "instructor_id": "2",
-      "image": "../studentImages/default.jpg"
+      "id": "28"
     },
     {
       "id": "29",
@@ -3625,6 +3628,18 @@
       "major": "Nuclear Medical Technician",
       "instructor_id": "1",
       "image": "../studentImages/default.jpg"
+    },
+    {
+      "first_name": "dana",
+      "last_name": "alhawari",
+      "University_id": "123456789",
+      "email": "daniaalhawari3@gmail.com",
+      "gender": "Female",
+      "status": "active",
+      "major": "Construction Engineering",
+      "University": "Faculdade Jaguariúna",
+      "instructor_id": "2",
+      "id": "Qn6d-DC"
     }
   ],
   "courses": [
