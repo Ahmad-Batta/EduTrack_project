@@ -1,6 +1,18 @@
-/* ==========================================================
-   dashboard.js - Dedicated Analytics Dashboard with Line Chart
-   ========================================================== */
+/* ==========================================================================
+   js/dashboard.js - Class Performance & Analytics Dashboard
+   --------------------------------------------------------------------------
+   This module powers the dedicated analytics dashboard page for instructors.
+   It fetches data (students, grades, assignments, attendance) from the backend API
+   (or db.json fallback), filters it specifically for the current instructor,
+   and calculates real-time class metrics and renders responsive charts:
+
+   1. Summary KPI Cards (Total Students, Class Average, Attendance Rate, At-Risk Count)
+   2. Performance Progress Line Chart (SVG rendered dynamically)
+   3. Grade Distribution Column Chart (Grade buckets A, B, C, D, F)
+   4. Attendance Breakdown Bar Chart (Present, Late, Absent)
+   5. Assignment Status Bar Chart (Published vs Drafts)
+   6. Student Performance Roster Overview Table
+   ========================================================================== */
 
 import { BASE_URL } from "./api.js";
 import {
@@ -9,19 +21,27 @@ import {
   escapeHtml,
 } from "./layout.js";
 
+// Ensure the user is authenticated before displaying the dashboard
 const user = requireAuth();
 if (!user) {
-  throw new Error("Unauthorized");
+  throw new Error("Unauthorized access to dashboard");
 }
 
+// Render the main navigation bar with "dashboard" as active item
 renderTopNav("dashboard");
 
+// Initialize dashboard analytics once the DOM elements are fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   loadAnalytics();
 });
 
+/**
+ * Main loader function: Fetches all necessary datasets in parallel
+ * and calculates analytics scoped to the currently logged-in instructor.
+ */
 async function loadAnalytics() {
   try {
+    // Attempt fetching data from JSON server REST endpoints concurrently
     const [studentsRes, gradesRes, assignmentsRes, attendanceRes] = await Promise.allSettled([
       fetch(`${BASE_URL}/students`).then((r) => (r.ok ? r.json() : [])),
       fetch(`${BASE_URL}/grades`).then((r) => (r.ok ? r.json() : [])),
@@ -29,15 +49,17 @@ async function loadAnalytics() {
       fetch(`${BASE_URL}/attendance`).then((r) => (r.ok ? r.json() : [])),
     ]);
 
+    // Extract values or default to empty arrays if endpoint fetch failed
     let students = studentsRes.status === "fulfilled" ? studentsRes.value : [];
     let grades = gradesRes.status === "fulfilled" ? gradesRes.value : [];
     let assignments = assignmentsRes.status === "fulfilled" ? assignmentsRes.value : [];
     let attendance = attendanceRes.status === "fulfilled" ? attendanceRes.value : [];
 
-    // Fallback if db.json is fetched directly
+    // Direct fallback mechanism: If json-server isn't running, attempt to fetch db.json directly
     if (!students.length || !assignments.length) {
       try {
-        const rawRes = await fetch("db.json");
+        let rawRes = await fetch("../db.json");
+        if (!rawRes.ok) rawRes = await fetch("db.json");
         if (rawRes.ok) {
           const dbData = await rawRes.json();
           if (!students.length) students = dbData.students || [];
@@ -46,11 +68,11 @@ async function loadAnalytics() {
           if (!attendance.length) attendance = dbData.attendance || [];
         }
       } catch (err) {
-        console.warn("Direct db.json fallback failed", err);
+        console.warn("Direct db.json fallback could not be loaded:", err);
       }
     }
 
-    // Filter data isolated to current logged in trainer
+    // Filter datasets to isolate data for the logged-in trainer only
     const myStudents = students.filter((s) => String(s.instructor_id || s.trainerId) === String(user.id));
     const myStudentIds = new Set(myStudents.map((s) => String(s.id)));
 
@@ -58,19 +80,23 @@ async function loadAnalytics() {
     const myAssignments = assignments.filter((a) => String(a.instructor_id || a.trainerId) === String(user.id));
     const myAttendance = attendance.filter((att) => myStudentIds.has(String(att.student_id)));
 
-    // Calculate Analytics
+    // Calculate and trigger individual section renderers
     renderKPIs(myStudents, myGrades, myAttendance);
     renderLineChart(myAssignments, myGrades);
     renderGradeDistribution(myGrades);
-    renderAttendanceChart(myAttendance, myStudents.length);
+    renderAttendanceChart(myAttendance);
     renderAssignmentStatusChart(myAssignments);
     renderStudentAnalyticsTable(myStudents, myGrades, myAttendance);
   } catch (error) {
-    console.error("Error loading analytics:", error);
+    console.error("Error calculating analytics dashboard data:", error);
     showErrorBox("Failed to calculate analytics from database.");
   }
 }
 
+/**
+ * Displays error messages inside a dedicated error container on the page
+ * @param {string} msg - The error message to display
+ */
 function showErrorBox(msg) {
   const box = document.getElementById("errorBox");
   if (!box) return;
@@ -78,20 +104,26 @@ function showErrorBox(msg) {
   box.hidden = false;
 }
 
-/* ---------- KPIs ---------- */
+/**
+ * Calculates and updates summary KPI metrics (Cards at top of page)
+ * @param {Array} myStudents - List of students belonging to current instructor
+ * @param {Array} myGrades - Grade records for these students
+ * @param {Array} myAttendance - Attendance records for these students
+ */
 function renderKPIs(myStudents, myGrades, myAttendance) {
+  // Total count of enrolled students
   const totalStudents = myStudents.length;
 
-  // Average grade
+  // Average class grade score percentage
   const scoreSum = myGrades.reduce((sum, g) => sum + (Number(g.grade ?? g.score) || 0), 0);
   const avgGrade = myGrades.length ? Math.round(scoreSum / myGrades.length) : 0;
 
-  // Attendance rate
+  // Attendance rate calculation percentage
   const presentCount = myAttendance.filter((a) => a.status === "present").length;
   const totalAttRecords = myAttendance.length;
   const attRate = totalAttRecords ? Math.round((presentCount / totalAttRecords) * 100) : 89;
 
-  // At risk students (student average grade < 60)
+  // Identify at-risk students (students with an average score below 60%)
   const studentAvgMap = {};
   myGrades.forEach((g) => {
     const sid = String(g.student_id);
@@ -108,18 +140,23 @@ function renderKPIs(myStudents, myGrades, myAttendance) {
     }
   });
 
+  // Inject computed values into the DOM elements
   document.getElementById("statStudents").textContent = totalStudents;
   document.getElementById("statAvg").textContent = `${avgGrade}%`;
   document.getElementById("statAttendance").textContent = `${attRate}%`;
   document.getElementById("statRisk").textContent = atRiskCount;
 }
 
-/* ---------- SVG Line Chart ---------- */
+/**
+ * Renders a custom SVG line chart displaying performance progress across tasks
+ * @param {Array} assignments - List of trainer assignments
+ * @param {Array} grades - Student grade records
+ */
 function renderLineChart(assignments, grades) {
   const container = document.getElementById("lineChartWrapper");
   if (!container) return;
 
-  // Group scores by assignment or generate progress points
+  // Standard baseline points for smooth line visualization
   const pointsData = [
     { label: "Task 1", score: 68 },
     { label: "Task 2", score: 72 },
@@ -129,7 +166,7 @@ function renderLineChart(assignments, grades) {
     { label: "Task 6", score: 88 },
   ];
 
-  // Calculate actual assignment averages if grades exist
+  // If actual task grades exist, compute true averages per assignment
   if (assignments.length && grades.length) {
     const calculated = assignments.slice(0, 6).map((a, idx) => {
       const aGrades = grades.filter((g) => String(g.assignment_id) === String(a.id));
@@ -146,6 +183,7 @@ function renderLineChart(assignments, grades) {
     }
   }
 
+  // SVG dimensions and padding calculation
   const width = 500;
   const height = 200;
   const paddingLeft = 40;
@@ -159,16 +197,15 @@ function renderLineChart(assignments, grades) {
   const minScore = 40;
   const maxScore = 100;
 
+  // Helper coordinate mappers
   const getX = (index) => paddingLeft + (index / (pointsData.length - 1)) * chartWidth;
   const getY = (score) => paddingTop + chartHeight - ((score - minScore) / (maxScore - minScore)) * chartHeight;
 
-  // Build SVG Path points
+  // Construct SVG Path instructions
   const pathD = pointsData.map((p, idx) => `${idx === 0 ? "M" : "L"} ${getX(idx)} ${getY(p.score)}`).join(" ");
-
-  // Closed area for gradient
   const areaD = `${pathD} L ${getX(pointsData.length - 1)} ${height - paddingBottom} L ${paddingLeft} ${height - paddingBottom} Z`;
 
-  // Grid Lines Y
+  // Render Y-Axis grid lines
   const yTicks = [50, 60, 70, 80, 90, 100];
   const gridLines = yTicks
     .map((tick) => {
@@ -180,7 +217,7 @@ function renderLineChart(assignments, grades) {
     })
     .join("");
 
-  // Points & Labels X
+  // Render data points and label tags
   const pointsAndLabels = pointsData
     .map((p, idx) => {
       const cx = getX(idx);
@@ -195,6 +232,7 @@ function renderLineChart(assignments, grades) {
     })
     .join("");
 
+  // Combine into final SVG string and insert into DOM
   container.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}" class="line-chart-svg" preserveAspectRatio="none">
       <defs>
@@ -204,22 +242,18 @@ function renderLineChart(assignments, grades) {
         </linearGradient>
       </defs>
 
-      <!-- Grid -->
       ${gridLines}
-
-      <!-- Area fill -->
       <path d="${areaD}" class="chart-area" />
-
-      <!-- Line stroke -->
       <path d="${pathD}" class="chart-line" />
-
-      <!-- Data Points & Labels -->
       ${pointsAndLabels}
     </svg>
   `;
 }
 
-/* ---------- Grade Distribution Column Chart ---------- */
+/**
+ * Renders the Grade Distribution column bar chart (Buckets A, B, C, D, F)
+ * @param {Array} myGrades - Grade records
+ */
 function renderGradeDistribution(myGrades) {
   const chartEl = document.getElementById("gradeChart");
   if (!chartEl) return;
@@ -234,7 +268,7 @@ function renderGradeDistribution(myGrades) {
     else buckets.F++;
   });
 
-  // Default values if empty
+  // Provide representative baseline distribution if grades table is currently empty
   if (!myGrades.length) {
     buckets.A = 15;
     buckets.B = 14;
@@ -265,8 +299,11 @@ function renderGradeDistribution(myGrades) {
     .join("");
 }
 
-/* ---------- Horizontal Attendance Bars ---------- */
-function renderAttendanceChart(myAttendance, studentCount) {
+/**
+ * Renders attendance progress bars (Present, Late, Absent)
+ * @param {Array} myAttendance - Attendance records
+ */
+function renderAttendanceChart(myAttendance) {
   const container = document.getElementById("attendanceChart");
   if (!container) return;
 
@@ -275,9 +312,9 @@ function renderAttendanceChart(myAttendance, studentCount) {
   let absent = myAttendance.filter((a) => a.status === "absent").length;
 
   if (!myAttendance.length) {
-    present = 2335;
-    late = 298;
-    absent = 148;
+    present = 235;
+    late = 28;
+    absent = 14;
   }
 
   const total = present + late + absent || 1;
@@ -303,7 +340,10 @@ function renderAttendanceChart(myAttendance, studentCount) {
     .join("");
 }
 
-/* ---------- Assignment Status Bar Chart ---------- */
+/**
+ * Renders assignment publication status progress bars
+ * @param {Array} assignments - Trainer assignments
+ */
 function renderAssignmentStatusChart(assignments) {
   const container = document.getElementById("assignmentChart");
   if (!container) return;
@@ -332,7 +372,12 @@ function renderAssignmentStatusChart(assignments) {
     </div>`;
 }
 
-/* ---------- Student Analytics Roster Table ---------- */
+/**
+ * Renders the student performance overview table at the bottom of the dashboard
+ * @param {Array} myStudents - Trainer students
+ * @param {Array} myGrades - Student grades
+ * @param {Array} myAttendance - Student attendance
+ */
 function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
   const tbody = document.getElementById("analyticsRosterBody");
   if (!tbody) return;
@@ -342,6 +387,7 @@ function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
     return;
   }
 
+  // Create grade average mapping per student
   const studentAvgMap = {};
   myGrades.forEach((g) => {
     const sid = String(g.student_id);
@@ -349,6 +395,7 @@ function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
     studentAvgMap[sid].push(Number(g.grade ?? g.score) || 0);
   });
 
+  // Create attendance record mapping per student
   const studentAttMap = {};
   myAttendance.forEach((att) => {
     const sid = String(att.student_id);
@@ -376,7 +423,7 @@ function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
       <tr>
         <td><strong>${escapeHtml(name)}</strong></td>
         <td><code>#${escapeHtml(s.id)}</code></td>
-        <td>Computer Science</td>
+        <td>${escapeHtml(s.major || "Computer Science")}</td>
         <td><strong>${avg}%</strong></td>
         <td>${attRate}%</td>
         <td>${statusBadge}</td>

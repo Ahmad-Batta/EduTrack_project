@@ -1,6 +1,15 @@
-/* ==========================================================
-   js/home.js - Home / Landing Page Logic & Announcements CRUD
-   ========================================================== */
+/* ==========================================================================
+   js/home.js - Instructor Home / Landing Page Portal
+   --------------------------------------------------------------------------
+   This module powers the main instructor portal (home page).
+   It aggregates workspace overview data:
+   - Greeting header with time-of-day detection (Good Morning/Afternoon/Evening)
+   - Quick workspace statistics (Students, Tasks, Upcoming Events, Announcements)
+   - Trainer To-Do List Agenda (Personal tasks with checkbox toggle & persistence)
+   - Real-time Scheduled Events summary synchronized from `js/events.js`
+   - Class Announcements manager with CRUD operations
+   - Activity log feed tracking recent actions
+   ========================================================================== */
 
 import { BASE_URL } from "./api.js";
 import {
@@ -12,19 +21,25 @@ import {
   showToast,
 } from "./layout.js";
 
+// Require logged-in instructor user session
 const user = requireAuth();
 if (!user) {
-  throw new Error("Unauthorized");
+  throw new Error("Unauthorized access to landing page");
 }
 
+// Render main navigation top bar
 renderTopNav("home");
 
-/* ---------- State ---------- */
+/* --------------------------------------------------------------------------
+   Page State Variables
+   -------------------------------------------------------------------------- */
 let announcements = [];
 let events = [];
 let todos = [];
 
-/* ---------- Initialization ---------- */
+/* --------------------------------------------------------------------------
+   Initialization
+   -------------------------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
   setupGreeting();
   loadDashboardData();
@@ -32,9 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTodos();
 });
 
+/**
+ * Customizes greeting based on the current time of day
+ */
 function setupGreeting() {
   const greetingEl = document.getElementById("homeGreeting");
   if (!greetingEl) return;
+
   const hour = new Date().getHours();
   let timeStr = "Good morning";
   if (hour >= 12 && hour < 17) timeStr = "Good afternoon";
@@ -44,10 +63,15 @@ function setupGreeting() {
   greetingEl.textContent = `${timeStr}, ${name} 👋`;
 }
 
-/* ---------- Load Data ---------- */
+/* --------------------------------------------------------------------------
+   Data Loading & Synchronization
+   -------------------------------------------------------------------------- */
+
+/**
+ * Fetches all home portal datasets in parallel (Students, Tasks, Events, Announcements)
+ */
 async function loadDashboardData() {
   try {
-    // Fetch students, assignments, events, announcements in parallel
     const [studentsRes, assignmentsRes, eventsRes, annRes] = await Promise.allSettled([
       fetch(`${BASE_URL}/students`).then((r) => (r.ok ? r.json() : [])),
       fetch(`${BASE_URL}/assignments`).then((r) => (r.ok ? r.json() : [])),
@@ -60,10 +84,11 @@ async function loadDashboardData() {
     events = eventsRes.status === "fulfilled" ? eventsRes.value : [];
     announcements = annRes.status === "fulfilled" ? annRes.value : [];
 
-    // Fallback if db.json fetched directly
+    // Direct db.json fallback if json-server endpoints are unpopulated
     if (!students.length || !assignments.length) {
       try {
-        const rawRes = await fetch("db.json");
+        let rawRes = await fetch("../db.json");
+        if (!rawRes.ok) rawRes = await fetch("db.json");
         if (rawRes.ok) {
           const dbData = await rawRes.json();
           if (!students.length) students = dbData.students || [];
@@ -72,45 +97,57 @@ async function loadDashboardData() {
           if (!announcements.length) announcements = dbData.announcements || [];
         }
       } catch (err) {
-        console.warn("Direct db.json fallback failed", err);
+        console.warn("db.json direct fallback could not be loaded:", err);
       }
     }
 
-    // Isolated Data per trainer
+    // Filter datasets specifically for the active instructor user
     const myStudents = students.filter((s) => String(s.instructor_id || s.trainerId) === String(user.id));
     const myAssignments = assignments.filter((a) => String(a.instructor_id || a.trainerId) === String(user.id));
     const myEvents = events.filter((e) => String(e.instructor_id || e.trainerId) === String(user.id));
     announcements = announcements.filter((a) => String(a.instructor_id || a.trainerId) === String(user.id));
 
-    // Also include local storage announcements
-    const localAnn = getLocalAnnouncements();
-    announcements = [...announcements, ...localAnn];
+    // Combine local storage events & announcements to ensure instant local updates display
+    const localEvents = getLocalEvents();
+    const combinedEvents = [...myEvents, ...localEvents];
 
-    // Remove duplicates by id
-    const seen = new Set();
-    announcements = announcements.filter((a) => {
-      if (seen.has(String(a.id))) return false;
-      seen.add(String(a.id));
+    // Remove duplicate events by ID
+    const seenEvt = new Set();
+    const finalEvents = combinedEvents.filter((e) => {
+      if (seenEvt.has(String(e.id))) return false;
+      seenEvt.add(String(e.id));
       return true;
     });
 
-    // Update Quick Stat Counts
+    const localAnn = getLocalAnnouncements();
+    announcements = [...announcements, ...localAnn];
+    const seenAnn = new Set();
+    announcements = announcements.filter((a) => {
+      if (seenAnn.has(String(a.id))) return false;
+      seenAnn.add(String(a.id));
+      return true;
+    });
+
+    // Update summary stat counter cards
     document.getElementById("statHomeStudents").textContent = myStudents.length;
     document.getElementById("statHomeTasks").textContent = myAssignments.length;
-    document.getElementById("statHomeEvents").textContent = myEvents.length;
+    document.getElementById("statHomeEvents").textContent = finalEvents.length;
     document.getElementById("statHomeAnnouncements").textContent = announcements.length;
 
-    // Render Components
-    renderEventsSummary(myEvents);
+    // Render portal widgets
+    renderEventsSummary(finalEvents);
     renderAnnouncements();
     seedActivityLogIfEmpty(myStudents, myAssignments);
     renderActivityFeed();
   } catch (error) {
-    console.error("Error loading home data:", error);
-    showErrorBox("Failed to load dashboard data. Please try refreshing.");
+    console.error("Error loading home dashboard portal data:", error);
+    showErrorBox("Failed to load dashboard data. Please refresh.");
   }
 }
 
+/**
+ * Displays error alert banner
+ */
 function showErrorBox(msg) {
   const box = document.getElementById("errorBox");
   if (!box) return;
@@ -118,7 +155,51 @@ function showErrorBox(msg) {
   box.hidden = false;
 }
 
-/* ---------- Events Summary ---------- */
+/* --------------------------------------------------------------------------
+   Local Storage Event & Announcement Sync Helpers
+   -------------------------------------------------------------------------- */
+
+function getLocalEvents() {
+  try {
+    return JSON.parse(localStorage.getItem("edutrack_events")) || [];
+  } catch {
+    return [];
+  }
+}
+
+function getLocalAnnouncements() {
+  try {
+    return JSON.parse(localStorage.getItem(`edutrack_announcements_${user.id}`)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalAnnouncement(ann) {
+  const local = getLocalAnnouncements();
+  const idx = local.findIndex((a) => String(a.id) === String(ann.id));
+  if (idx >= 0) {
+    local[idx] = ann;
+  } else {
+    local.unshift(ann);
+  }
+  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(local));
+}
+
+function removeLocalAnnouncement(id) {
+  const local = getLocalAnnouncements();
+  const filtered = local.filter((a) => String(a.id) !== String(id));
+  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(filtered));
+}
+
+/* --------------------------------------------------------------------------
+   Scheduled Events Summary Widget
+   -------------------------------------------------------------------------- */
+
+/**
+ * Renders upcoming event cards on home page fed from events data
+ * @param {Array} myEvents - List of scheduled events
+ */
 function renderEventsSummary(myEvents) {
   const container = document.getElementById("eventsContainer");
   if (!container) return;
@@ -135,12 +216,12 @@ function renderEventsSummary(myEvents) {
   container.innerHTML = myEvents
     .slice(0, 4)
     .map((ev) => `
-      <div class="event-summary-card">
+      <div class="event-summary-card" style="padding:12px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
           <strong style="font-size:0.95rem;">${escapeHtml(ev.title)}</strong>
-          <span class="badge badge-info" style="font-size:0.75rem;">${escapeHtml(ev.type || "Event")}</span>
+          <span class="badge ${ev.type === "Exam" ? "badge-danger" : ev.type === "Workshop" ? "badge-warning" : "badge-info"}" style="font-size:0.75rem;">${escapeHtml(ev.type || "Event")}</span>
         </div>
-        <p style="font-size:0.84rem; color:var(--muted); margin-bottom:6px;">${escapeHtml(ev.description || "No details")}</p>
+        <p style="font-size:0.84rem; color:var(--muted); margin-bottom:6px;">${escapeHtml(ev.location || "Online")}</p>
         <div style="font-size:0.78rem; color:var(--navy); font-weight:600;">
           📅 ${escapeHtml(ev.date || "TBD")} ${ev.time ? "• 🕒 " + escapeHtml(ev.time) : ""}
         </div>
@@ -149,7 +230,10 @@ function renderEventsSummary(myEvents) {
     .join("");
 }
 
-/* ---------- Activity Feed ---------- */
+/* --------------------------------------------------------------------------
+   Activity History Feed
+   -------------------------------------------------------------------------- */
+
 function getActivityLog() {
   const key = `edutrack_activity_log_${user.id}`;
   try {
@@ -181,7 +265,6 @@ function seedActivityLogIfEmpty(students, assignments) {
 
   const initial = [];
 
-  // Default initial announcements in activity log
   announcements.forEach((ann) => {
     initial.push({
       title: `Announcement posted: <strong>${escapeHtml(ann.title)}</strong>`,
@@ -190,7 +273,6 @@ function seedActivityLogIfEmpty(students, assignments) {
     });
   });
 
-  // Default students in activity log
   students.slice(0, 2).forEach((s) => {
     const name = `${s.first_name || ""} ${s.last_name || ""}`.trim() || s.name || "Student";
     initial.push({
@@ -200,7 +282,6 @@ function seedActivityLogIfEmpty(students, assignments) {
     });
   });
 
-  // Default tasks
   assignments.slice(0, 2).forEach((a) => {
     initial.push({
       title: `New task: <strong>${escapeHtml(a.title)}</strong>`,
@@ -227,15 +308,18 @@ function renderActivityFeed() {
     .slice(0, 10)
     .map(
       (act) => `
-      <li>
+      <li style="padding:8px 0; border-bottom:1px dashed var(--border); font-size:0.88rem; display:flex; justify-content:space-between;">
         <span class="feed-title">${act.title}</span>
-        <span class="feed-meta">${escapeHtml(act.time)}</span>
+        <span class="feed-meta" style="color:var(--muted); font-size:0.78rem;">${escapeHtml(act.time)}</span>
       </li>`
     )
     .join("");
 }
 
-/* ---------- Trainer To-Do List ---------- */
+/* --------------------------------------------------------------------------
+   Trainer Personal To-Do List Agenda Widget
+   -------------------------------------------------------------------------- */
+
 function loadTodos() {
   const storageKey = `edutrack_todos_${user.id}`;
   try {
@@ -278,7 +362,6 @@ function renderTodos() {
     )
     .join("");
 
-  // Event Listeners for checkboxes and delete
   listEl.querySelectorAll(".todo-checkbox").forEach((cb) => {
     cb.addEventListener("change", (e) => {
       const id = Number(e.target.dataset.todoId);
@@ -336,32 +419,9 @@ function openAddTodoModal() {
   });
 }
 
-/* ---------- Announcements CRUD ---------- */
-function getLocalAnnouncements() {
-  try {
-    const data = JSON.parse(localStorage.getItem(`edutrack_announcements_${user.id}`)) || [];
-    return data;
-  } catch {
-    return [];
-  }
-}
-
-function saveLocalAnnouncement(ann) {
-  const local = getLocalAnnouncements();
-  const idx = local.findIndex((a) => String(a.id) === String(ann.id));
-  if (idx >= 0) {
-    local[idx] = ann;
-  } else {
-    local.unshift(ann);
-  }
-  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(local));
-}
-
-function removeLocalAnnouncement(id) {
-  const local = getLocalAnnouncements();
-  const filtered = local.filter((a) => String(a.id) !== String(id));
-  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(filtered));
-}
+/* --------------------------------------------------------------------------
+   Announcements Section CRUD
+   -------------------------------------------------------------------------- */
 
 function renderAnnouncements() {
   const listEl = document.getElementById("announcementList");
@@ -381,22 +441,21 @@ function renderAnnouncements() {
     .map((ann) => {
       const priorityClass = ann.priority ? `priority-${escapeHtml(ann.priority)}` : "priority-medium";
       return `
-      <article class="announcement ${priorityClass}">
-        <div class="announcement-head">
-          <h4>${escapeHtml(ann.title)}</h4>
+      <article class="announcement ${priorityClass}" style="margin-bottom:12px; padding:12px; border-left:4px solid var(--primary); background:#ffffff; border-radius:var(--radius-sm);">
+        <div class="announcement-head" style="display:flex; justify-content:space-between; align-items:center;">
+          <h4 style="margin:0; font-size:1rem;">${escapeHtml(ann.title)}</h4>
           <div style="display:flex; gap:6px; align-items:center;">
             ${ann.priority ? `<span class="badge badge-${ann.priority === "high" ? "danger" : ann.priority === "medium" ? "warning" : "success"}" style="font-size:0.7rem;">${escapeHtml(ann.priority.toUpperCase())}</span>` : ""}
             <button type="button" class="btn btn-ghost btn-sm" data-edit-ann="${ann.id}" style="padding:2px 6px;" title="Edit">✏️</button>
             <button type="button" class="btn btn-ghost btn-sm" data-delete-ann="${ann.id}" style="padding:2px 6px; color:var(--danger);" title="Delete">🗑️</button>
           </div>
         </div>
-        <p>${escapeHtml(ann.content || ann.message || ann.body || "")}</p>
-        <time>${escapeHtml(ann.date || ann.createdAt || new Date().toLocaleDateString())}</time>
+        <p style="margin:6px 0; font-size:0.88rem;">${escapeHtml(ann.content || ann.message || ann.body || "")}</p>
+        <time style="font-size:0.75rem; color:var(--muted);">${escapeHtml(ann.date || ann.createdAt || new Date().toLocaleDateString())}</time>
       </article>`;
     })
     .join("");
 
-  // Attach Edit and Delete listeners
   listEl.querySelectorAll("[data-edit-ann]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.editAnn;
@@ -460,10 +519,10 @@ function openAddAnnouncementModal() {
       title,
       priority,
       content,
+      message: content,
       date: new Date().toISOString().split("T")[0],
     };
 
-    // Try POST to API
     try {
       const res = await fetch(`${BASE_URL}/announcements`, {
         method: "POST",
@@ -474,7 +533,6 @@ function openAddAnnouncementModal() {
       const saved = await res.json();
       announcements.unshift(saved);
     } catch {
-      // Fallback
       saveLocalAnnouncement(newAnn);
       announcements.unshift(newAnn);
     }
@@ -511,7 +569,7 @@ function openEditAnnouncementModal(ann) {
         </div>
         <div class="form-actions" style="margin-top:20px;">
           <button type="button" class="btn btn-ghost" data-close>Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes (PUT/PATCH)</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
       </form>`,
   });
@@ -526,9 +584,9 @@ function openEditAnnouncementModal(ann) {
       title: modal.querySelector("#editAnnTitle").value.trim(),
       priority: modal.querySelector("#editAnnPriority").value,
       content: modal.querySelector("#editAnnContent").value.trim(),
+      message: modal.querySelector("#editAnnContent").value.trim(),
     };
 
-    // Try PATCH or PUT to API
     try {
       const res = await fetch(`${BASE_URL}/announcements/${ann.id}`, {
         method: "PATCH",
@@ -584,7 +642,9 @@ function confirmDeleteAnnouncement(id) {
   });
 }
 
-/* ---------- Setup Event Listeners ---------- */
+/* --------------------------------------------------------------------------
+   Setup Event Handlers
+   -------------------------------------------------------------------------- */
 function setupEventListeners() {
   document.getElementById("addAnnouncementBtn")?.addEventListener("click", openAddAnnouncementModal);
   document.getElementById("quickAnnouncementBtn")?.addEventListener("click", openAddAnnouncementModal);

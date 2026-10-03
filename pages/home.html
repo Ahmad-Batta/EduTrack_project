@@ -4,15 +4,15 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Trainer Home | EduTrack</title>
-	<link rel="stylesheet" href="css/global.css" />
-	<link rel="stylesheet" href="css/dashboard.css" />
+	<link rel="stylesheet" href="../css/global.css" />
+	<link rel="stylesheet" href="../css/dashboard.css" />
 	<style>
-		.quick-access-grid {
+		/* .quick-access-grid {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 			gap: 12px;
 			margin-bottom: 20px;
-		}
+		} */
 		.quick-card {
 			display: flex;
 			align-items: center;
@@ -93,30 +93,6 @@
 
 			<div id="errorBox" class="error-box" role="alert" hidden></div>
 
-			<!-- Quick Access Action Buttons -->
-			<section class="quick-access-grid">
-				<a href="students.html?action=add" class="quick-card">
-					<div class="quick-icon bg-teal">👤</div>
-					<span>+ Add Student</span>
-				</a>
-				<a href="assignments.html?action=add" class="quick-card">
-					<div class="quick-icon bg-blue">📝</div>
-					<span>+ New Task</span>
-				</a>
-				<a href="quizzes.html?action=add" class="quick-card">
-					<div class="quick-icon bg-purple">⚡</div>
-					<span>+ New Quiz</span>
-				</a>
-				<a href="events.html?action=add" class="quick-card">
-					<div class="quick-icon bg-amber">📅</div>
-					<span>+ New Event</span>
-				</a>
-				<button type="button" id="quickAnnouncementBtn" class="quick-card" style="cursor:pointer; width:100%; border:1px solid var(--border); text-align:left;">
-					<div class="quick-icon bg-green">📢</div>
-					<span>+ Announcement</span>
-				</button>
-			</section>
-
 			<!-- Quick Overview Stat Cards -->
 			<section class="stats-grid" aria-label="Summary Overview">
 				<article class="card stat">
@@ -149,24 +125,27 @@
 				</article>
 			</section>
 
-			<!-- 2 Column Layout: Schedule & Events / Announcements & Feed -->
+			<!-- 2 Column Layout: Announcements & Events / Agenda & Feed -->
 			<section class="grid-2">
 				<div style="display:flex; flex-direction:column; gap:16px;">
-					<!-- To-Do List & Agenda -->
-					<article class="card">
+					<!-- Class Announcements (Above Events) -->
+					<article class="card" aria-labelledby="announcementsTitle">
 						<div class="card-header">
 							<div>
-								<h3>Trainer Agenda & To-Do List</h3>
-								<p class="muted">Check off your daily tasks and priorities</p>
+								<h3 id="announcementsTitle">Announcements</h3>
+								<p class="muted">Class notifications & updates</p>
 							</div>
-							<button type="button" class="btn btn-sm btn-ghost" id="addTodoBtn">+ Add Task Item</button>
+							<div style="display:flex; gap:8px; align-items:center;">
+								<button type="button" class="btn btn-primary btn-sm" id="addAnnouncementBtn">+ Add</button>
+								<a href="events.html" class="btn btn-sm btn-ghost">Manage Announcements →</a>
+							</div>
 						</div>
-						<div id="todoList" style="margin-top:10px;">
-							<!-- Dynamically populated -->
+						<div id="announcementList" class="announcement-list" aria-live="polite">
+							<p class="empty-state">Loading announcements...</p>
 						</div>
 					</article>
 
-					<!-- Upcoming Events & Classes -->
+					<!-- Scheduled Events & Workshops -->
 					<article class="card">
 						<div class="card-header">
 							<div>
@@ -182,17 +161,17 @@
 				</div>
 
 				<div style="display:flex; flex-direction:column; gap:16px;">
-					<!-- Announcements CRUD -->
-					<article class="card" aria-labelledby="announcementsTitle">
+					<!-- To-Do List & Agenda -->
+					<article class="card">
 						<div class="card-header">
 							<div>
-								<h3 id="announcementsTitle">Announcements</h3>
-								<p class="muted">Class notifications & updates</p>
+								<h3>Trainer Agenda & To-Do List</h3>
+								<p class="muted">Check off your daily tasks and priorities</p>
 							</div>
-							<button type="button" class="btn btn-primary btn-sm" id="addAnnouncementBtn">+ Add</button>
+							<button type="button" class="btn btn-sm btn-ghost" id="addTodoBtn">+ Add Task Item</button>
 						</div>
-						<div id="announcementList" class="announcement-list" aria-live="polite">
-							<p class="empty-state">Loading announcements...</p>
+						<div id="todoList" style="margin-top:10px;">
+							<!-- Dynamically populated -->
 						</div>
 					</article>
 
@@ -213,6 +192,6 @@
 		</main>
 	</div>
 
-	<script type="module" src="js/home.js"></script>
+	<script type="module" src="../js/home.js"></script>
 </body>
 </html>
