@@ -45,7 +45,8 @@ const addStudentForm =
 const saveStudentButton =
     document.getElementById("save-student-btn");
 
-
+const cancelStudentButton =
+    document.getElementById("cancel-student-btn");
 
 let allStudents = [];
 
@@ -517,6 +518,16 @@ addStudentButton.addEventListener("click", function() {
         false;
 
 });
+
+cancelStudentButton.addEventListener(
+    "click",
+    function() {
+
+        addStudentForm.hidden =
+            true;
+
+    }
+);
 
 
 

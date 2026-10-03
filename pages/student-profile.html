@@ -21,24 +21,120 @@
 
 </head>
 
-
 <body>
 
     <div class="app">
 
 
-        <!-- Navbar placeholder -->
-        <header
-            id="navbar"
-            class="top-navbar">
+        <!-- =========================================
+             Premium Navbar
+             ========================================= -->
+
+        <header class="top-navbar">
+
+            <div class="nav-container">
+
+                <a
+                    href="home.html"
+                    class="nav-brand">
+
+                    <span class="brand-mark">
+                        E
+                    </span>
+
+                    <div>
+
+                        <span class="logo">
+                            EduTrack
+                        </span>
+
+                        <span class="logo-sub">
+                            Academic Management
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <nav class="nav-links-desktop">
+
+                    <a
+                        href="home.html"
+                        class="nav-link">
+                        Home
+                    </a>
+
+                    <a
+                        href="students.html"
+                        class="nav-link active">
+                        Students
+                    </a>
+
+                    <a
+                        href="courses.html"
+                        class="nav-link">
+                        Courses
+                    </a>
+
+                    <a
+                        href="tasks.html"
+                        class="nav-link">
+                        Tasks
+                    </a>
+
+                    <a
+                        href="dashboard.html"
+                        class="nav-link">
+                        Analytics
+                    </a>
+
+                </nav>
+
+
+                <div class="nav-right">
+
+                    <a
+                        href="instructorProfile.html"
+                        class="profile-btn">
+
+                        <div class="avatar">
+                            T
+                        </div>
+
+                        <div class="profile-copy">
+
+                            <span class="profile-name">
+                                Trainer
+                            </span>
+
+                            <span class="profile-role">
+                                Instructor
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
         </header>
 
 
 
+        <!-- =========================================
+             Main Content
+             ========================================= -->
+
         <main class="main student-profile-page">
 
 
-            <!-- Page Header -->
+            <!-- =========================================
+                 Page Header
+                 ========================================= -->
+
             <header class="page-header">
 
                 <div>
@@ -63,8 +159,8 @@
 
 
                     <p class="muted">
-                        Student information,
-                        attendance and academic performance.
+                        Review student information,
+                        attendance records and academic performance.
                     </p>
 
                 </div>
@@ -73,9 +169,14 @@
 
 
 
-            <!-- Student Information -->
+            <!-- =========================================
+                 Student Info + Attendance
+                 ========================================= -->
+
             <section class="profile-layout">
 
+
+                <!-- Student Information -->
 
                 <article class="profile-main-card">
 
@@ -84,7 +185,7 @@
                         <div>
 
                             <p class="section-kicker">
-                                Profile
+                                Profile Overview
                             </p>
 
                             <h2>
@@ -96,13 +197,16 @@
                     </div>
 
 
-                    <div id="student-profile"></div>
+                    <div
+                        id="student-profile">
+                    </div>
 
                 </article>
 
 
 
-                <!-- Attendance -->
+                <!-- Attendance Summary -->
+
                 <article class="analytics-card">
 
                     <div class="section-heading">
@@ -117,23 +221,33 @@
                                 Attendance Summary
                             </h2>
 
+                            <p class="muted">
+                                Student presence and absence overview.
+                            </p>
+
                         </div>
 
                     </div>
 
 
-                    <div id="attendance-container"></div>
+                    <div
+                        id="attendance-container">
+                    </div>
 
                 </article>
-
 
             </section>
 
 
 
-            <!-- Academic Performance -->
+            <!-- =========================================
+                 Academic Performance
+                 ========================================= -->
+
             <section class="academic-grid">
 
+
+                <!-- Academic Analytics -->
 
                 <article class="analytics-card">
 
@@ -149,16 +263,24 @@
                                 Academic Performance
                             </h2>
 
+                            <p class="muted">
+                                Grade statistics and overall performance.
+                            </p>
+
                         </div>
 
                     </div>
 
 
-                    <div id="grades-analytics"></div>
+                    <div
+                        id="grades-analytics">
+                    </div>
 
                 </article>
 
 
+
+                <!-- Courses & Grades -->
 
                 <article class="analytics-card">
 
@@ -174,21 +296,29 @@
                                 Courses & Grades
                             </h2>
 
+                            <p class="muted">
+                                Detailed grades for enrolled courses.
+                            </p>
+
                         </div>
 
                     </div>
 
 
-                    <div id="grades-container"></div>
+                    <div
+                        id="grades-container">
+                    </div>
 
                 </article>
-
 
             </section>
 
 
 
-            <!-- Charts -->
+            <!-- =========================================
+                 Student Analytics Charts
+                 ========================================= -->
+
             <section class="charts-section">
 
 
@@ -205,8 +335,8 @@
                         </h2>
 
                         <p class="muted">
-                            Visual representation of
-                            attendance and academic grades.
+                            Visual representation of attendance
+                            and course performance.
                         </p>
 
                     </div>
@@ -218,6 +348,8 @@
                 <div class="charts-grid">
 
 
+                    <!-- Attendance Chart -->
+
                     <article class="chart-card">
 
                         <div class="chart-card-header">
@@ -227,7 +359,7 @@
                             </h3>
 
                             <p class="muted">
-                                Present, absent and late records.
+                                Present, absent and late attendance records.
                             </p>
 
                         </div>
@@ -245,6 +377,8 @@
 
 
 
+                    <!-- Grades Chart -->
+
                     <article class="chart-card">
 
                         <div class="chart-card-header">
@@ -254,7 +388,7 @@
                             </h3>
 
                             <p class="muted">
-                                Grade comparison across courses.
+                                Grade comparison across the student's courses.
                             </p>
 
                         </div>
@@ -273,7 +407,6 @@
 
                 </div>
 
-
             </section>
 
 
@@ -281,7 +414,10 @@
 
 
 
-        <!-- Footer -->
+        <!-- =========================================
+             Footer
+             ========================================= -->
+
         <footer class="site-footer">
 
             <p>
@@ -295,11 +431,18 @@
 
 
 
-    <!-- Chart.js Library -->
+    <!-- =========================================
+         Chart.js Library
+         ========================================= -->
+
     <script
         src="https://cdn.jsdelivr.net/npm/chart.js">
     </script>
 
+
+    <!-- =========================================
+         Student Profile JavaScript
+         ========================================= -->
 
     <script
         type="module"
