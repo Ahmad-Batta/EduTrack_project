@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduTrack - Assignments</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/tasks.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header id="navbar" class="top-navbar"></header>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Header Section -->
+        <header class="page-header">
+          <div class="header-title">
+            <h1>Assignments</h1>
+            <p>Create and manage course assignments separately.</p>
+          </div>
+          <div class="header-actions">
+            <div class="search-box">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search assignments by title or course..."
+              />
+            </div>
+            <button class="btn-primary" id="add-assignment-btn" type="button">
+              + New assignment
+            </button>
+          </div>
+        </header>
+
+        <!-- Table Card Section -->
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ASSIGNMENT</th>
+                <th>COURSE</th>
+                <th>DUE DATE</th>
+                <th>MAX SCORE</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Assignments rendered dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal Dialog -->
+    <div class="modal-overlay" id="assignment-modal" role="dialog" aria-modal="true">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 id="modal-heading">Create New Assignment</h2>
+          <button type="button" class="btn-close-x" id="close-modal-btn" aria-label="Close modal">&times;</button>
+        </div>
+        <form id="assignment-form">
+          <div class="form-group">
+            <label for="modal-title">Assignment Title</label>
+            <input
+              type="text"
+              id="modal-title"
+              placeholder="e.g. JS Basics Assignment"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="modal-description">Description</label>
+            <textarea
+              id="modal-description"
+              placeholder="Write assignment details and instructions here..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="modal-course">Course</label>
+              <select id="modal-course" required></select>
+            </div>
+            <div class="form-group">
+              <label for="modal-score">Max Score</label>
+              <input
+                type="number"
+                id="modal-score"
+                placeholder="e.g. 100"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="modal-date">Due Date</label>
+              <input type="date" id="modal-date" required />
+            </div>
+            <div class="form-group">
+              <label for="modal-time">Due Time</label>
+              <input type="time" id="modal-time" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="modal-status">Status</label>
+            <select id="modal-status">
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" id="cancel-modal-btn">
+              Cancel
+            </button>
+            <button type="submit" class="btn-save">Save Assignment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="../js/tasks.js"></script>
+  </body>
+</html>

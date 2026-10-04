@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Students | EduTrack</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <link rel="stylesheet" href="../css/students.css" />
+  </head>
+
+  <body>
+    <div class="app">
+      <header id="navbar" class="top-navbar"></header>
+
+      <main class="main students-page">
+        <!-- Page Header -->
+        <header class="page-header">
+          <div>
+            <p class="page-eyebrow">Student Management</p>
+            <h1>Students</h1>
+            <p class="muted">
+              Manage student profiles, academic information and status.
+            </p>
+          </div>
+
+          <button id="add-student-btn" class="btn btn-primary" type="button">
+            + Add Student
+          </button>
+        </header>
+
+        <section class="students-toolbar">
+          <div class="search-box">
+            <label for="search-input" class="toolbar-label">
+              Search Students
+            </label>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search by name or student ID"
+            />
+          </div>
+
+          <div class="filter-box">
+            <label for="filter-select" class="toolbar-label">
+              Student Status
+            </label>
+            <select id="filter-select">
+              <option value="all">All Students</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Directory</p>
+              <h2>Student Directory</h2>
+              <p class="muted">Browse and manage all student records.</p>
+            </div>
+          </div>
+
+          <section id="students-container" class="students-container"></section>
+
+          <p id="no-students-message" class="empty-state" hidden>
+            No students found.
+          </p>
+        </section>
+
+        <template id="student-card-template">
+          <article class="student-card">
+            <h2 class="student-name">Student Name</h2>
+            <p>
+              <strong> Student ID: </strong>
+              <span class="student-id"></span>
+            </p>
+            <p>
+              <strong> Major: </strong>
+              <span class="student-major"></span>
+            </p>
+            <p>
+              <strong> University: </strong>
+              <span class="student-university"></span>
+            </p>
+            <p>
+              <strong> Email: </strong>
+              <span class="student-email"></span>
+            </p>
+            <div class="student-actions">
+              <button class="view-profile-btn">View Profile</button>
+            </div>
+          </article>
+        </template>
+      </main>
+
+      <section id="add-student-form" class="student-modal-backdrop" hidden>
+        <div class="student-modal">
+          <div class="modal-accent"></div>
+
+          <div class="student-modal-header">
+            <span class="modal-label"> Student Management </span>
+            <h2>Student Information</h2>
+            <p>Add or update the student's information below.</p>
+          </div>
+
+          <div class="student-form-grid">
+            <div class="form-group">
+              <label for="first-name-input"> First Name </label>
+              <input
+                type="text"
+                id="first-name-input"
+                placeholder="Enter first name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="last-name-input"> Last Name </label>
+              <input
+                type="text"
+                id="last-name-input"
+                placeholder="Enter last name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="university-id-input"> Student ID </label>
+              <input
+                type="text"
+                id="university-id-input"
+                placeholder="Enter 9-digit student ID"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email-input"> Email Address </label>
+              <input
+                type="email"
+                id="email-input"
+                placeholder="student@email.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="gender-input"> Gender </label>
+              <select id="gender-input">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="major-input"> Major </label>
+              <input
+                type="text"
+                id="major-input"
+                placeholder="Enter student major"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="university-input"> University </label>
+              <input
+                type="text"
+                id="university-input"
+                placeholder="Enter university name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="instructor-id-input"> Instructor ID </label>
+              <input
+                type="text"
+                id="instructor-id-input"
+                placeholder="Enter instructor ID"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              id="cancel-student-btn"
+              type="button"
+              class="premium-btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              id="save-student-btn"
+              type="button"
+              class="premium-btn btn-primary"
+            >
+              Save Student
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <p>© EduTrack Student Management</p>
+      </footer>
+    </div>
+
+    <script type="module" src="../js/students.js"></script>
+  </body>
+</html>

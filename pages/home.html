@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Trainer Home | EduTrack</title>
+	<link rel="stylesheet" href="../css/global.css" />
+	<link rel="stylesheet" href="../css/dashboard.css" />
+	<style>
+		/* .quick-access-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 12px;
+			margin-bottom: 20px;
+		} */
+		.quick-card {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 14px 16px;
+			background: #ffffff;
+			border: 1px solid var(--border);
+			border-radius: var(--radius-sm);
+			text-decoration: none;
+			color: var(--navy);
+			font-weight: 600;
+			font-size: 0.92rem;
+			transition: all 0.2s ease;
+		}
+		.quick-card:hover {
+			border-color: var(--primary);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(15,139,141,0.12);
+		}
+		.quick-icon {
+			width: 36px;
+			height: 36px;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.1rem;
+		}
+		.bg-teal { background: #ABD2FA; color: #091540; }
+		.bg-blue { background: #ABD2FA; color: #1B2CC1; }
+		.bg-purple { background: #e8f1fd; color: #1B2CC1; }
+		.bg-amber { background: #ABD2FA; color: #091540; }
+		.bg-green { background: #dcfce7; color: #16a34a; }
+
+		.todo-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px 12px;
+			border-bottom: 1px solid var(--border);
+			font-size: 0.9rem;
+		}
+		.todo-item:last-child {
+			border-bottom: none;
+		}
+		.todo-left {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.todo-checkbox {
+			width: 18px;
+			height: 18px;
+			cursor: pointer;
+		}
+		.todo-title.completed {
+			text-decoration: line-through;
+			color: var(--muted);
+		}
+	</style>
+</head>
+<body>
+	<div class="app">
+		<header id="navbar" class="top-navbar"></header>
+
+		<main class="main">
+			<header class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+				<div>
+					<h1 id="homeGreeting">Good day, Trainer</h1>
+					<p class="muted">Here is your daily agenda, announcements, and quick access portal.</p>
+				</div>
+				<div>
+					<a href="dashboard.html" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+						📊 Go to Analytics Dashboard →
+					</a>
+				</div>
+			</header>
+
+			<div id="errorBox" class="error-box" role="alert" hidden></div>
+
+			<!-- Quick Overview Stat Cards -->
+			<section class="stats-grid" aria-label="Summary Overview">
+				<article class="card stat">
+					<div class="stat-top">
+						<span class="stat-label">Active Students</span>
+						<span class="stat-dot dot-primary" aria-hidden="true"></span>
+					</div>
+					<strong id="statHomeStudents">0</strong>
+				</article>
+				<article class="card stat">
+					<div class="stat-top">
+						<span class="stat-label">Active Tasks</span>
+						<span class="stat-dot dot-info" aria-hidden="true"></span>
+					</div>
+					<strong id="statHomeTasks">0</strong>
+				</article>
+				<article class="card stat">
+					<div class="stat-top">
+						<span class="stat-label">Upcoming Events</span>
+						<span class="stat-dot dot-success" aria-hidden="true"></span>
+					</div>
+					<strong id="statHomeEvents">0</strong>
+				</article>
+				<article class="card stat">
+					<div class="stat-top">
+						<span class="stat-label">Announcements</span>
+						<span class="stat-dot dot-danger" aria-hidden="true"></span>
+					</div>
+					<strong id="statHomeAnnouncements">0</strong>
+				</article>
+			</section>
+
+			<!-- 2 Column Layout: Announcements & Events / Agenda & Feed -->
+			<section class="grid-2">
+				<div style="display:flex; flex-direction:column; gap:16px;">
+					<!-- Class Announcements (Above Events) -->
+					<article class="card" aria-labelledby="announcementsTitle">
+						<div class="card-header">
+							<div>
+								<h3 id="announcementsTitle">Announcements</h3>
+								<p class="muted">Class notifications & updates</p>
+							</div>
+							<div style="display:flex; gap:8px; align-items:center;">
+								<!-- <button type="button" class="btn btn-primary btn-sm" id="addAnnouncementBtn">+ Add</button> -->
+								<a href="events.html" class="btn btn-sm btn-ghost">Manage Announcements →</a>
+							</div>
+						</div>
+						<div id="announcementList" class="announcement-list" aria-live="polite">
+							<p class="empty-state">Loading announcements...</p>
+						</div>
+					</article>
+
+					<!-- Scheduled Events & Workshops -->
+					<article class="card">
+						<div class="card-header">
+							<div>
+								<h3>Scheduled Events & Workshops</h3>
+								<p class="muted">Events created for your classes and students</p>
+							</div>
+							<a href="events.html" class="btn btn-sm btn-ghost">Manage Events →</a>
+						</div>
+						<div id="eventsContainer" class="events-summary-grid">
+							<!-- Dynamically populated -->
+						</div>
+					</article>
+				</div>
+
+				<div style="display:flex; flex-direction:column; gap:16px;">
+					<!-- To-Do List & Agenda -->
+					<article class="card">
+						<div class="card-header">
+							<div>
+								<h3>Trainer Agenda & To-Do List</h3>
+								<p class="muted">Check off your daily tasks and priorities</p>
+							</div>
+							<button type="button" class="btn btn-sm btn-ghost" id="addTodoBtn">+ Add Task Item</button>
+						</div>
+						<div id="todoList" style="margin-top:10px;">
+							<!-- Dynamically populated -->
+						</div>
+					</article>
+
+					<!-- Recent Activity Feed -->
+					<article class="card">
+						<div class="card-header">
+							<div>
+								<h3>Recent Activity</h3>
+								<p class="muted">Updates across your workspace</p>
+							</div>
+						</div>
+						<ul id="activityList" class="feed">
+							<!-- Dynamically populated -->
+						</ul>
+					</article>
+				</div>
+			</section>
+		</main>
+	</div>
+
+	<script type="module" src="../js/home.js"></script>
+</body>
+</html>

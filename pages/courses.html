@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack - Courses</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/courses.css">
+</head>
+<body>
+
+    <div class="app">
+    <header id="navbar" class="top-navbar"></header>
+
+    <!-- المحتوى الرئيسي (Main Content) -->
+    <main class="main-content">
+        <header class="page-header">
+            <div class="header-title">
+                <h1>Courses Management</h1>
+                <p>Manage all your courses, enrolled students, and track statistics.</p>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <span class="search-icon" aria-hidden="true">🔍</span>
+                    <input type="text" id="searchCourseInput" placeholder="Search courses by title or code..." autocomplete="off" aria-label="Search courses">
+                </div>
+                <button class="btn-primary" id="openCourseModalBtn" type="button">+ New Course</button>
+            </div>
+        </header>
+
+        <!-- كروت تحليلات وإحصائيات الكورسات (Course Analytics) -->
+        <section class="analytics-row">
+            <div class="analytics-card">
+                <span class="analytics-title">Total Courses</span>
+                <strong class="analytics-value" id="statTotalCourses">0</strong>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-title">Total Student Enrollments</span>
+                <strong class="analytics-value" id="statTotalEnrollments">0</strong>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-title">Avg. Students Per Course</span>
+                <strong class="analytics-value" id="statAvgStudents">0</strong>
+            </div>
+        </section>
+
+        <!-- قائمة الكورسات (Courses Grid) -->
+        <section class="courses-grid" id="coursesGrid">
+            <!-- يتم تعبئة كروت الكورسات برمجياً -->
+        </section>
+    </main>
+
+    <!-- 1. نافذة إضافة / تعديل كورس (Course Modal) -->
+    <div class="modal-overlay" id="courseModal" role="dialog" aria-modal="true" aria-labelledby="courseModalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="courseModalTitle">Add New Course</h2>
+                <button type="button" class="btn-close-x" id="closeCourseModalXBtn" aria-label="Close dialog">&times;</button>
+            </div>
+
+            <form id="courseForm">
+                <input type="hidden" id="courseId">
+
+                <div class="form-group">
+                    <label for="courseTitle">Course Title</label>
+                    <input type="text" id="courseTitle" placeholder="e.g. JavaScript Fundamentals" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseCode">Course Code</label>
+                    <input type="text" id="courseCode" placeholder="e.g. CS101" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="courseDescription">Description</label>
+                    <textarea id="courseDescription" rows="3" placeholder="Brief course description..." required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="closeCourseModalBtn">Cancel</button>
+                    <button type="submit" class="btn-save" id="saveCourseBtn">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. نافذة إدارة الطلاب المسجلين بالكبسة على الكورس (Enrolled Students Modal) -->
+    <div class="modal-overlay" id="studentsModal" role="dialog" aria-modal="true" aria-labelledby="studentsModalTitle">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <div>
+                    <h2 id="studentsModalTitle">Enrolled Students</h2>
+                    <p id="studentsModalSubtitle" class="modal-subtitle"></p>
+                </div>
+                <button type="button" class="btn-close-x" id="closeStudentsModalBtn" aria-label="Close dialog">&times;</button>
+            </div>
+
+            <!-- نموذج تسجيل طالب جديد في الكورس (Enroll Student) -->
+            <form id="enrollForm" class="enroll-form">
+                <input type="hidden" id="enrollCourseId">
+                <div class="form-group enroll-form-group">
+                    <select id="selectStudentToEnroll" required aria-label="Select student to enroll">
+                        <option value="" disabled selected>Select student to enroll...</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Enroll Student</button>
+            </form>
+
+            <hr class="modal-divider">
+
+            <!-- جدول عرض الطلاب المسجلين وإزالتهم -->
+            <div class="table-card table-card-flush">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>STUDENT NAME</th>
+                            <th>EMAIL</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enrolledStudentsTableBody">
+                        <!-- تعبئة الطلاب المسجلين برمجياً -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- الملفات البرمجية -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/activityLogger.js"></script>
+    <script type="module" src="../js/courses.js"></script>
+</body>
+</html>
