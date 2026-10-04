@@ -1,15 +1,8 @@
 /* ==========================================================================
-   js/home.js - Instructor Home / Landing Page Portal
-   --------------------------------------------------------------------------
-   This module powers the main instructor portal (home page).
-   It aggregates workspace overview data:
-   - Greeting header with time-of-day detection (Good Morning/Afternoon/Evening)
-   - Quick workspace statistics (Students, Tasks, Upcoming Events, Announcements)
-   - Trainer To-Do List Agenda (Personal tasks with checkbox toggle & persistence)
-   - Real-time Scheduled Events summary synchronized from `js/events.js`
-   - Class Announcements manager with CRUD operations
-   - Activity log feed tracking recent actions
-   ========================================================================== */
+    js/home.js - Instructor Home / Landing Page Portal
+    --------------------------------------------------------------------------
+    This module powers the main instructor portal (home page).
+    ========================================================================== */
 
 import { BASE_URL } from "./api.js";
 import {
@@ -21,26 +14,22 @@ import {
   showToast,
 } from "./layout.js";
 
-// Require logged-in instructor user session
+// Check if user is logged in
 const user = requireAuth();
 if (!user) {
   throw new Error("Unauthorized access to landing page");
 }
 
-// Render main navigation top bar
+// Render the top navigation bar
 renderTopNav("home");
 
-/* --------------------------------------------------------------------------
-   Page State Variables
-   -------------------------------------------------------------------------- */
+// Page State Variables
 let announcements = [];
 let events = [];
 let todos = [];
 
-/* --------------------------------------------------------------------------
-   Initialization
-   -------------------------------------------------------------------------- */
-document.addEventListener("DOMContentLoaded", () => {
+// Run when the page loads
+document.addEventListener("DOMContentLoaded", function () {
   setupGreeting();
   loadDashboardData();
   setupEventListeners();
@@ -48,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Customizes greeting based on the current time of day
+ * Sets a personalized greeting (Good morning/afternoon/evening) based on the user's local time.
  */
 function setupGreeting() {
   const greetingEl = document.getElementById("homeGreeting");
@@ -56,155 +45,164 @@ function setupGreeting() {
 
   const hour = new Date().getHours();
   let timeStr = "Good morning";
-  if (hour >= 12 && hour < 17) timeStr = "Good afternoon";
-  else if (hour >= 17) timeStr = "Good evening";
+  
+  if (hour >= 12 && hour < 17) {
+    timeStr = "Good afternoon";
+  } else if (hour >= 17) {
+    timeStr = "Good evening";
+  }
 
   const name = user.name ? user.name.split(" ")[0] : "Trainer";
-  greetingEl.textContent = `${timeStr}, ${name} 👋`;
+  greetingEl.textContent = timeStr + ", " + name + " 👋";
 }
 
 /* --------------------------------------------------------------------------
-   Data Loading & Synchronization
-   -------------------------------------------------------------------------- */
+   Data Loading
+  -------------------------------------------------------------------------- */
 
 /**
- * Fetches all home portal datasets in parallel (Students, Tasks, Events, Announcements)
+ * Fetches students, assignments, events, and announcements from the server,
+ * filters them for the logged-in instructor, combines them with local storage data,
+ * and updates all dashboard counts and widgets.
  */
 async function loadDashboardData() {
   try {
-    const [studentsRes, assignmentsRes, eventsRes, annRes] = await Promise.allSettled([
-      fetch(`${BASE_URL}/students`).then((r) => (r.ok ? r.json() : [])),
-      fetch(`${BASE_URL}/assignments`).then((r) => (r.ok ? r.json() : [])),
-      fetch(`${BASE_URL}/events`).then((r) => (r.ok ? r.json() : [])),
-      fetch(`${BASE_URL}/announcements`).then((r) => (r.ok ? r.json() : [])),
-    ]);
+    // Fetch data from API endpoints
+    const studentsRes = await fetch(BASE_URL + "/students");
+    const students = studentsRes.ok ? await studentsRes.json() : [];
 
-    let students = studentsRes.status === "fulfilled" ? studentsRes.value : [];
-    let assignments = assignmentsRes.status === "fulfilled" ? assignmentsRes.value : [];
-    events = eventsRes.status === "fulfilled" ? eventsRes.value : [];
-    announcements = annRes.status === "fulfilled" ? annRes.value : [];
+    const assignmentsRes = await fetch(BASE_URL + "/assignments");
+    const assignments = assignmentsRes.ok ? await assignmentsRes.json() : [];
 
-    // Direct db.json fallback if json-server endpoints are unpopulated
-    if (!students.length || !assignments.length) {
-      try {
-        let rawRes = await fetch("../db.json");
-        if (!rawRes.ok) rawRes = await fetch("db.json");
-        if (rawRes.ok) {
-          const dbData = await rawRes.json();
-          if (!students.length) students = dbData.students || [];
-          if (!assignments.length) assignments = dbData.assignments || [];
-          if (!events.length) events = dbData.events || [];
-          if (!announcements.length) announcements = dbData.announcements || [];
-        }
-      } catch (err) {
-        console.warn("db.json direct fallback could not be loaded:", err);
-      }
-    }
+    const eventsRes = await fetch(BASE_URL + "/events");
+    events = eventsRes.ok ? await eventsRes.json() : [];
 
-    // Filter datasets specifically for the active instructor user
-    const myStudents = students.filter((s) => String(s.instructor_id || s.trainerId || s.instructorId) === String(user.id));
-    const myAssignments = assignments.filter((a) => String(a.instructor_id || a.trainerId || a.instructorId) === String(user.id));
-    const myEvents = events.filter((e) => String(e.instructor_id || e.trainerId || e.instructorId) === String(user.id));
-    announcements = announcements.filter((a) => String(a.instructor_id || a.trainerId || a.instructorId) === String(user.id));
+    const annRes = await fetch(BASE_URL + "/announcements");
+    announcements = annRes.ok ? await annRes.json() : [];
 
-    // Combine local storage events & announcements to ensure instant local updates display
-    const localEvents = getLocalEvents().filter((e) => String(e.instructor_id || e.trainerId || e.instructorId) === String(user.id));
-    const combinedEvents = [...myEvents, ...localEvents];
-
-    // Remove duplicate events by ID
-    const seenEvt = new Set();
-    const finalEvents = combinedEvents.filter((e) => {
-      if (seenEvt.has(String(e.id))) return false;
-      seenEvt.add(String(e.id));
-      return true;
+    // Filter datasets for the logged-in instructor
+    const myStudents = students.filter(function (s) {
+      const trainerId = s.instructor_id || s.trainerId || s.instructorId;
+      return String(trainerId) === String(user.id);
     });
+
+    const myAssignments = assignments.filter(function (a) {
+      const trainerId = a.instructor_id || a.trainerId || a.instructorId;
+      return String(trainerId) === String(user.id);
+    });
+
+    const myEvents = events.filter(function (e) {
+      const trainerId = e.instructor_id || e.trainerId || e.instructorId;
+      return String(trainerId) === String(user.id);
+    });
+
+    announcements = announcements.filter(function (a) {
+      const trainerId = a.instructor_id || a.trainerId || a.instructorId;
+      return String(trainerId) === String(user.id);
+    });
+
+    // Combine with local storage items
+    const localEvents = getLocalEvents().filter(function (e) {
+      const trainerId = e.instructor_id || e.trainerId || e.instructorId;
+      return String(trainerId) === String(user.id);
+    });
+    const finalEvents = myEvents.concat(localEvents);
 
     const localAnn = getLocalAnnouncements();
-    announcements = [...announcements, ...localAnn];
-    const seenAnn = new Set();
-    announcements = announcements.filter((a) => {
-      if (seenAnn.has(String(a.id))) return false;
-      seenAnn.add(String(a.id));
-      return true;
-    });
+    announcements = announcements.concat(localAnn);
 
-    // Update summary stat counter cards
+    // Update top summary counters
     document.getElementById("statHomeStudents").textContent = myStudents.length;
     document.getElementById("statHomeTasks").textContent = myAssignments.length;
     document.getElementById("statHomeEvents").textContent = finalEvents.length;
     document.getElementById("statHomeAnnouncements").textContent = announcements.length;
 
-    // Render portal widgets
+    // Render widgets
     renderEventsSummary(finalEvents);
     renderAnnouncements();
     seedActivityLogIfEmpty(myStudents, myAssignments);
     renderActivityFeed();
+
   } catch (error) {
-    console.error("Error loading home dashboard portal data:", error);
-    showErrorBox("Failed to load dashboard data. Please refresh.");
+    console.error("Error loading dashboard data:", error);
+    const box = document.getElementById("errorBox");
+    if (box) {
+      box.textContent = "Failed to load dashboard data. Please refresh.";
+      box.hidden = false;
+    }
   }
 }
 
-/**
- * Displays error alert banner
- */
-function showErrorBox(msg) {
-  const box = document.getElementById("errorBox");
-  if (!box) return;
-  box.textContent = msg;
-  box.hidden = false;
-}
-
 /* --------------------------------------------------------------------------
-   Local Storage Event & Announcement Sync Helpers
-   -------------------------------------------------------------------------- */
+   Local Storage Helpers
+  -------------------------------------------------------------------------- */
 
+/**
+ * Retrieves cached events from the browser's local storage.
+ */
 function getLocalEvents() {
   try {
     return JSON.parse(localStorage.getItem("edutrack_events")) || [];
-  } catch {
+  } catch (e) {
     return [];
   }
 }
 
+/**
+ * Retrieves announcements specific to the logged-in user from local storage.
+ */
 function getLocalAnnouncements() {
   try {
-    return JSON.parse(localStorage.getItem(`edutrack_announcements_${user.id}`)) || [];
-  } catch {
+    return JSON.parse(localStorage.getItem("edutrack_announcements_" + user.id)) || [];
+  } catch (e) {
     return [];
   }
 }
 
+/**
+ * Saves or updates a specific announcement in local storage.
+ */
 function saveLocalAnnouncement(ann) {
-  const local = getLocalAnnouncements();
-  const idx = local.findIndex((a) => String(a.id) === String(ann.id));
-  if (idx >= 0) {
-    local[idx] = ann;
+  let local = getLocalAnnouncements();
+  let foundIndex = -1;
+  for (let i = 0; i < local.length; i++) {
+    if (String(local[i].id) === String(ann.id)) {
+      foundIndex = i;
+      break;
+    }
+  }
+
+  if (foundIndex >= 0) {
+    local[foundIndex] = ann;
   } else {
     local.unshift(ann);
   }
-  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(local));
+  localStorage.setItem("edutrack_announcements_" + user.id, JSON.stringify(local));
 }
 
+/**
+ * Removes an announcement from local storage by its ID.
+ */
 function removeLocalAnnouncement(id) {
-  const local = getLocalAnnouncements();
-  const filtered = local.filter((a) => String(a.id) !== String(id));
-  localStorage.setItem(`edutrack_announcements_${user.id}`, JSON.stringify(filtered));
+  let local = getLocalAnnouncements();
+  let filtered = local.filter(function (a) {
+    return String(a.id) !== String(id);
+  });
+  localStorage.setItem("edutrack_announcements_" + user.id, JSON.stringify(filtered));
 }
 
 /* --------------------------------------------------------------------------
-   Scheduled Events Summary Widget
-   -------------------------------------------------------------------------- */
+   Events Summary Widget
+  -------------------------------------------------------------------------- */
 
 /**
- * Renders upcoming event cards on home page fed from events data
- * @param {Array} myEvents - List of scheduled events
+ * Renders up to 4 upcoming event cards onto the dashboard summary widget.
  */
 function renderEventsSummary(myEvents) {
   const container = document.getElementById("eventsContainer");
   if (!container) return;
 
-  if (!myEvents.length) {
+  if (myEvents.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align:center; padding:24px 12px; color:var(--muted);">
         <p style="margin-bottom:8px;">No scheduled events found.</p>
@@ -213,175 +211,225 @@ function renderEventsSummary(myEvents) {
     return;
   }
 
-  container.innerHTML = myEvents
-    .slice(0, 4)
-    .map((ev) => `
+  let html = "";
+  let limit = myEvents.length > 4 ? 4 : myEvents.length;
+
+  for (let i = 0; i < limit; i++) {
+    let ev = myEvents[i];
+    let badgeClass = "badge-info";
+    if (ev.type === "Exam") badgeClass = "badge-danger";
+    if (ev.type === "Workshop") badgeClass = "badge-warning";
+
+    html += `
       <div class="event-summary-card" style="padding:12px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
           <strong style="font-size:0.95rem;">${escapeHtml(ev.title)}</strong>
-          <span class="badge ${ev.type === "Exam" ? "badge-danger" : ev.type === "Workshop" ? "badge-warning" : "badge-info"}" style="font-size:0.75rem;">${escapeHtml(ev.type || "Event")}</span>
+          <span class="badge ${badgeClass}" style="font-size:0.75rem;">${escapeHtml(ev.type || "Event")}</span>
         </div>
         <p style="font-size:0.84rem; color:var(--muted); margin-bottom:6px;">${escapeHtml(ev.location || "Online")}</p>
         <div style="font-size:0.78rem; color:var(--navy); font-weight:600;">
           📅 ${escapeHtml(ev.date || "TBD")} ${ev.time ? "• 🕒 " + escapeHtml(ev.time) : ""}
         </div>
-      </div>
-    `)
-    .join("");
+      </div>`;
+  }
+
+  container.innerHTML = html;
 }
 
 /* --------------------------------------------------------------------------
    Activity History Feed
-   -------------------------------------------------------------------------- */
+  -------------------------------------------------------------------------- */
 
+/**
+ * Gets the activity log list from local storage for the current user.
+ */
 function getActivityLog() {
-  const key = `edutrack_activity_log_${user.id}`;
+  let key = "edutrack_activity_log_" + user.id;
   try {
     return JSON.parse(localStorage.getItem(key)) || [];
-  } catch {
+  } catch (e) {
     return [];
   }
 }
 
+/**
+ * Saves the updated activity log array into local storage.
+ */
 function saveActivityLog(log) {
-  const key = `edutrack_activity_log_${user.id}`;
+  let key = "edutrack_activity_log_" + user.id;
   localStorage.setItem(key, JSON.stringify(log));
 }
 
-function logActivity(textHtml, timeStr = "Today") {
-  const log = getActivityLog();
+/**
+ * Adds a new entry to the top of the activity log and re-renders the feed.
+ */
+function logActivity(textHtml, timeStr) {
+  let log = getActivityLog();
   log.unshift({
     title: textHtml,
-    time: timeStr,
+    time: timeStr || "Today",
     timestamp: Date.now(),
   });
   saveActivityLog(log);
   renderActivityFeed();
 }
 
+/**
+ * Generates initial baseline activity logs if the log is completely empty.
+ */
 function seedActivityLogIfEmpty(students, assignments) {
-  const existing = getActivityLog();
-  if (existing.length) return;
+  let existing = getActivityLog();
+  if (existing.length > 0) return;
 
-  const initial = [];
+  let initial = [];
 
-  announcements.forEach((ann) => {
+  for (let i = 0; i < announcements.length; i++) {
     initial.push({
-      title: `Announcement posted: <strong>${escapeHtml(ann.title)}</strong>`,
+      title: "Announcement posted: <strong>" + escapeHtml(announcements[i].title) + "</strong>",
       time: "Today",
       timestamp: Date.now() - 1000,
     });
-  });
+  }
 
-  students.slice(0, 2).forEach((s) => {
-    const name = `${s.first_name || ""} ${s.last_name || ""}`.trim() || s.name || "Student";
+  let studentLimit = students.length > 2 ? 2 : students.length;
+  for (let i = 0; i < studentLimit; i++) {
+    let s = students[i];
+    let name = (s.first_name || "") + " " + (s.last_name || "");
+    name = name.trim() || s.name || "Student";
     initial.push({
-      title: `Added student <strong>${escapeHtml(name)}</strong>`,
+      title: "Added student <strong>" + escapeHtml(name) + "</strong>",
       time: "Recent",
       timestamp: Date.now() - 2000,
     });
-  });
+  }
 
-  assignments.slice(0, 2).forEach((a) => {
+  let assignLimit = assignments.length > 2 ? 2 : assignments.length;
+  for (let i = 0; i < assignLimit; i++) {
+    let a = assignments[i];
     initial.push({
-      title: `New task: <strong>${escapeHtml(a.title)}</strong>`,
+      title: "New task: <strong>" + escapeHtml(a.title) + "</strong>",
       time: a.due_date || "Upcoming",
       timestamp: Date.now() - 3000,
     });
-  });
+  }
 
   saveActivityLog(initial);
 }
 
+/**
+ * Renders the recent activity log items onto the feed UI element.
+ */
 function renderActivityFeed() {
   const feedEl = document.getElementById("activityList");
   if (!feedEl) return;
 
-  const activities = getActivityLog();
+  let activities = getActivityLog();
 
-  if (!activities.length) {
+  if (activities.length === 0) {
     feedEl.innerHTML = `<li class="muted" style="padding:12px; text-align:center;">No recent activity</li>`;
     return;
   }
 
-  feedEl.innerHTML = activities
-    .slice(0, 10)
-    .map(
-      (act) => `
+  let html = "";
+  let limit = activities.length > 10 ? 10 : activities.length;
+
+  for (let i = 0; i < limit; i++) {
+    let act = activities[i];
+    html += `
       <li style="padding:8px 0; border-bottom:1px dashed var(--border); font-size:0.88rem; display:flex; justify-content:space-between;">
         <span class="feed-title">${act.title}</span>
         <span class="feed-meta" style="color:var(--muted); font-size:0.78rem;">${escapeHtml(act.time)}</span>
-      </li>`
-    )
-    .join("");
+      </li>`;
+  }
+
+  feedEl.innerHTML = html;
 }
 
 /* --------------------------------------------------------------------------
-   Trainer Personal To-Do List Agenda Widget
-   -------------------------------------------------------------------------- */
+   Trainer Personal To-Do List Widget
+  -------------------------------------------------------------------------- */
 
+/**
+ * Loads the trainer's personal to-do list items from local storage.
+ */
 function loadTodos() {
-  const storageKey = `edutrack_todos_${user.id}`;
+  const storageKey = "edutrack_todos_" + user.id;
   try {
     todos = JSON.parse(localStorage.getItem(storageKey)) || [
       { id: 1, title: "Review student assignment submissions", done: false },
       { id: 2, title: "Prepare lecture slides for next class", done: true },
       { id: 3, title: "Grade JavaScript DOM quizzes", done: false },
     ];
-  } catch {
+  } catch (e) {
     todos = [];
   }
   renderTodos();
 }
 
+/**
+ * Saves the current to-do list array to local storage and refreshes the display.
+ */
 function saveTodos() {
-  const storageKey = `edutrack_todos_${user.id}`;
+  const storageKey = "edutrack_todos_" + user.id;
   localStorage.setItem(storageKey, JSON.stringify(todos));
   renderTodos();
 }
 
+/**
+ * Renders all to-do items into the task list UI and attaches interaction handlers.
+ */
 function renderTodos() {
   const listEl = document.getElementById("todoList");
   if (!listEl) return;
 
-  if (!todos.length) {
+  if (todos.length === 0) {
     listEl.innerHTML = `<p class="muted" style="font-size:0.85rem; padding:12px; text-align:center;">No to-do items. Click "+ Add Task Item" above!</p>`;
     return;
   }
 
-  listEl.innerHTML = todos
-    .map(
-      (item) => `
+  let html = "";
+  for (let i = 0; i < todos.length; i++) {
+    let item = todos[i];
+    html += `
       <div class="todo-item">
         <div class="todo-left">
           <input type="checkbox" class="todo-checkbox" data-todo-id="${item.id}" ${item.done ? "checked" : ""} />
           <span class="todo-title ${item.done ? "completed" : ""}">${escapeHtml(item.title)}</span>
         </div>
         <button type="button" class="btn btn-ghost btn-sm" data-delete-todo="${item.id}" style="color:var(--danger); padding:2px 6px;">✕</button>
-      </div>`
-    )
-    .join("");
+      </div>`;
+  }
 
-  listEl.querySelectorAll(".todo-checkbox").forEach((cb) => {
-    cb.addEventListener("change", (e) => {
-      const id = Number(e.target.dataset.todoId);
-      const found = todos.find((t) => t.id === id);
-      if (found) {
-        found.done = e.target.checked;
-        saveTodos();
+  listEl.innerHTML = html;
+
+  // Add event listeners for checkboxes and delete buttons
+  listEl.querySelectorAll(".todo-checkbox").forEach(function (cb) {
+    cb.addEventListener("change", function (e) {
+      let id = Number(e.target.dataset.todoId);
+      for (let i = 0; i < todos.length; i++) {
+        if (todos[i].id === id) {
+          todos[i].done = e.target.checked;
+          break;
+        }
       }
+      saveTodos();
     });
   });
 
-  listEl.querySelectorAll("[data-delete-todo]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = Number(btn.dataset.deleteTodo);
-      todos = todos.filter((t) => t.id !== id);
+  listEl.querySelectorAll("[data-delete-todo]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      let id = Number(btn.dataset.deleteTodo);
+      todos = todos.filter(function (t) {
+        return t.id !== id;
+      });
       saveTodos();
     });
   });
 }
 
+/**
+ * Opens a modal dialog allowing the user to create and add a new personal to-do task.
+ */
 function openAddTodoModal() {
   openModal({
     title: "Add To-Do Item",
@@ -400,34 +448,39 @@ function openAddTodoModal() {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    modal.querySelector("#todoForm")?.addEventListener("submit", function (e) {
+      e.preventDefault();
+      let titleInput = modal.querySelector("#todoTitle");
+      let title = titleInput ? titleInput.value.trim() : "";
+      if (!title) return;
 
-  modal?.querySelector("#todoForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = modal.querySelector("#todoTitle").value.trim();
-    if (!title) return;
+      todos.push({
+        id: Date.now(),
+        title: title,
+        done: false,
+      });
 
-    todos.push({
-      id: Date.now(),
-      title,
-      done: false,
+      saveTodos();
+      closeModal();
+      showToast("Task added to agenda", "success");
     });
-
-    saveTodos();
-    closeModal();
-    showToast("Task added to agenda", "success");
-  });
+  }
 }
 
 /* --------------------------------------------------------------------------
-   Announcements Section CRUD
-   -------------------------------------------------------------------------- */
+   Announcements Section
+  -------------------------------------------------------------------------- */
 
+/**
+ * Renders all class announcements onto the announcement section UI.
+ */
 function renderAnnouncements() {
   const listEl = document.getElementById("announcementList");
   if (!listEl) return;
 
-  if (!announcements.length) {
+  if (announcements.length === 0) {
     listEl.innerHTML = `
       <div style="text-align:center; padding:20px;">
         <p class="empty-state" style="margin-bottom:8px;">No announcements posted yet.</p>
@@ -437,41 +490,60 @@ function renderAnnouncements() {
     return;
   }
 
-  listEl.innerHTML = announcements
-    .map((ann) => {
-      const priorityClass = ann.priority ? `priority-${escapeHtml(ann.priority)}` : "priority-medium";
-      return `
+  let html = "";
+  for (let i = 0; i < announcements.length; i++) {
+    let ann = announcements[i];
+    let priorityClass = ann.priority ? "priority-" + escapeHtml(ann.priority) : "priority-medium";
+    
+    let badgeColor = "success";
+    if (ann.priority === "high") badgeColor = "danger";
+    if (ann.priority === "medium") badgeColor = "warning";
+
+    let msg = ann.content || ann.message || ann.body || "";
+    let dateStr = ann.date || ann.createdAt || new Date().toLocaleDateString();
+
+    html += `
       <article class="announcement ${priorityClass}" style="margin-bottom:12px; padding:12px; border-left:4px solid var(--primary); background:#ffffff; border-radius:var(--radius-sm);">
         <div class="announcement-head" style="display:flex; justify-content:space-between; align-items:center;">
           <h4 style="margin:0; font-size:1rem;">${escapeHtml(ann.title)}</h4>
           <div style="display:flex; gap:6px; align-items:center;">
-            ${ann.priority ? `<span class="badge badge-${ann.priority === "high" ? "danger" : ann.priority === "medium" ? "warning" : "success"}" style="font-size:0.7rem;">${escapeHtml(ann.priority.toUpperCase())}</span>` : ""}
+            ${ann.priority ? `<span class="badge badge-${badgeColor}" style="font-size:0.7rem;">${escapeHtml(ann.priority.toUpperCase())}</span>` : ""}
             <button type="button" class="btn btn-ghost btn-sm" data-edit-ann="${ann.id}" style="padding:2px 6px;" title="Edit">✏️</button>
             <button type="button" class="btn btn-ghost btn-sm" data-delete-ann="${ann.id}" style="padding:2px 6px; color:var(--danger);" title="Delete">🗑️</button>
           </div>
         </div>
-        <p style="margin:6px 0; font-size:0.88rem;">${escapeHtml(ann.content || ann.message || ann.body || "")}</p>
-        <time style="font-size:0.75rem; color:var(--muted);">${escapeHtml(ann.date || ann.createdAt || new Date().toLocaleDateString())}</time>
+        <p style="margin:6px 0; font-size:0.88rem;">${escapeHtml(msg)}</p>
+        <time style="font-size:0.75rem; color:var(--muted);">${escapeHtml(dateStr)}</time>
       </article>`;
-    })
-    .join("");
+  }
 
-  listEl.querySelectorAll("[data-edit-ann]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.editAnn;
-      const found = announcements.find((a) => String(a.id) === String(id));
+  listEl.innerHTML = html;
+
+  listEl.querySelectorAll("[data-edit-ann]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      let id = btn.dataset.editAnn;
+      let found = null;
+      for (let i = 0; i < announcements.length; i++) {
+        if (String(announcements[i].id) === String(id)) {
+          found = announcements[i];
+          break;
+        }
+      }
       if (found) openEditAnnouncementModal(found);
     });
   });
 
-  listEl.querySelectorAll("[data-delete-ann]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.deleteAnn;
+  listEl.querySelectorAll("[data-delete-ann]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      let id = btn.dataset.deleteAnn;
       confirmDeleteAnnouncement(id);
     });
   });
 }
 
+/**
+ * Opens a modal dialog allowing the instructor to create and post a new announcement.
+ */
 function openAddAnnouncementModal() {
   openModal({
     title: "Post New Announcement",
@@ -502,50 +574,55 @@ function openAddAnnouncementModal() {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    modal.querySelector("#announcementForm")?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      let title = modal.querySelector("#annTitle").value.trim();
+      let priority = modal.querySelector("#annPriority").value;
+      let content = modal.querySelector("#annContent").value.trim();
 
-  modal?.querySelector("#announcementForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const title = modal.querySelector("#annTitle").value.trim();
-    const priority = modal.querySelector("#annPriority").value;
-    const content = modal.querySelector("#annContent").value.trim();
+      if (!title || !content) return;
 
-    if (!title || !content) return;
+      let newAnn = {
+        id: "ann_" + Date.now(),
+        instructor_id: String(user.id),
+        trainerId: String(user.id),
+        title: title,
+        priority: priority,
+        content: content,
+        message: content,
+        date: new Date().toISOString().split("T")[0],
+      };
 
-    const newAnn = {
-      id: "ann_" + Date.now(),
-      instructor_id: String(user.id),
-      trainerId: String(user.id),
-      title,
-      priority,
-      content,
-      message: content,
-      date: new Date().toISOString().split("T")[0],
-    };
+      try {
+        let res = await fetch(BASE_URL + "/announcements", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newAnn),
+        });
+        if (!res.ok) throw new Error("API error");
+        let saved = await res.json();
+        announcements.unshift(saved);
+      } catch (err) {
+        saveLocalAnnouncement(newAnn);
+        announcements.unshift(newAnn);
+      }
 
-    try {
-      const res = await fetch(`${BASE_URL}/announcements`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newAnn),
-      });
-      if (!res.ok) throw new Error("API error");
-      const saved = await res.json();
-      announcements.unshift(saved);
-    } catch {
-      saveLocalAnnouncement(newAnn);
-      announcements.unshift(newAnn);
-    }
-
-    closeModal();
-    renderAnnouncements();
-    document.getElementById("statHomeAnnouncements").textContent = announcements.length;
-    logActivity(`Announcement posted: <strong>${escapeHtml(newAnn.title)}</strong>`, "Just now");
-    showToast("Announcement posted successfully", "success");
-  });
+      closeModal();
+      renderAnnouncements();
+      document.getElementById("statHomeAnnouncements").textContent = announcements.length;
+      logActivity("Announcement posted: <strong>" + escapeHtml(newAnn.title) + "</strong>", "Just now");
+      showToast("Announcement posted successfully", "success");
+    });
+  }
 }
 
+/**
+ * Opens a modal dialog pre-filled with an existing announcement's details so the instructor can edit it.
+ */
 function openEditAnnouncementModal(ann) {
+  let msg = ann.content || ann.message || ann.body || "";
   openModal({
     title: "Edit Announcement",
     subtitle: "Update notice details",
@@ -565,7 +642,7 @@ function openEditAnnouncementModal(ann) {
         </div>
         <div class="form-group">
           <label for="editAnnContent">Message</label>
-          <textarea id="editAnnContent" rows="3" required>${escapeHtml(ann.content || ann.message || ann.body || "")}</textarea>
+          <textarea id="editAnnContent" rows="3" required>${escapeHtml(msg)}</textarea>
         </div>
         <div class="form-actions" style="margin-top:20px;">
           <button type="button" class="btn btn-ghost" data-close>Cancel</button>
@@ -575,39 +652,50 @@ function openEditAnnouncementModal(ann) {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    modal.querySelector("#editAnnForm")?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      
+      let updated = {
+        ...ann,
+        title: modal.querySelector("#editAnnTitle").value.trim(),
+        priority: modal.querySelector("#editAnnPriority").value,
+        content: modal.querySelector("#editAnnContent").value.trim(),
+        message: modal.querySelector("#editAnnContent").value.trim(),
+      };
 
-  modal?.querySelector("#editAnnForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const updated = {
-      ...ann,
-      title: modal.querySelector("#editAnnTitle").value.trim(),
-      priority: modal.querySelector("#editAnnPriority").value,
-      content: modal.querySelector("#editAnnContent").value.trim(),
-      message: modal.querySelector("#editAnnContent").value.trim(),
-    };
+      try {
+        let res = await fetch(BASE_URL + "/announcements/" + ann.id, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated),
+        });
+        if (!res.ok) throw new Error("PATCH failed");
+      } catch (err) {
+        saveLocalAnnouncement(updated);
+      }
 
-    try {
-      const res = await fetch(`${BASE_URL}/announcements/${ann.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
-      });
-      if (!res.ok) throw new Error("PATCH failed");
-    } catch {
-      saveLocalAnnouncement(updated);
-    }
+      let idx = -1;
+      for (let i = 0; i < announcements.length; i++) {
+        if (String(announcements[i].id) === String(ann.id)) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx >= 0) announcements[idx] = updated;
 
-    const idx = announcements.findIndex((a) => String(a.id) === String(ann.id));
-    if (idx >= 0) announcements[idx] = updated;
-
-    closeModal();
-    renderAnnouncements();
-    logActivity(`Announcement updated: <strong>${escapeHtml(updated.title)}</strong>`, "Just now");
-    showToast("Announcement updated", "success");
-  });
+      closeModal();
+      renderAnnouncements();
+      logActivity("Announcement updated: <strong>" + escapeHtml(updated.title) + "</strong>", "Just now");
+      showToast("Announcement updated", "success");
+    });
+  }
 }
 
+/**
+ * Opens a confirmation modal before permanently deleting an announcement.
+ */
 function confirmDeleteAnnouncement(id) {
   openModal({
     title: "Delete Announcement",
@@ -620,33 +708,54 @@ function confirmDeleteAnnouncement(id) {
   });
 
   const modal = document.getElementById("modalBackdrop");
-  modal?.querySelector("[data-close]")?.addEventListener("click", closeModal);
+  if (modal) {
+    modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
+    modal.querySelector("#confirmDeleteAnnBtn")?.addEventListener("click", async function () {
+      try {
+        await fetch(BASE_URL + "/announcements/" + id, { method: "DELETE" });
+      } catch (e) {
+        // ignore
+      }
 
-  modal?.querySelector("#confirmDeleteAnnBtn")?.addEventListener("click", async () => {
-    try {
-      await fetch(`${BASE_URL}/announcements/${id}`, { method: "DELETE" });
-    } catch {
-      // ignore
-    }
-    const deletedItem = announcements.find((a) => String(a.id) === String(id));
-    removeLocalAnnouncement(id);
-    announcements = announcements.filter((a) => String(a.id) !== String(id));
+      let deletedItem = null;
+      for (let i = 0; i < announcements.length; i++) {
+        if (String(announcements[i].id) === String(id)) {
+          deletedItem = announcements[i];
+          break;
+        }
+      }
 
-    closeModal();
-    renderAnnouncements();
-    document.getElementById("statHomeAnnouncements").textContent = announcements.length;
-    if (deletedItem) {
-      logActivity(`Announcement deleted: <strong>${escapeHtml(deletedItem.title)}</strong>`, "Just now");
-    }
-    showToast("Announcement deleted", "info");
-  });
+      removeLocalAnnouncement(id);
+      announcements = announcements.filter(function (a) {
+        return String(a.id) !== String(id);
+      });
+
+      closeModal();
+      renderAnnouncements();
+      document.getElementById("statHomeAnnouncements").textContent = announcements.length;
+      
+      if (deletedItem) {
+        logActivity("Announcement deleted: <strong>" + escapeHtml(deletedItem.title) + "</strong>", "Just now");
+      }
+      showToast("Announcement deleted", "info");
+    });
+  }
 }
 
 /* --------------------------------------------------------------------------
    Setup Event Handlers
-   -------------------------------------------------------------------------- */
+  -------------------------------------------------------------------------- */
+
+/**
+ * Binds click event listeners to buttons like adding announcements and tasks.
+ */
 function setupEventListeners() {
-  document.getElementById("addAnnouncementBtn")?.addEventListener("click", openAddAnnouncementModal);
-  document.getElementById("quickAnnouncementBtn")?.addEventListener("click", openAddAnnouncementModal);
-  document.getElementById("addTodoBtn")?.addEventListener("click", openAddTodoModal);
+  const addAnnBtn = document.getElementById("addAnnouncementBtn");
+  if (addAnnBtn) addAnnBtn.addEventListener("click", openAddAnnouncementModal);
+
+  const quickAnnBtn = document.getElementById("quickAnnouncementBtn");
+  if (quickAnnBtn) quickAnnBtn.addEventListener("click", openAddAnnouncementModal);
+
+  const addTodoBtn = document.getElementById("addTodoBtn");
+  if (addTodoBtn) addTodoBtn.addEventListener("click", openAddTodoModal);
 }
