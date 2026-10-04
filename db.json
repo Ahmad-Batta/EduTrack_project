@@ -1,4 +1,5 @@
 {
+  "quizzes": [],
   "instructors": [
     {
       "id": "1",
@@ -44,6 +45,24 @@
       "password": "Makookee@2002",
       "University": "aaaaaaaaaaaaaaaaa",
       "department": "aaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "id": "I2-CrbZGKN0",
+      "first_name": "naser",
+      "last_name": "bader",
+      "email": "naser@naser.com",
+      "password": "12345678Nn",
+      "University": "hashemite university",
+      "department": "cis"
+    },
+    {
+      "id": "xtToxF4x71s",
+      "first_name": "ahmad",
+      "last_name": "asem",
+      "email": "ahmad234@gmail.com",
+      "password": "12345678P!",
+      "University": "yarmouk uni",
+      "department": "cs"
     }
   ],
   "students": [
@@ -60,16 +79,16 @@
       "image": "../studentImages/1.jpg"
     },
     {
-      "id": "2",
       "first_name": "Gustave",
       "last_name": "Urvoy",
+      "University_id": "271973775",
       "email": "gurvoy1@sogou.com",
       "gender": "Male",
-      "University": "Louisiana Tech University",
-      "University_id": "271973775",
+      "status": "active",
       "major": "Engineering Physics",
+      "University": "Louisiana Tech University",
       "instructor_id": "1",
-      "image": "../studentImages/2.jpg"
+      "id": "2"
     },
     {
       "id": "3",
@@ -3670,6 +3689,42 @@
       "University": "aaaaaaaaaaaaaaaaa",
       "instructor_id": "1",
       "id": "jEfg06DFv-E"
+    },
+    {
+      "first_name": "omar",
+      "last_name": "ahmad",
+      "University_id": "928374920",
+      "email": "Ahmad@gmail.com",
+      "gender": "Male",
+      "status": "active",
+      "major": "cis",
+      "University": "hashemite",
+      "instructor_id": "I2-CrbZGKN0",
+      "id": "Zh16zi4feTY"
+    },
+    {
+      "first_name": "dana",
+      "last_name": "alhawari",
+      "University_id": "123456789",
+      "email": "danahawari@gmail.com",
+      "gender": "Female",
+      "status": "active",
+      "major": "computer science",
+      "University": "tafila",
+      "instructor_id": "I2-CrbZGKN0",
+      "id": "SDAuYEfn4nA"
+    },
+    {
+      "first_name": "asem",
+      "last_name": "bata",
+      "University_id": "123456781",
+      "email": "asem234@gmail.com",
+      "gender": "Male",
+      "status": "active",
+      "major": "se",
+      "University": "hashemite",
+      "instructor_id": "1",
+      "id": "jrT0Un-fAPE"
     }
   ],
   "courses": [
@@ -5710,6 +5765,17 @@
       "status": "published",
       "createdAt": "Created Oct 1",
       "id": "Ty8yI9wuo7s"
+    },
+    {
+      "title": "web advanced",
+      "description": "saofjkpoiqs",
+      "course": "IT Security",
+      "score": "90",
+      "date": "Mar 31, 2004",
+      "time": "02:03",
+      "status": "published",
+      "createdAt": "Created Oct 4",
+      "id": "Ra9UhRVS0WI"
     }
   ],
   "attendance": [

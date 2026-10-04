@@ -122,32 +122,16 @@
                 </article>
             </section>
 
-            <!-- Student Performance Roster Overview -->
+            <!-- Student Performance Grouped Overview -->
             <section class="card" style="margin-bottom:24px;">
                 <div class="card-header">
                     <div>
-                        <h3>Student Performance Summary</h3>
-                        <p class="muted">Overview of student averages and risk flags</p>
+                        <h3>Student Performance Groups</h3>
+                        <p class="muted">Students grouped by academic performance tier</p>
                     </div>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="analyticsRosterTable">
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Student ID</th>
-                                <th>Enrolled Course</th>
-                                <th>Average Grade</th>
-                                <th>Attendance</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="analyticsRosterBody">
-                            <tr>
-                                <td colspan="6" class="muted" style="text-align:center;">Loading analytics roster...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="performanceGroupsContainer" style="display:flex; flex-direction:column; gap:20px; margin-top:16px;">
+                    <p class="muted" style="text-align:center; padding:16px;">Loading student performance groups...</p>
                 </div>
             </section>
         </main>

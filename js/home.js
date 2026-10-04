@@ -246,7 +246,10 @@ function renderEventsSummary(myEvents) {
 function getActivityLog() {
   let key = "edutrack_activity_log_" + user.id;
   try {
-    return JSON.parse(localStorage.getItem(key)) || [];
+    let logs = JSON.parse(localStorage.getItem(key)) || [];
+    // Ensure sorted by timestamp descending so recent activities are always at the top
+    logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    return logs;
   } catch (e) {
     return [];
   }
@@ -257,6 +260,7 @@ function getActivityLog() {
  */
 function saveActivityLog(log) {
   let key = "edutrack_activity_log_" + user.id;
+  log.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   localStorage.setItem(key, JSON.stringify(log));
 }
 
@@ -435,9 +439,10 @@ function openAddTodoModal() {
     title: "Add To-Do Item",
     subtitle: "Add a personal task item to your daily agenda",
     bodyHtml: `
-      <form id="todoForm">
+      <form id="todoForm" novalidate>
+        <div id="todoFormError" class="error-box" style="margin-bottom: 12px; padding: 8px 12px; background-color: #fee2e2; border: 1px solid #ef4444; color: #991b1b; border-radius: 4px; font-size: 0.88rem;" hidden></div>
         <div class="form-group">
-          <label for="todoTitle">Task Description</label>
+          <label for="todoTitle">Task Description <span style="color:var(--danger, #ef4444);">*</span></label>
           <input type="text" id="todoTitle" required placeholder="e.g. Grade midterm assignments" />
         </div>
         <div class="form-actions" style="margin-top:20px;">
@@ -452,9 +457,21 @@ function openAddTodoModal() {
     modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
     modal.querySelector("#todoForm")?.addEventListener("submit", function (e) {
       e.preventDefault();
+      let errorBox = modal.querySelector("#todoFormError");
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+
       let titleInput = modal.querySelector("#todoTitle");
       let title = titleInput ? titleInput.value.trim() : "";
-      if (!title) return;
+      if (!title) {
+        if (errorBox) {
+          errorBox.textContent = "Task description is required.";
+          errorBox.hidden = false;
+        }
+        return;
+      }
 
       todos.push({
         id: Date.now(),
@@ -549,9 +566,10 @@ function openAddAnnouncementModal() {
     title: "Post New Announcement",
     subtitle: "Share reminders and notices with your classes",
     bodyHtml: `
-      <form id="announcementForm">
+      <form id="announcementForm" novalidate>
+        <div id="annFormError" class="error-box" style="margin-bottom: 12px; padding: 8px 12px; background-color: #fee2e2; border: 1px solid #ef4444; color: #991b1b; border-radius: 4px; font-size: 0.88rem;" hidden></div>
         <div class="form-group">
-          <label for="annTitle">Title</label>
+          <label for="annTitle">Title <span style="color:var(--danger, #ef4444);">*</span></label>
           <input type="text" id="annTitle" required placeholder="e.g. Midterm Progress Exam Reminder" />
         </div>
         <div class="form-group">
@@ -563,7 +581,7 @@ function openAddAnnouncementModal() {
           </select>
         </div>
         <div class="form-group">
-          <label for="annContent">Message</label>
+          <label for="annContent">Message <span style="color:var(--danger, #ef4444);">*</span></label>
           <textarea id="annContent" rows="3" required placeholder="Write announcement details here..."></textarea>
         </div>
         <div class="form-actions" style="margin-top:20px;">
@@ -578,11 +596,23 @@ function openAddAnnouncementModal() {
     modal.querySelector("[data-close]")?.addEventListener("click", closeModal);
     modal.querySelector("#announcementForm")?.addEventListener("submit", async function (e) {
       e.preventDefault();
+      let errorBox = modal.querySelector("#annFormError");
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.textContent = "";
+      }
+
       let title = modal.querySelector("#annTitle").value.trim();
       let priority = modal.querySelector("#annPriority").value;
       let content = modal.querySelector("#annContent").value.trim();
 
-      if (!title || !content) return;
+      if (!title || !content) {
+        if (errorBox) {
+          errorBox.textContent = "Title and message content are required.";
+          errorBox.hidden = false;
+        }
+        return;
+      }
 
       let newAnn = {
         id: "ann_" + Date.now(),

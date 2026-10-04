@@ -58,6 +58,8 @@ function logEventActivity(titleHtml) {
       timestamp: Date.now(),
     });
 
+    logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
     localStorage.setItem(logKey, JSON.stringify(logs));
   } catch (err) {
     console.warn("Failed to log activity:", err);
@@ -298,10 +300,13 @@ export async function refreshEvents() {
 
 function eventFormHtml(isEdit) {
   const buttonText = isEdit ? "Update Event" : "Create Event";
+  const todayStr = new Date().toISOString().split("T")[0];
+  const req = ' <span style="color:var(--danger, #ef4444);">*</span>';
   return `
     <form id="eventForm" novalidate>
+      <div id="eventFormError" class="error-box" style="margin-bottom: 12px; padding: 8px 12px; background-color: #fee2e2; border: 1px solid #ef4444; color: #991b1b; border-radius: 4px; font-size: 0.88rem;" hidden></div>
       <div class="form-group">
-        <label for="evtTitle">Event Title</label>
+        <label for="evtTitle">Event Title${req}</label>
         <input id="evtTitle" name="title" type="text" placeholder="e.g. JavaScript Hackathon Kickoff" required />
       </div>
       <div class="form-group">
@@ -314,18 +319,18 @@ function eventFormHtml(isEdit) {
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div class="form-group">
-          <label for="evtDate">Date</label>
-          <input id="evtDate" name="date" type="date" required />
+          <label for="evtDate">Date${req}</label>
+          <input id="evtDate" name="date" type="date" min="${todayStr}" required />
         </div>
         <div class="form-group">
-          <label for="evtTime">Time</label>
+          <label for="evtTime">Time${req}</label>
           <input id="evtTime" name="time" type="text" placeholder="e.g. 3:00 PM" required />
         </div>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
         <div class="form-group">
-          <label for="evtDuration">Duration</label>
-          <input id="evtDuration" name="duration" type="text" placeholder="e.g. 1 hour" />
+          <label for="evtDuration">Duration (at least 15 mins)${req}</label>
+          <input id="evtDuration" name="duration" type="text" placeholder="e.g. 1 hour or 15 mins" required />
         </div>
         <div class="form-group">
           <label for="evtLevel">Level / Tag</label>
@@ -333,8 +338,8 @@ function eventFormHtml(isEdit) {
         </div>
       </div>
       <div class="form-group">
-        <label for="evtLocation">Location / Room</label>
-        <input id="evtLocation" name="location" type="text" placeholder="e.g. Lab 201 / Zoom Link" />
+        <label for="evtLocation">Location / Room${req}</label>
+        <input id="evtLocation" name="location" type="text" placeholder="e.g. Lab 201 / Zoom Link" required />
       </div>
       <div class="form-actions" style="margin-top:20px;">
         <button type="button" class="btn btn-ghost" data-close>Cancel</button>
@@ -355,28 +360,93 @@ export function openAddEventModal() {
 
   form.addEventListener("submit", async function(e) {
     e.preventDefault();
-    const titleInput = form.elements.title.value.trim();
-    if (!titleInput) {
-      showToast("Please enter an event title", "error");
+    const errorBox = form.querySelector("#eventFormError");
+    if (errorBox) {
+      errorBox.hidden = true;
+      errorBox.textContent = "";
+    }
+
+  const titleVal = form.elements.title.value.trim();
+  const dateVal = form.elements.date.value;
+  const timeVal = form.elements.time.value.trim();
+  const durationVal = form.elements.duration.value.trim();
+  const locationVal = form.elements.location.value.trim();
+
+  if (!titleVal || !dateVal || !timeVal || !durationVal || !locationVal) {
+      if (errorBox) {
+      errorBox.textContent = "Please fill in all mandatory fields (Title, Date, Time, Duration, Location).";
+        errorBox.hidden = false;
+      }
       return;
     }
 
+    const todayStr = new Date().toISOString().split("T")[0];
+  if (dateVal < todayStr) {
+      if (errorBox) {
+        errorBox.textContent = "Date cannot be in the past.";
+        errorBox.hidden = false;
+      }
+      return;
+    }
+
+  // Parse time for 24-hour range validation
+  let isValidTime = false;
+  if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]\s*(AM|PM|am|pm)?$/.test(timeVal)) {
+    isValidTime = true;
+  } else if (/^(1[0-2]|0?[1-9]):[0-5][0-9]\s*(AM|PM|am|pm)$/i.test(timeVal)) {
+    isValidTime = true;
+  }
+
+  if (!isValidTime) {
+    if (errorBox) {
+      errorBox.textContent = "Please enter a valid time (e.g. 14:30 or 2:30 PM within 24-hour range).";
+      errorBox.hidden = false;
+    }
+    return;
+  }
+
+  // Parse duration for at least 15 mins check
+  let durationMins = 0;
+  const minsMatch = durationVal.match(/(\d+)\s*(m|min|minute|minutes)/i);
+  const hoursMatch = durationVal.match(/(\d+(\.\d+)?)\s*(h|hr|hour|hours)/i);
+
+  if (hoursMatch) {
+    durationMins += parseFloat(hoursMatch[1]) * 60;
+  }
+  if (minsMatch) {
+    durationMins += parseInt(minsMatch[1], 10);
+  }
+  if (!minsMatch && !hoursMatch && !isNaN(parseFloat(durationVal))) {
+    durationMins = parseFloat(durationVal);
+  }
+
+  if (durationMins < 15) {
+    if (errorBox) {
+      errorBox.textContent = "Event duration must be at least 15 minutes (e.g. 15 mins, 1 hour).";
+      errorBox.hidden = false;
+    }
+    return;
+  }
+
     try {
       await createEvent(currentUser, {
-        title: titleInput,
+        title: titleVal,
         type: form.elements.type.value,
-        date: form.elements.date.value || new Date().toISOString().split("T")[0],
-        time: form.elements.time.value || "12:00 PM",
-        duration: form.elements.duration.value || "1 hour",
+        date: dateVal,
+        time: timeVal,
+        duration: durationVal,
         level: form.elements.level.value || "All levels",
-        location: form.elements.location.value || "Online",
+        location: locationVal,
       });
 
       closeModal();
       showToast("Event created successfully!", "success");
       await refreshEvents();
     } catch (err) {
-      showToast("Failed to create event: " + err.message, "error");
+      if (errorBox) {
+        errorBox.textContent = "Failed to create event: " + err.message;
+        errorBox.hidden = false;
+      }
     }
   });
 }
@@ -401,9 +471,28 @@ export function openEditEventModal(item) {
 
   form.addEventListener("submit", async function(e) {
     e.preventDefault();
+    const errorBox = form.querySelector("#eventFormError");
+    if (errorBox) {
+      errorBox.hidden = true;
+      errorBox.textContent = "";
+    }
+
     const titleInput = form.elements.title.value.trim();
     if (!titleInput) {
-      showToast("Please enter an event title", "error");
+      if (errorBox) {
+        errorBox.textContent = "Please enter an event title.";
+        errorBox.hidden = false;
+      }
+      return;
+    }
+
+    const selectedDate = form.elements.date.value;
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (selectedDate && selectedDate < todayStr) {
+      if (errorBox) {
+        errorBox.textContent = "Date cannot be in the past.";
+        errorBox.hidden = false;
+      }
       return;
     }
 
@@ -422,7 +511,10 @@ export function openEditEventModal(item) {
       showToast("Event updated successfully!", "success");
       await refreshEvents();
     } catch (err) {
-      showToast("Failed to update event: " + err.message, "error");
+      if (errorBox) {
+        errorBox.textContent = "Failed to update event: " + err.message;
+        errorBox.hidden = false;
+      }
     }
   });
 }
@@ -673,7 +765,8 @@ function openAddAnnouncementModal() {
     title: "Post New Announcement",
     subtitle: "Broadcast a notice or reminder to your students",
     bodyHtml: `
-      <form id="annForm">
+      <form id="annForm" novalidate>
+        <div id="eventsAnnFormError" class="error-box" style="margin-bottom: 12px; padding: 8px 12px; background-color: #fee2e2; border: 1px solid #ef4444; color: #991b1b; border-radius: 4px; font-size: 0.88rem;" hidden></div>
         <div class="form-group">
           <label for="annTitle">Title</label>
           <input type="text" id="annTitle" required placeholder="e.g. Midterm Review Session" />
@@ -705,11 +798,23 @@ function openAddAnnouncementModal() {
     if (form) {
       form.addEventListener("submit", async function(e) {
         e.preventDefault();
+        const errorBox = modal.querySelector("#eventsAnnFormError");
+        if (errorBox) {
+          errorBox.hidden = true;
+          errorBox.textContent = "";
+        }
+
         const title = modal.querySelector("#annTitle").value.trim();
         const priority = modal.querySelector("#annPriority").value;
         const content = modal.querySelector("#annContent").value.trim();
 
-        if (!title || !content) return;
+        if (!title || !content) {
+          if (errorBox) {
+            errorBox.textContent = "Title and message content are required.";
+            errorBox.hidden = false;
+          }
+          return;
+        }
 
         const newAnn = {
           id: "ann_" + Date.now(),

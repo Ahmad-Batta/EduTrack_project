@@ -367,18 +367,17 @@ function renderAssignmentStatusChart(assignments) {
 }
 
 function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
-  var tbody = document.getElementById("analyticsRosterBody");
-  if (!tbody) return;
+  var container = document.getElementById("performanceGroupsContainer") || document.getElementById("analyticsRosterBody");
+  if (!container) return;
 
   if (myStudents.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="muted" style="text-align:center;">No students found for this trainer.</td></tr>';
+    container.innerHTML = '<p class="muted" style="text-align:center; padding:16px;">No students found for this trainer.</p>';
     return;
   }
 
   var studentAvgMap = {};
   for (var i = 0; i < myGrades.length; i++) {
-    // var g = myGrgrades[i] || myGrad=es[i];
-	var g = myGrades[i];
+    var g = myGrades[i];
     var sid = String(g.student_id);
     if (!studentAvgMap[sid]) {
       studentAvgMap[sid] = [];
@@ -399,16 +398,15 @@ function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
     }
   }
 
-  var html = "";
-  var limit = myStudents.length < 10 ? myStudents.length : 10;
-  for (var i = 0; i < limit; i++) {
+  var highPerformers = [];
+  var averagePerformers = [];
+  var atRiskPerformers = [];
+
+  for (var i = 0; i < myStudents.length; i++) {
     var s = myStudents[i];
     var firstName = s.first_name || "";
     var lastName = s.last_name || "";
-    var name = (firstName + " " + lastName).trim();
-    if (name === "") {
-      name = s.name || "Student";
-    }
+    var name = (firstName + " " + lastName).trim() || s.name || "Student";
 
     var scores = studentAvgMap[String(s.id)] || [];
     var avg = 78;
@@ -426,22 +424,57 @@ function renderStudentAnalyticsTable(myStudents, myGrades, myAttendance) {
       attRate = Math.round((attRec.present / attRec.total) * 100);
     }
 
-    var statusBadge = "";
-    if (avg < 60) {
-      statusBadge = '<span class="badge badge-danger">At Risk</span>';
-    } else {
-      statusBadge = '<span class="badge badge-success">Good Standing</span>';
-    }
+    var studentData = {
+      id: s.id,
+      name: name,
+      major: s.major || "Computer Science",
+      avg: avg,
+      attRate: attRate,
+    };
 
-    html += '<tr>';
-    html += '<td><strong>' + escapeHtml(name) + '</strong></td>';
-    html += '<td><code>#' + escapeHtml(String(s.id)) + '</code></td>';
-    html += '<td>' + escapeHtml(s.major || "Computer Science") + '</td>';
-    html += '<td><strong>' + avg + '%</strong></td>';
-    html += '<td>' + attRate + '%</td>';
-    html += '<td>' + statusBadge + '</td>';
-    html += '</tr>';
+    if (avg >= 80) {
+      highPerformers.push(studentData);
+    } else if (avg >= 60) {
+      averagePerformers.push(studentData);
+    } else {
+      atRiskPerformers.push(studentData);
+    }
   }
 
-  tbody.innerHTML = html;
+  function renderGroupHtml(title, description, badgeColor, items) {
+    var groupHtml = '<div class="performance-group" style="border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; background:#fff;">';
+    groupHtml += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">';
+    groupHtml += '<div><h4 style="margin:0; font-size:1.05rem;">' + escapeHtml(title) + '</h4><p class="muted" style="margin:2px 0 0; font-size:0.82rem;">' + escapeHtml(description) + '</p></div>';
+    groupHtml += '<span class="badge badge-' + badgeColor + '">' + items.length + ' Students</span>';
+    groupHtml += '</div>';
+
+    if (items.length === 0) {
+      groupHtml += '<p class="muted" style="font-size:0.85rem; margin:8px 0;">No students in this performance category.</p>';
+    } else {
+      groupHtml += '<ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">';
+      for (var k = 0; k < items.length; k++) {
+        var st = items[k];
+        groupHtml += '<li style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border:1px solid var(--border); border-radius:4px; background:#fafafa; font-size:0.9rem;">';
+        groupHtml += '<div><strong>' + escapeHtml(st.name) + '</strong> <span class="muted" style="font-size:0.8rem;">(#' + escapeHtml(String(st.id)) + ')</span> • <span class="muted">' + escapeHtml(st.major) + '</span></div>';
+        groupHtml += '<div style="display:flex; gap:16px; align-items:center;">';
+        groupHtml += '<span>Avg: <strong>' + st.avg + '%</strong></span>';
+        groupHtml += '<span class="muted">Attendance: ' + st.attRate + '%</span>';
+        groupHtml += '</div></li>';
+      }
+      groupHtml += '</ul>';
+    }
+    groupHtml += '</div>';
+    return groupHtml;
+  }
+
+  // Sort Average Performers descending by average grade and restrict to top 3
+  averagePerformers.sort(function(a, b) { return b.avg - a.avg; });
+  var top3Average = averagePerformers.slice(0, 3);
+
+  var finalHtml = "";
+  finalHtml += renderGroupHtml("High Performers (80% - 100%)", "Students with excellent academic standing", "success", highPerformers);
+  finalHtml += renderGroupHtml("Average Performers (60% - 79%)", "Top 3 students meeting expected criteria", "info", top3Average);
+  finalHtml += renderGroupHtml("At-Risk Performers (< 60%)", "Students requiring additional academic support", "danger", atRiskPerformers);
+
+  container.innerHTML = finalHtml;
 }

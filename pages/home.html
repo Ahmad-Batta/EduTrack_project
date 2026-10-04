@@ -161,6 +161,19 @@
 				</div>
 
 				<div style="display:flex; flex-direction:column; gap:16px;">
+					<!-- Recent Activity Feed (Above To-Do List) -->
+					<article class="card">
+						<div class="card-header">
+							<div>
+								<h3>Recent Activity</h3>
+								<p class="muted">Updates across your workspace</p>
+							</div>
+						</div>
+						<ul id="activityList" class="feed">
+							<!-- Dynamically populated -->
+						</ul>
+					</article>
+
 					<!-- To-Do List & Agenda -->
 					<article class="card">
 						<div class="card-header">
@@ -173,19 +186,6 @@
 						<div id="todoList" style="margin-top:10px;">
 							<!-- Dynamically populated -->
 						</div>
-					</article>
-
-					<!-- Recent Activity Feed -->
-					<article class="card">
-						<div class="card-header">
-							<div>
-								<h3>Recent Activity</h3>
-								<p class="muted">Updates across your workspace</p>
-							</div>
-						</div>
-						<ul id="activityList" class="feed">
-							<!-- Dynamically populated -->
-						</ul>
 					</article>
 				</div>
 			</section>
