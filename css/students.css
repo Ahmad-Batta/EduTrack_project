@@ -722,7 +722,7 @@ svg {
    Student Grid
    ========================================================== */
 
-.students-container {
+/* .students-container {
     display: grid;
 
     grid-template-columns:
@@ -732,14 +732,14 @@ svg {
         );
 
     gap: 20px;
-}
+} */
 
 
 /* ==========================================================
    Premium Student Cards
    ========================================================== */
 
-.student-card {
+/* .student-card {
     position: relative;
 
     isolation: isolate;
@@ -898,13 +898,13 @@ svg {
 
     text-transform:
         capitalize;
-}
+} */
 
 
 /* ==========================================================
    Student Card Buttons
    ========================================================== */
-
+/* 
 .student-card button {
     position: relative;
 
@@ -937,6 +937,443 @@ svg {
         translateY(-2px);
 }
 
+
+
+
+
+
+/* ==========================================================
+   Students Table
+   ========================================================== */
+
+.students-table {
+    width: 100%;
+
+    background: #ffffff;
+
+    border:
+        1px solid
+        rgba(118, 146, 255, 0.16);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 18px 50px
+        rgba(9, 21, 64, 0.08);
+
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   Table Header
+   ========================================================== */
+
+.students-table-header {
+    display: grid;
+
+    grid-template-columns:
+        minmax(170px, 1.2fr)
+        minmax(125px, 0.8fr)
+        minmax(170px, 1fr)
+        minmax(190px, 1.2fr)
+        minmax(210px, 1.25fr)
+        minmax(120px, 0.7fr)
+        minmax(310px, 1.6fr);
+
+    align-items: center;
+
+    min-width: 1320px;
+
+    padding:
+        0 22px;
+
+    min-height: 58px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #091540,
+            #1B2CC1
+        );
+
+    font-size: 0.76rem;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.055em;
+}
+
+
+.actions-header {
+    text-align: center;
+}
+
+
+/* ==========================================================
+   Scrollable Students Area
+   ========================================================== */
+
+.students-container {
+    display: block;
+
+    max-height: 610px;
+
+    overflow-y: auto;
+
+    overflow-x: auto;
+
+    background:
+        #ffffff;
+
+    scroll-behavior: smooth;
+}
+
+
+/* Premium scrollbar */
+
+.students-container::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+.students-container::-webkit-scrollbar-track {
+    background: #F2F5FC;
+}
+
+.students-container::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            180deg,
+            #7692FF,
+            #1B2CC1
+        );
+
+    border-radius: 999px;
+
+    border:
+        2px solid #F2F5FC;
+}
+
+.students-container::-webkit-scrollbar-thumb:hover {
+    background: #1B2CC1;
+}
+
+
+/* ==========================================================
+   Student Row
+   ========================================================== */
+
+.student-card {
+    display: grid;
+
+    grid-template-columns:
+        minmax(170px, 1.2fr)
+        minmax(125px, 0.8fr)
+        minmax(170px, 1fr)
+        minmax(190px, 1.2fr)
+        minmax(210px, 1.25fr)
+        minmax(120px, 0.7fr)
+        92px
+        65px
+        82px
+        70px;
+
+    align-items: center;
+
+    min-width: 1320px;
+
+    min-height: 82px;
+
+    padding:
+        12px 22px;
+
+    background: #ffffff;
+
+    border-bottom:
+        1px solid
+        rgba(118, 146, 255, 0.13);
+
+    transition:
+        background 0.22s ease,
+        box-shadow 0.22s ease,
+        transform 0.22s ease;
+}
+
+
+/* remove old card effect */
+
+.student-card::before,
+.student-card::after {
+    display: none;
+}
+
+
+/* Premium row hover */
+
+.student-card:hover {
+    background:
+        linear-gradient(
+            90deg,
+            #F8FAFF 0%,
+            #EEF2FF 50%,
+            #F8FAFF 100%
+        );
+
+    box-shadow:
+        inset 4px 0 0 #1B2CC1;
+
+    transform: none;
+}
+
+
+/* alternate rows */
+
+.student-card:nth-child(even) {
+    background: #FBFCFF;
+}
+
+.student-card:nth-child(even):hover {
+    background:
+        linear-gradient(
+            90deg,
+            #F7F9FF,
+            #EDF1FF
+        );
+}
+
+
+/* ==========================================================
+   Student Name
+   ========================================================== */
+
+.student-card h2 {
+    margin: 0;
+
+    padding-right: 12px;
+
+    color: #091540;
+
+    font-size: 0.94rem;
+
+    font-weight: 800;
+
+    letter-spacing:
+        -0.01em;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* ==========================================================
+   Student Data Cells
+   ========================================================== */
+
+.student-card p {
+    margin: 0;
+
+    padding:
+        0 12px 0 0;
+
+    color: #6D7991;
+
+    background: transparent;
+
+    border: 0;
+
+    border-radius: 0;
+
+    font-size: 0.79rem;
+
+    line-height: 1.45;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* stop old hover effects */
+
+.student-card p:hover {
+    transform: none;
+
+    background: transparent;
+
+    border: 0;
+}
+
+
+/* ==========================================================
+   Status Cell
+   ========================================================== */
+
+.student-card p:nth-of-type(5) {
+    justify-self: start;
+
+    width: fit-content;
+
+    margin: 0;
+
+    padding:
+        6px 10px;
+
+    border-radius:
+        999px;
+
+    color: #11775A;
+
+    background:
+        #E7F7F1;
+
+    font-size:
+        0.72rem;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   Table Action Buttons
+   ========================================================== */
+
+.student-card button {
+    width: auto;
+
+    min-width: 0;
+
+    min-height: 34px;
+
+    margin: 0 5px 0 0;
+
+    padding:
+        0 9px;
+
+    border-radius:
+        9px;
+
+    border:
+        1px solid transparent;
+
+    font-size:
+        0.72rem;
+
+    font-weight: 750;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+
+.student-card button:hover {
+    transform:
+        translateY(-2px);
+}
+
+
+/* View Profile */
+
+.student-card button:nth-of-type(1) {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1B2CC1,
+            #4059E8
+        );
+
+    box-shadow:
+        0 6px 16px
+        rgba(27, 44, 193, 0.20);
+}
+
+
+.student-card button:nth-of-type(1):hover {
+    box-shadow:
+        0 10px 22px
+        rgba(27, 44, 193, 0.30);
+}
+
+
+/* Edit */
+
+.student-card button:nth-of-type(2) {
+    color: #1B2CC1;
+
+    background:
+        #EEF2FF;
+
+    border-color:
+        #CDD6FF;
+}
+
+
+.student-card button:nth-of-type(2):hover {
+    background:
+        #E2E8FF;
+}
+
+
+/* Archive / Restore */
+
+.student-card button:nth-of-type(3) {
+    color: #93600B;
+
+    background:
+        #FFF6DD;
+
+    border-color:
+        #F1D58C;
+}
+
+
+.student-card button:nth-of-type(3):hover {
+    background:
+        #FFEDBC;
+}
+
+
+/* Delete */
+
+.student-card button:nth-of-type(4) {
+    color: #B83748;
+
+    background:
+        #FDECEE;
+
+    border-color:
+        #F4C7CD;
+}
+
+
+.student-card button:nth-of-type(4):hover {
+    background:
+        #FADDE1;
+}
+
+
+/* ==========================================================
+   Last Row
+   ========================================================== */
+
+.student-card:last-child {
+    border-bottom: 0;
+}
 /* View */
 
 .student-card button:nth-of-type(1) {
@@ -994,7 +1431,7 @@ svg {
     box-shadow:
         0 12px 24px
         rgba(27, 44, 193, 0.30);
-}
+} */
 
 
 /* ==========================================================

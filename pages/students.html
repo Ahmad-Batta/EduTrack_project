@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,13 +17,18 @@
         rel="stylesheet"
         href="../css/students.css"
     >
+
 </head>
+
 
 <body>
 
     <div class="app">
 
 
+        <!-- =====================================================
+             NAVBAR
+             ===================================================== -->
 
         <header class="top-navbar">
 
@@ -29,7 +36,8 @@
 
                 <a
                     href="home.html"
-                    class="nav-brand">
+                    class="nav-brand"
+                >
 
                     <span class="brand-mark">
                         E
@@ -54,31 +62,36 @@
 
                     <a
                         href="home.html"
-                        class="nav-link">
+                        class="nav-link"
+                    >
                         Home
                     </a>
 
                     <a
                         href="students.html"
-                        class="nav-link active">
+                        class="nav-link active"
+                    >
                         Students
                     </a>
 
                     <a
                         href="courses.html"
-                        class="nav-link">
+                        class="nav-link"
+                    >
                         Courses
                     </a>
 
                     <a
                         href="tasks.html"
-                        class="nav-link">
+                        class="nav-link"
+                    >
                         Tasks
                     </a>
 
                     <a
                         href="dashboard.html"
-                        class="nav-link">
+                        class="nav-link"
+                    >
                         Analytics
                     </a>
 
@@ -89,7 +102,8 @@
 
                     <a
                         href="instructorProfile.html"
-                        class="profile-btn">
+                        class="profile-btn"
+                    >
 
                         <div class="avatar">
                             T
@@ -117,12 +131,16 @@
 
 
 
-      
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
 
         <main class="main students-page">
 
 
-            <!-- Page Header -->
+            <!-- =================================================
+                 PAGE HEADER
+                 ================================================= -->
 
             <header class="page-header">
 
@@ -147,17 +165,18 @@
                 <button
                     id="add-student-btn"
                     class="btn btn-primary"
-                    type="button">
-
+                    type="button"
+                >
                     + Add Student
-
                 </button>
 
             </header>
 
 
 
-          
+            <!-- =================================================
+                 SEARCH AND FILTER
+                 ================================================= -->
 
             <section class="students-toolbar">
 
@@ -165,10 +184,9 @@
 
                     <label
                         for="search-input"
-                        class="toolbar-label">
-
+                        class="toolbar-label"
+                    >
                         Search Students
-
                     </label>
 
                     <input
@@ -184,10 +202,9 @@
 
                     <label
                         for="filter-select"
-                        class="toolbar-label">
-
+                        class="toolbar-label"
+                    >
                         Student Status
-
                     </label>
 
                     <select id="filter-select">
@@ -212,7 +229,9 @@
 
 
 
-           
+            <!-- =================================================
+                 STUDENT DIRECTORY
+                 ================================================= -->
 
             <section>
 
@@ -237,26 +256,86 @@
                 </div>
 
 
-                <section
-                    id="students-container"
-                    class="students-container">
-                </section>
 
+                <!-- =============================================
+                     STUDENTS TABLE
+                     ============================================= -->
+
+                <div class="students-table">
+
+
+                    <!-- Table Header -->
+
+                    <div class="students-table-header">
+
+                        <div>
+                            Student
+                        </div>
+
+                        <div>
+                            Student ID
+                        </div>
+
+                        <div>
+                            Major
+                        </div>
+
+                        <div>
+                            University
+                        </div>
+
+                        <div>
+                            Email
+                        </div>
+
+                        <div>
+                            Status
+                        </div>
+
+                        <div class="actions-header">
+                            Actions
+                        </div>
+
+                    </div>
+
+
+
+                    <!--
+                        IMPORTANT:
+                        students.js still uses this same ID.
+
+                        JavaScript will dynamically add
+                        the student rows inside this section.
+                    -->
+
+                    <section
+                        id="students-container"
+                        class="students-container"
+                    >
+                    </section>
+
+                </div>
+
+
+
+                <!-- No Students Message -->
 
                 <p
                     id="no-students-message"
                     class="empty-state"
-                    hidden>
-
+                    hidden
+                >
                     No students found.
-
                 </p>
 
             </section>
 
 
 
-            
+            <!-- =================================================
+                 STUDENT TEMPLATE
+                 ================================================= -->
+
             <template id="student-card-template">
 
                 <article class="student-card">
@@ -266,42 +345,49 @@
                     </h2>
 
                     <p>
+
                         <strong>
                             Student ID:
                         </strong>
 
                         <span class="student-id"></span>
+
                     </p>
 
                     <p>
+
                         <strong>
                             Major:
                         </strong>
 
                         <span class="student-major"></span>
+
                     </p>
 
                     <p>
+
                         <strong>
                             University:
                         </strong>
 
                         <span class="student-university"></span>
+
                     </p>
 
                     <p>
+
                         <strong>
                             Email:
                         </strong>
 
                         <span class="student-email"></span>
+
                     </p>
 
 
                     <div class="student-actions">
 
-                        <button
-                            class="view-profile-btn">
+                        <button class="view-profile-btn">
                             View Profile
                         </button>
 
@@ -311,15 +397,20 @@
 
             </template>
 
+
         </main>
 
 
 
+        <!-- =====================================================
+             ADD / EDIT STUDENT MODAL
+             ===================================================== -->
+
         <section
             id="add-student-form"
             class="student-modal-backdrop"
-            hidden>
-
+            hidden
+        >
 
             <div class="student-modal">
 
@@ -346,8 +437,14 @@
 
 
 
+                <!-- =============================================
+                     STUDENT FORM
+                     ============================================= -->
+
                 <div class="student-form-grid">
 
+
+                    <!-- First Name -->
 
                     <div class="form-group">
 
@@ -364,6 +461,8 @@
                     </div>
 
 
+                    <!-- Last Name -->
+
                     <div class="form-group">
 
                         <label for="last-name-input">
@@ -378,6 +477,8 @@
 
                     </div>
 
+
+                    <!-- Student ID -->
 
                     <div class="form-group">
 
@@ -394,6 +495,8 @@
                     </div>
 
 
+                    <!-- Email -->
+
                     <div class="form-group">
 
                         <label for="email-input">
@@ -408,6 +511,8 @@
 
                     </div>
 
+
+                    <!-- Gender -->
 
                     <div class="form-group">
 
@@ -434,6 +539,8 @@
                     </div>
 
 
+                    <!-- Major -->
+
                     <div class="form-group">
 
                         <label for="major-input">
@@ -449,6 +556,8 @@
                     </div>
 
 
+                    <!-- University -->
+
                     <div class="form-group">
 
                         <label for="university-input">
@@ -463,6 +572,8 @@
 
                     </div>
 
+
+                    <!-- Instructor ID -->
 
                     <div class="form-group">
 
@@ -482,25 +593,27 @@
 
 
 
+                <!-- =============================================
+                     MODAL BUTTONS
+                     ============================================= -->
+
                 <div class="modal-footer">
 
                     <button
                         id="cancel-student-btn"
                         type="button"
-                        class="premium-btn btn-secondary">
-
+                        class="premium-btn btn-secondary"
+                    >
                         Cancel
-
                     </button>
 
 
                     <button
                         id="save-student-btn"
                         type="button"
-                        class="premium-btn btn-primary">
-
+                        class="premium-btn btn-primary"
+                    >
                         Save Student
-
                     </button>
 
                 </div>
@@ -511,6 +624,9 @@
 
 
 
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
 
         <footer class="site-footer">
 
@@ -520,14 +636,21 @@
 
         </footer>
 
+
     </div>
 
 
 
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
     <script
         type="module"
-        src="../js/students.js">
+        src="../js/students.js"
+    >
     </script>
+
 
 </body>
 
