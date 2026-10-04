@@ -113,6 +113,9 @@ export function renderTopNav(activeKey) {
       </nav>
 
       <div class="nav-right">
+        <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn" title="Log out" style="color:var(--danger); border:1px solid var(--border);">
+          Logout
+        </button>
         <button type="button" class="profile-btn" id="profileBtn" title="View Profile" aria-label="Trainer Profile">
           <div class="avatar">${initial}</div>
           <div class="profile-copy">
@@ -143,6 +146,7 @@ export function renderTopNav(activeKey) {
     </div>`;
 
   // Listeners
+  container.querySelector("#logoutBtn")?.addEventListener("click", logout);
   container.querySelector("#profileBtn")?.addEventListener("click", openProfileModal);
   container.querySelector("#mobileProfileBtn")?.addEventListener("click", () => {
     toggleMobileMenu(false);

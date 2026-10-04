@@ -65,7 +65,7 @@ const renderProfile = () => {
 renderProfile();
 
 // ---------- Logout ----------
-$("logout-btn").addEventListener("click", logout);
+if ($("logout-btn")) $("logout-btn").addEventListener("click", logout);
 
 // ---------- Tabs ----------
 let studentsLoaded = false;
@@ -121,29 +121,39 @@ editForm.addEventListener("submit", async (event) => {
   }
 });
 
-const closeDeleteModal = () => deleteModal.classList.remove("active");
+const deleteModal = $("delete-modal");
+const deleteInput = $("delete-confirm-input");
+const confirmDeleteBtn = $("confirm-delete-btn");
 
-$("open-delete-btn").addEventListener("click", openDeleteModal);
-$("cancel-delete-btn").addEventListener("click", closeDeleteModal);
-$("close-delete-x").addEventListener("click", closeDeleteModal);
-deleteModal.addEventListener("click", (event) => {
-  if (event.target === deleteModal) closeDeleteModal();
-});
+const closeDeleteModal = () => deleteModal && deleteModal.classList.remove("active");
+
+if ($("open-delete-btn")) $("open-delete-btn").addEventListener("click", () => deleteModal && deleteModal.classList.add("active"));
+if ($("cancel-delete-btn")) $("cancel-delete-btn").addEventListener("click", closeDeleteModal);
+if ($("close-delete-x")) $("close-delete-x").addEventListener("click", closeDeleteModal);
+if (deleteModal) {
+  deleteModal.addEventListener("click", (event) => {
+    if (event.target === deleteModal) closeDeleteModal();
+  });
+}
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeDeleteModal();
 });
 
-deleteInput.addEventListener("input", () => {
-  confirmDeleteBtn.disabled = deleteInput.value.trim().toLowerCase() !== user.email.toLowerCase();
-});
+if (deleteInput && confirmDeleteBtn) {
+  deleteInput.addEventListener("input", () => {
+    confirmDeleteBtn.disabled = deleteInput.value.trim().toLowerCase() !== user.email.toLowerCase();
+  });
+}
 
-confirmDeleteBtn.addEventListener("click", async () => {
-  confirmDeleteBtn.disabled = true;
-  try {
-    await updateInstructor(user.id, { archived: true });
-    logout();
-  } catch (error) {
-    $("delete-message").textContent = error.message;
-    confirmDeleteBtn.disabled = false;
-  }
-});
+if (confirmDeleteBtn) {
+  confirmDeleteBtn.addEventListener("click", async () => {
+    confirmDeleteBtn.disabled = true;
+    try {
+      await updateInstructor(user.id, { archived: true });
+      logout();
+    } catch (error) {
+      if ($("delete-message")) $("delete-message").textContent = error.message;
+      confirmDeleteBtn.disabled = false;
+    }
+  });
+}

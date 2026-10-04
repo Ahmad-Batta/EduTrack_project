@@ -100,6 +100,7 @@ body { display:flex; background:var(--bg); min-height:100vh; color:var(--text); 
 .form-group { margin-bottom:16px; display:flex; flex-direction:column; gap:6px; }
 .form-group label { font-size:13px; font-weight:600; color:#475569; }
 .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px; font-size:14px; color:var(--ink); background:var(--bg); outline:none; transition:all .2s ease; }
+.form-group select { height:42px; appearance:auto; -webkit-appearance:auto; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { background:#fff; border-color:var(--teal); box-shadow:0 0 0 3px rgba(13,148,136,.15); }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:24px; padding-top:16px; border-top:1px solid var(--line-soft); }

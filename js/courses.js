@@ -39,6 +39,23 @@ function saveLocalCourses(list) {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(list));
 }
 
+function normalizeCourse(c) {
+    if (!c || typeof c !== 'object') return null;
+    const title = c.title || c.name || 'Untitled Course';
+    const code = c.code || c.major || 'COURSE';
+    const instructorId = c.instructorId || c.instructor_id || null;
+    return {
+        ...c,
+        id: String(c.id),
+        title,
+        code,
+        description: c.description || '',
+        instructorId,
+        instructor_id: instructorId,
+        enrolledStudentIds: Array.isArray(c.enrolledStudentIds) ? c.enrolledStudentIds : []
+    };
+}
+
 // ==========================================
 // 2. التحميل الأولي للبيانات
 // ==========================================
@@ -88,33 +105,35 @@ function setupEventListeners() {
 
 async function loadCourses() {
     const currentInstructor = Auth.getCurrentInstructor();
-    let fresh = [];
-    try {
-        console.log('[courses] Loading for instructor:', currentInstructor.id);
-        fresh = await CourseAPI.getByInstructor(currentInstructor.id);
+    const instId = String(currentInstructor.id);
+    let freshApi = [];
 
-        if (!Array.isArray(fresh) || fresh.length === 0) {
-            const all = await CourseAPI.getAll();
-            if (Array.isArray(all)) {
-                fresh = all.filter(c => String(c.instructorId || c.instructor_id) === String(currentInstructor.id));
-            }
+    try {
+        console.log('[courses] Loading courses from API');
+        const all = await CourseAPI.getAll();
+        if (Array.isArray(all)) {
+            freshApi = all;
         }
     } catch (error) {
         console.warn('[courses] ❌ Load failed via API, checking localStorage:', error);
     }
 
-    if (!Array.isArray(fresh)) fresh = [];
+    const localList = getLocalCourses();
+    const combinedRaw = [...freshApi, ...localList];
 
-    const local = getLocalCourses();
-    const localInstructor = local.filter(c => String(c.instructorId || c.instructor_id) === String(currentInstructor.id));
+    const map = new Map();
+    combinedRaw.forEach(item => {
+        const norm = normalizeCourse(item);
+        if (norm && norm.id) {
+            map.set(norm.id, norm);
+        }
+    });
 
-    const combined = [...fresh, ...localInstructor];
-    const seen = new Set();
-    allCourses = combined.filter(c => {
-        const idStr = String(c.id);
-        if (seen.has(idStr)) return false;
-        seen.add(idStr);
-        return true;
+    const allNormalized = Array.from(map.values());
+
+    allCourses = allNormalized.filter(c => {
+        if (!c.instructorId) return true; // General/default courses
+        return String(c.instructorId) === instId;
     });
 
     applySearchAndRender();
@@ -266,6 +285,7 @@ if (courseForm) {
             } else {
                 savedCourse = await CourseAPI.create({
                     instructorId: currentInstructor.id,
+                    instructor_id: currentInstructor.id,
                     title,
                     code,
                     description,
@@ -275,7 +295,10 @@ if (courseForm) {
             }
         } catch (saveError) {
             console.warn('[courses] API Save failed, using local storage fallback:', saveError);
-            const existingCourse = id ? allCourses.find(c => String(c.id) === String(id)) : null;
+        }
+
+        const existingCourse = id ? allCourses.find(c => String(c.id) === String(id)) : null;
+        if (!savedCourse || !savedCourse.id) {
             savedCourse = {
                 id: id || ('crs_' + Date.now()),
                 instructorId: currentInstructor.id,
@@ -285,11 +308,10 @@ if (courseForm) {
                 description,
                 enrolledStudentIds: existingCourse ? (existingCourse.enrolledStudentIds || []) : []
             };
-            if (id) {
-                await ActivityLogger.logActivity('EDIT_COURSE', `Updated course: ${title}`);
-            } else {
-                await ActivityLogger.logActivity('ADD_COURSE', `Created course: ${title}`);
-            }
+        } else {
+            savedCourse = normalizeCourse(savedCourse);
+            savedCourse.instructorId = currentInstructor.id;
+            savedCourse.instructor_id = currentInstructor.id;
         }
 
         if (savedCourse) {
@@ -301,17 +323,7 @@ if (courseForm) {
         }
 
         hideCourseModal();
-
-        if (savedCourse && savedCourse.id) {
-            const idx = allCourses.findIndex(c => String(c.id) === String(savedCourse.id));
-            if (idx > -1) allCourses[idx] = savedCourse;
-            else allCourses.push(savedCourse);
-            if (searchCourseInput && !id) searchCourseInput.value = '';
-            applySearchAndRender();
-            calculateCourseAnalytics();
-        } else {
-            setTimeout(loadCourses, 400);
-        }
+        await loadCourses();
     });
 }
 

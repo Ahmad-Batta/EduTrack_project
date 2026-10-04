@@ -1,6 +1,9 @@
 /* ==========================================================
    quizzes.js — صفحة الكويزات: CRUD + أرشفة + نتائج + تحليلات + أسئلة
    ========================================================== */
+
+
+   
 const $ = (id) => document.getElementById(id);
 
 const state = { quizzes: [], courses: [], students: [], results: [], view: 'active', activeQuizId: null, currentQuestions: [] };
@@ -17,30 +20,67 @@ function avgPercent(quiz) {
     return rs.length ? rs.reduce((sum, r) => sum + toPercent(r.score, quiz.totalMarks), 0) / rs.length : null;
 }
 
+function getLocalCourses() {
+    try {
+        return JSON.parse(localStorage.getItem('edutrack_courses')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function normalizeCourse(c) {
+    if (!c || typeof c !== 'object') return null;
+    const title = c.title || c.name || 'Untitled Course';
+    const code = c.code || c.major || 'COURSE';
+    const instructorId = c.instructorId || c.instructor_id || null;
+    return {
+        ...c,
+        id: String(c.id),
+        title,
+        code,
+        description: c.description || '',
+        instructorId,
+        instructor_id: instructorId,
+        enrolledStudentIds: Array.isArray(c.enrolledStudentIds) ? c.enrolledStudentIds : []
+    };
+}
+
 // ---------- تحميل البيانات ----------
 async function loadData() {
     const { id } = Auth.getCurrentInstructor();
+    const instId = String(id);
     console.log('[quizzes] Loading data for instructor:', id);
 
-    // ✅ الحل الجذري: نجلب كل شيء، ثم نُفلتر محلياً
-    // لأن json-server v1 لا يدعم فلترة query params (?instructorId=...)
-    const [allCourses, allQuizzes, students, allResults] = await Promise.all([
-        CourseAPI.getAll(),
-        QuizAPI.getAll(),
-        StudentAPI.getAll(),
-        ResultAPI.getAll(),
+    const [allCoursesRaw, allQuizzes, students, allResults] = await Promise.all([
+        CourseAPI.getAll().catch(() => []),
+        QuizAPI.getAll().catch(() => []),
+        StudentAPI.getAll().catch(() => []),
+        ResultAPI.getAll().catch(() => []),
     ]);
 
-    const courses = Array.isArray(allCourses)
-        ? allCourses.filter(c => String(c.instructorId) === String(id))
-        : [];
+    const localList = getLocalCourses();
+    const combinedRaw = [...(Array.isArray(allCoursesRaw) ? allCoursesRaw : []), ...localList];
+
+    const courseMap = new Map();
+    combinedRaw.forEach(item => {
+        const norm = normalizeCourse(item);
+        if (norm && norm.id) {
+            courseMap.set(norm.id, norm);
+        }
+    });
+
+    const courses = Array.from(courseMap.values()).filter(c => {
+        if (!c.instructorId) return true; // General/default courses
+        return String(c.instructorId) === instId;
+    });
+
     const quizzes = Array.isArray(allQuizzes)
-        ? allQuizzes.filter(q => String(q.instructorId) === String(id))
+        ? allQuizzes.filter(q => String(q.instructorId || q.instructor_id) === instId)
         : [];
     const results = Array.isArray(allResults) ? allResults : [];
 
-    console.log('[quizzes] Filtered courses:', courses.length, '/', allCourses?.length || 0);
-    console.log('[quizzes] Filtered quizzes:', quizzes.length, '/', allQuizzes?.length || 0);
+    console.log('[quizzes] Filtered courses:', courses.length);
+    console.log('[quizzes] Filtered quizzes:', quizzes.length);
 
     const quizIds = new Set(quizzes.map((q) => String(q.id)));
 
@@ -72,7 +112,7 @@ async function loadData() {
     $('quizCourse').innerHTML = courses.length
         ? '<option value="" disabled selected>Select a course...</option>' +
           courses.map((c) => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.title)} (${escapeHTML(c.code)})</option>`).join('')
-        : '<option value="" disabled selected>No courses — add one first</option>';
+        : '<option value="" disabled selected>No courses available</option>';
 }
 
 async function refreshAll() {

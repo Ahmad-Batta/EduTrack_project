@@ -457,6 +457,12 @@ ul {
   width: 100%;
 }
 
+.form-group select {
+  height: 42px;
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
 .form-group textarea {
   min-height: 96px;
   resize: vertical;

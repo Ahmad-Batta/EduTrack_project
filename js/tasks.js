@@ -31,31 +31,85 @@ async function loadAssignments() {
     }
 }
 
+function getLocalCourses() {
+    try {
+        return JSON.parse(localStorage.getItem('edutrack_courses')) || [];
+    } catch {
+        return [];
+    }
+}
+
+function normalizeCourse(c) {
+    if (!c || typeof c !== 'object') return null;
+    const title = c.title || c.name || 'Untitled Course';
+    const code = c.code || c.major || 'COURSE';
+    const instructorId = c.instructorId || c.instructor_id || null;
+    return {
+        ...c,
+        id: String(c.id),
+        title,
+        code,
+        description: c.description || '',
+        instructorId,
+        instructor_id: instructorId
+    };
+}
+
 // Populate course options in modal dropdown
 async function loadCourses() {
     const courseSelect = document.getElementById('modal-course');
     if (!courseSelect) return;
 
+    let apiCourses = [];
     try {
         const response = await fetch('http://localhost:3000/courses');
-        if (!response.ok) throw new Error('Failed to fetch courses from server.');
-        
-        const courses = await response.json();
-
-        courseSelect.innerHTML = '<option value="" disabled selected>Select a course</option>';
-        
-        courses.forEach(course => {
-            const option = document.createElement('option');
-            const courseName = course.name || course.title;
-            
-            option.value = courseName;
-            option.textContent = courseName;
-            courseSelect.appendChild(option);
-        });
-
+        if (response.ok) {
+            const raw = await response.json();
+            if (Array.isArray(raw)) apiCourses = raw;
+        }
     } catch (error) {
         console.error("Error loading courses from server:", error);
     }
+
+    const localList = getLocalCourses();
+    const combinedRaw = [...apiCourses, ...localList];
+
+    const courseMap = new Map();
+    combinedRaw.forEach(item => {
+        const norm = normalizeCourse(item);
+        if (norm && norm.id) {
+            courseMap.set(norm.id, norm);
+        }
+    });
+
+    let currentInstructorId = null;
+    try {
+        const session = JSON.parse(sessionStorage.getItem('session')) ||
+                        JSON.parse(sessionStorage.getItem('currentUser')) ||
+                        JSON.parse(localStorage.getItem('currentInstructor'));
+        if (session && session.id) currentInstructorId = String(session.id);
+    } catch {
+        currentInstructorId = null;
+    }
+
+    const courses = Array.from(courseMap.values()).filter(c => {
+        if (!c.instructorId || !currentInstructorId) return true;
+        return String(c.instructorId) === currentInstructorId;
+    });
+
+    courseSelect.innerHTML = '<option value="" disabled selected>Select a course</option>';
+
+    if (courses.length === 0) {
+        courseSelect.innerHTML += '<option value="" disabled>No courses available</option>';
+        return;
+    }
+
+    courses.forEach(course => {
+        const option = document.createElement('option');
+        option.value = course.title;
+        option.textContent = `${course.title} (${course.code})`;
+        courseSelect.appendChild(option);
+    });
 }
 
 // Render Table

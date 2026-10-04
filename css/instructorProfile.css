@@ -38,7 +38,7 @@
 .top-links a:hover { color: var(--teal); }
 .top-links a:hover::after { width: 100%; }
 
-.btn-logout {
+/* .btn-logout {
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -49,8 +49,8 @@
   padding: 8px 16px;
   cursor: pointer;
   transition: background .2s;
-}
-.btn-logout:hover { background: #FEF2F2; }
+} */
+/* .btn-logout:hover { background: #FEF2F2; } */
 
 .site-footer {
   text-align: center;
