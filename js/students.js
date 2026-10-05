@@ -1,13 +1,10 @@
-import { requireAuth, renderTopNav, getCurrentUser } from "./layout.js";
-
-requireAuth();
-renderTopNav("students");
-
 import {
     getStudents,
     addStudent,
     updateStudent
 } from "./students-api.js";
+
+
 
 
 import {
@@ -50,7 +47,8 @@ const addStudentForm =
 const saveStudentButton =
     document.getElementById("save-student-btn");
 
-
+const cancelStudentButton =
+    document.getElementById("cancel-student-btn");
 
 let allStudents = [];
 
@@ -523,6 +521,16 @@ addStudentButton.addEventListener("click", function() {
 
 });
 
+cancelStudentButton.addEventListener(
+    "click",
+    function() {
+
+        addStudentForm.hidden =
+            true;
+
+    }
+);
+
 
 
 // لما نضغط Save Student نجيب البيانات ونضيف الطالب
@@ -626,19 +634,12 @@ saveStudentButton.addEventListener(
 // هون بتشغل الصفحة شو بدي اعمل في البيانات الي جبتها عشان مبدئFunction Responsibility
 async function startStudentsPage() {
 
-    const user = getCurrentUser() || {};
-
     const students =
         await getStudents();
 
 
-    if (user.id) {
-        allStudents = students.filter(function(student) {
-            return String(student.instructor_id || student.trainerId) === String(user.id);
-        });
-    } else {
-        allStudents = students;
-    }
+    allStudents =
+        students;
 
 
     applyStudentFilters();
